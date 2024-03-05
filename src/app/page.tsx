@@ -100,7 +100,7 @@ export default function Home() {
     <>
     <main className='w-full' style={{maxWidth: "1244px"}}> 
       <div className='mt-4 mb-4 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
-        <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glowlabs.org/'>Glow Protocol</a>.</div>
+        <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glowlabs.org/#about'>Glow Protocol</a>.</div>
       </div>
       <div 
         id='green-section' 
