@@ -1,0 +1,35 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Output {
+  id        String     @default(cuid()) @id
+  week      Int
+  output    Int
+}
+
+model Farms {
+  id        String     @default(cuid()) @id
+  week      Int
+  count     Int
+}
+
+model PriceUniswap {
+  id        String     @default(cuid()) @id
+  date      DateTime
+  price     Decimal
+}
+
+model PriceContract {
+  id        String     @default(cuid()) @id
+  date      DateTime
+  price     Decimal
+}
