@@ -10,6 +10,9 @@ interface ChartCounterProps {
 
 const ChartCounter = ({ title, value, info=false, infoMessage="" }: ChartCounterProps) => {
 
+  // This is somewhat hacky, but it works for now
+  const valueSize = value ? value.toString().length : 0;
+
   return (
     <div className='flex flex-col justify-between'>
       {info ? 
@@ -24,7 +27,7 @@ const ChartCounter = ({ title, value, info=false, infoMessage="" }: ChartCounter
         {title}
       </div>)
       }
-      <div className='pl-4 p-1 pb-2 text-xl'>
+      <div className={`pl-4 p-1 pb-2 ${valueSize > 9 ? "text-base" : "text-xl"}`}>
         {(value) ? value : "Loading..."}
       </div>
     </div>
