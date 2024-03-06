@@ -7,25 +7,27 @@ interface PriceData {
   price: number;
 }
 
-interface TokenCardProps {
-  tokenPriceUniswap: number;
-  tokenPriceContract: number;
+interface TokenStats {
+  price: number;
+  circulatingSupply: number;
+  totalSupply: number;
+  marketCap: number;
 }
 
-const TokenCard = (props:TokenCardProps) => {
+const TokenCard = () => {
   const [priceUniswapData, setPriceUniswapData] = useState<PriceData[]>([]);
   const [priceContractData, setPriceContractData] = useState<PriceData[]>([]);
+  const [tokenStats, setTokenStats] = useState<TokenStats>({} as TokenStats);
 
-  const { tokenPriceUniswap, tokenPriceContract } = props;
-  // TODO: Get circSupply from the contract
-  const circSupply = 4159696;
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/glowStats');
+      const data = await res.json();
+      setTokenStats(data);
+    };
 
-  const marketCap = (tokenPriceUniswap && tokenPriceContract) ? 
-  Math.round(((Number(tokenPriceUniswap) + Number(tokenPriceContract)) / 2) * circSupply)
-  : 0;
-
-  const uniswapLineColor = "rgb(75, 192, 192)";
-  const contractLineColor = 'rgb(34,197,94)';
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +39,13 @@ const TokenCard = (props:TokenCardProps) => {
 
     fetchData();
   }, []);
+
+  const totalSupply = Math.round(tokenStats.totalSupply || 0);
+  const circSupply = Math.round(tokenStats.circulatingSupply || 0);
+  const marketCap = Math.round(tokenStats.marketCap || 0);
+
+  const uniswapLineColor = 'rgb(75, 192, 192)';
+  const contractLineColor = 'rgb(34,197,94)';
   
   const labels = priceUniswapData.map((data: PriceData) => data.date.substring(8,10));
   const weeklyPriceUniswap = priceUniswapData.map((data: PriceData) => data.price);
@@ -52,22 +61,22 @@ const TokenCard = (props:TokenCardProps) => {
     <div id='top-values' className='flex flex-row'>
       <div className='w-4/12 flex flex-row justify-between'>
         <ChartCounter 
-          title={"Price (Uniswap)"} 
-          value={tokenPriceUniswap ? `$${tokenPriceUniswap}` : null}
+          title={"Total Supply"} 
+          value={totalSupply ? totalSupply.toLocaleString() : ''}
         />
         <div className='h-full w-px' style={{backgroundColor: "rgb(230,230,230"}}></div>
       </div>
       <div className='w-4/12 flex flex-row justify-between'>
         <ChartCounter 
           title={"Circulating Supply"} 
-          value={circSupply.toLocaleString()}
+          value={circSupply ? circSupply.toLocaleString() : ''}
         />
         <div className='h-full w-px' style={{backgroundColor: "rgb(230,230,230"}}></div>
       </div>
       <div className='w-4/12 flex flex-row justify-between'>
         <ChartCounter 
           title={"Market Cap"} 
-          value={marketCap ? `$${(marketCap).toLocaleString()}` : null} 
+          value={marketCap ? `$${(marketCap).toLocaleString()}` : ''} 
           />
       </div>
     </div>

@@ -17,7 +17,7 @@ const ChartCounter = ({ title, value, info=false, infoMessage="" }: ChartCounter
     <div className='flex flex-col justify-between'>
       {info ? 
       (
-        <div className='pl-4 pb-0 p-1 text-gray text-md flex flex-row justify-between items-center gap-1'>
+        <div className='pl-4 pb-0 p-1 mb-1 text-gray text-md flex flex-row justify-between items-center gap-1'>
           {title}
           <Tooltip message={infoMessage}><AiOutlineInfoCircle/></Tooltip>
         </div>
@@ -27,7 +27,7 @@ const ChartCounter = ({ title, value, info=false, infoMessage="" }: ChartCounter
         {title}
       </div>)
       }
-      <div className={`pl-4 p-1 pb-2 lg:text-xl ${valueSize > 9 ? "text-base" : "text-xl"}`}>
+      <div className={`pl-4 p-1 pb-2 lg:text-xl ${valueSize >= 9 ? "text-base" : "text-xl"}`}>
         {(value) ? value : "Loading..."}
       </div>
     </div>

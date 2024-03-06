@@ -176,10 +176,7 @@ export default function Home() {
       </div>
       <div id='figures' className='flex lg:flex-row flex-col gap-2 lg:h-96'>
         <PowerCard weekCount={weekCount} labels={labels}/>
-        <TokenCard 
-          tokenPriceUniswap={tokenPriceUniswap} 
-          tokenPriceContract={tokenPriceContract} 
-        />
+        <TokenCard />
       </div>
       <div id='divider' className='h-8'></div>
       <div id='divider' className='h-16'></div>
