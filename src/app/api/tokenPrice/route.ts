@@ -37,7 +37,7 @@ async function fetchGlowPriceFromContract() {
   }
 }
 
-export async function fetchGlowPriceFromUniswap() {
+async function fetchGlowPriceFromUniswap() {
   try {
     const web3 = new Web3(process.env.INFURA_URL as string); // Replace with your node URL
 
