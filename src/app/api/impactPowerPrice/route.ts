@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 export const revalidate = 120;
 
-const GLOW_GREEN_API = process.env.GLOW_GREEN_API || '';
+const GLOW_GREEN_API_BASE = process.env.GLOW_GREEN_API || '';
+const GLOW_GREEN_API = GLOW_GREEN_API_BASE + 'estimateUSDC?amountImpactPointsDesired=1000000000000';
 
 export async function GET() {
   try {
