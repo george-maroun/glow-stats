@@ -27,7 +27,7 @@ const ChartCounter = ({ title, value, info=false, infoMessage="" }: ChartCounter
         {title}
       </div>)
       }
-      <div className={`pl-4 p-1 pb-2 ${valueSize > 9 ? "text-base" : "text-xl"}`}>
+      <div className={`pl-4 p-1 pb-2 lg:text-xl ${valueSize > 9 ? "text-base" : "text-xl"}`}>
         {(value) ? value : "Loading..."}
       </div>
     </div>
