@@ -71,17 +71,17 @@ const TokenCard = () => {
       return dataSlice;
     }
   
-    // Price is recorded every 2 hours
+    // Price is recorded every hour
     if (period['1D']) {
       priceSlice = glowPriceData.slice(-12);
     } else if (period['1W']) {
-      priceSlice = getSlicedData(84);
+      priceSlice = getSlicedData(7 * 24);
     } else if (period['1M']) {
-      priceSlice = getSlicedData(360);
+      priceSlice = getSlicedData(30 * 24);
     } else if (period['3M']) {
-      priceSlice = getSlicedData(1080);
+      priceSlice = getSlicedData(90 * 24);
     } else if (period['1Y']) {
-      priceSlice = getSlicedData(4380);
+      priceSlice = getSlicedData(365 * 24);
     } else if (period['Max']) {
       priceSlice = getSlicedData(glowPriceData.length);
     }
