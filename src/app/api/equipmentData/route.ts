@@ -1,4 +1,3 @@
-// Test route to check if data caching is working
 import { NextResponse } from 'next/server';
 export const revalidate = 60;
 
