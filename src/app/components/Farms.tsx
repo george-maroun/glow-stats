@@ -103,7 +103,7 @@ export default function Farms({ labels }: FarmsProps) {
 
   const dataPoints = selectedFarm ? weeklyOutputs : weeklyFarmCounts;
 
-  const pastMonthFarms = weeklyFarmCounts ? 
+  const pastMonthFarms = weeklyFarmCounts.length ? 
   weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5]
   : 0;
 
@@ -403,7 +403,7 @@ export default function Farms({ labels }: FarmsProps) {
             <div className='w-4/12 flex flex-row justify-between'>
               <ChartCounter 
                 title={"Past Month Increase"} 
-                value={pastMonthFarms} 
+                value={weeklyFarmCounts.length ? pastMonthFarms.toString() : 0} 
                 />
             </div>
           </div>

@@ -179,14 +179,14 @@ export default function Home() {
         <TokenCard />
       </div>
       <div id='divider' className='h-8'></div>
-      <div id='divider' className='h-16'></div>
+      <div id='divider' className='h-10'></div>
       <div className='text-4xl mb-8'>Explore Farms</div>
 
       
       <Farms labels={labels.slice(0, labels.length - 1)}/>
       <div id='divider' className='h-8'></div>
 
-      <div id='divider' className='h-16'></div>
+      <div id='divider' className='h-10'></div>
       <div className='text-4xl mb-8'>Protocol Statistics</div>
 
       <div className='mt-4 mb-4 w-full flex lg:flex-row flex-col gap-2'>
