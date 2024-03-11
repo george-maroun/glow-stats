@@ -1,28 +1,36 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../lib/prisma';
-export const revalidate = 600;
+export const revalidate = 60;
 
-const fetchTokenPrice = async () => {
-  const priceUniswapDaily = await prisma.priceUniswap.findMany({
-    orderBy: {
-      date: 'asc',
-    },
-  });
-  const priceContractDaily = await prisma.priceContract.findMany({
-    orderBy: {
-      date: 'asc', 
-    },
-  });
-  return { priceUniswapDaily, priceContractDaily };
+const GLOW_GREEN_API = process.env.GLOW_GREEN_API || '';
+const GLOW_PRICE_API = `${GLOW_GREEN_API}all-glow-prices`;
+
+interface PriceData {
+  date: number;
+  price: string;
+}
+
+async function getGlowDailyPrice() {
+  try {
+    const response = await fetch(GLOW_PRICE_API);
+    if (!response.ok) throw new Error('Network response was not ok');
+    const glowDailyPrice: PriceData[] = await response.json();
+
+    return {
+      glowDailyPrice,
+    };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return undefined;
+  }
 }
 
 export async function GET() {
-  let tokenPriceData;
-  try {
-    tokenPriceData = await fetchTokenPrice();
+  const glowDailyPrice = await getGlowDailyPrice(); 
+
+  if (!glowDailyPrice) {
+    return NextResponse.error();
   }
-  catch (error) {
-    console.error('Error fetching token price data:', error);
-  }
-  return NextResponse.json(tokenPriceData);
+
+  return NextResponse.json(glowDailyPrice);
 }
+

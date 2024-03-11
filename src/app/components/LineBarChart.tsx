@@ -60,7 +60,11 @@ const LineBarChart = (props: LineChartProps) => {
       x: {
         grid: {
           display: false
-        }
+        },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 10 // Adjust this number to control the maximum amount of labels displayed
+        },
       },
       y: {
         type: 'linear',

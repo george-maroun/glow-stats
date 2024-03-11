@@ -3,8 +3,8 @@ import LineChart from './LineChart';
 import ChartCounter from './ChartCounter';
 
 interface PriceData {
-  date: string;
-  price: number;
+  date: number;
+  price: string;
 }
 
 interface TokenStats {
@@ -14,10 +14,27 @@ interface TokenStats {
   marketCap: number;
 }
 
+interface Period {
+  '1D': boolean;
+  '1W': boolean;
+  '1M': boolean;
+  '3M': boolean;
+  '1Y': boolean;
+  'Max': boolean;
+}
+
+const getISODateFromTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp*1000);
+  const formattedDate = date.toISOString();
+  return formattedDate;
+}
+
 const TokenCard = () => {
-  const [priceUniswapData, setPriceUniswapData] = useState<PriceData[]>([]);
-  const [priceContractData, setPriceContractData] = useState<PriceData[]>([]);
+  const [glowPriceData, setGlowPriceData] = useState<PriceData[]>([]);
   const [tokenStats, setTokenStats] = useState<TokenStats>({} as TokenStats);
+  const [period, setPeriod] = useState<Period>({ '1D': false, '1W': false, '1M': false, '3M': false, '1Y': false, 'Max': true });
+  const [labels, setLabels] = useState<string[]>([]);
+  const [priceDataPoints, setPriceDataPoints] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +42,6 @@ const TokenCard = () => {
       const data = await res.json();
       setTokenStats(data);
     };
-
     fetchData();
   }, []);
 
@@ -33,26 +49,63 @@ const TokenCard = () => {
     const fetchData = async () => {
       const res = await fetch('/api/tokenPriceDaily');
       const data = await res.json();
-      setPriceUniswapData(data.priceUniswapDaily);
-      setPriceContractData(data.priceContractDaily);
+      setGlowPriceData(data.glowDailyPrice);
     };
-
     fetchData();
   }, []);
+
+  useEffect(() => {
+    let labels: string[] = [];
+    let priceDataPoints: number[] = [];
+    let priceSlice: PriceData[] = [];
+  
+    const getSlicedData = (dataCount:number): PriceData[] => {
+      const dataSlice: PriceData[] = [];
+
+      let dataFrequency;
+      dataFrequency = Math.max(Math.round(glowPriceData.length / 50), 1);
+
+      for (let i = Math.max(glowPriceData.length - dataCount, 0); i < glowPriceData.length; i += dataFrequency) {
+        dataSlice.push(glowPriceData[i]);
+      }
+      return dataSlice;
+    }
+  
+    // Price is recorded every 2 hours
+    if (period['1D']) {
+      priceSlice = glowPriceData.slice(-12);
+    } else if (period['1W']) {
+      priceSlice = getSlicedData(84);
+    } else if (period['1M']) {
+      priceSlice = getSlicedData(360);
+    } else if (period['3M']) {
+      priceSlice = getSlicedData(1080);
+    } else if (period['1Y']) {
+      priceSlice = getSlicedData(4380);
+    } else if (period['Max']) {
+      priceSlice = getSlicedData(glowPriceData.length);
+    }
+    console.log('priceSlice', priceSlice);
+    if (period['1D']) {
+      labels = priceSlice.map(data => getISODateFromTimestamp(data.date).substring(11,16));
+    } else {
+      labels = priceSlice.map(data => getISODateFromTimestamp(data.date).substring(5,10));
+    }
+    
+    priceDataPoints = priceSlice.map(data => Number(data.price));
+  
+    setLabels(labels);
+    setPriceDataPoints(priceDataPoints);
+  }, [glowPriceData, period]);
+  
+
 
   const totalSupply = Math.round(tokenStats.totalSupply || 0);
   const circSupply = Math.round(tokenStats.circulatingSupply || 0);
   const marketCap = Math.round(tokenStats.marketCap || 0);
 
-  const uniswapLineColor = 'rgb(75, 192, 192)';
-  const contractLineColor = 'rgb(34,197,94)';
-  
-  const labels = priceUniswapData.map((data: PriceData) => data.date.substring(8,10));
-  const weeklyPriceUniswap = priceUniswapData.map((data: PriceData) => data.price);
-  const weeklyFarmContract = priceContractData.map((data: PriceData) => data.price);
-
   return (
-    <div id='right-figure' className='rounded-xl h-full lg:w-6/12 border' style={{backgroundColor: "white", borderColor: "rgb(220,220,220"}}>
+    <div id='right-figure' className='rounded-xl h-full lg:w-6/12 border' style={{backgroundColor: "white", borderColor: "rgb(220,220,220)"}}>
     <div className='p-4 pb-2 text-2xl'>
       Glow Token
     </div>
@@ -84,11 +137,22 @@ const TokenCard = () => {
     <div className='pl-4 pb-2 pt-2 pr-4 text-gray text-md flex flex-row justify-between items-center'>
       <div>Daily Price of GLW</div>
       
-      <div className='flex flex-row items-center'>
-       Uniswap
-      <div className='w-3 h-1 ml-1.5 mr-4' style={{ backgroundColor: uniswapLineColor }}></div>
-       Contract
-      <div className='w-3 h-1 ml-1.5 mr-4' style={{ backgroundColor: contractLineColor}}></div>
+      <div className='flex flex-row gap-3 text-sm'>
+        {Object.keys(period).map((key) => {
+          const periodKey = key as keyof Period;
+          return (
+            <button 
+              key={key}
+              className={`${period[periodKey] ? "text-[#000000]" : "text-[#777777]"}`}
+              onClick={() => {
+                const newPeriod = Object.fromEntries(Object.keys(period).map((k:any) => [k, k === key]));
+                setPeriod(newPeriod);
+              }}
+            >
+              {key}
+            </button>
+          )
+        })}
       </div>
     </div>
 
@@ -96,13 +160,10 @@ const TokenCard = () => {
       <LineChart 
         title="" 
         labels={labels} 
-        dataPoints={weeklyPriceUniswap}
-        dataPoints2={weeklyFarmContract} 
-        color={uniswapLineColor}
-        color2={contractLineColor}
+        dataPoints={priceDataPoints}
         dataLabel={"Price"}
         dataLabel2={"Price"}
-        interval='Date'
+        interval={period['1D'] ? 'Time' : 'Date'}
       />
     </div>
   );
