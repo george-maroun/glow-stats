@@ -18,6 +18,11 @@ interface WeeklyCarbonCredits {
   value: number;
 }
 
+interface ImpactProps {
+  carbonCredits: number;
+  weeklyCarbonCredits: {week: number, value: number}[];
+}
+
 const createLabels = () => {
   const weeks = getWeeksSinceStart();
   const labels = [];
@@ -28,13 +33,15 @@ const createLabels = () => {
   return labels;
 }
 
-export default function Impact() {
-  const [weeklyCarbonCredits, setWeeklyCarbonCredits] = useState<number[]>([]);
-  const [totalCarbonCredits, setTotalCarbonCredits] = useState<number>(0);
+export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: ImpactProps) {
+  // const [weeklyCarbonCredits, setWeeklyCarbonCredits] = useState<number[]>([]);
+  // const [totalCarbonCredits, setTotalCarbonCredits] = useState<number>(0);
   const [protocolFeesPerWeek, setProtocolFeesPerWeek] = useState<ProtocolFeesPerWeek[]>([]);
   const [impactPowerCount, setImpactPowerCount] = useState<number>(0);
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
   const [impactMultiplier, setImpactMultiplier] = useState<number>(0);
+
+    const weeklyCarbonCreditsValues = weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
 
     // Get impact power price
     useEffect(() => {
@@ -65,16 +72,16 @@ export default function Impact() {
       fetchData();
     }, []);
 
-  useEffect(() => {
-    async function fetchCarbonCredits() {
-      const response = await fetch('/api/carbonCredits');
-      const data = await response.json();
-      const carbonCreditsData = data.weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
-      setWeeklyCarbonCredits(carbonCreditsData);
-      setTotalCarbonCredits(data.GCCSupply);
-    }
-    fetchCarbonCredits();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchCarbonCredits() {
+  //     const response = await fetch('/api/carbonCredits');
+  //     const data = await response.json();
+  //     const carbonCreditsData = data.weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
+  //     setWeeklyCarbonCredits(carbonCreditsData);
+  //     setTotalCarbonCredits(data.GCCSupply);
+  //   }
+  //   fetchCarbonCredits();
+  // }, []);
 
   const labels = createLabels();
 
@@ -104,7 +111,7 @@ export default function Impact() {
           <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
           <div id='top-values' className='flex flex-row'>
               <div className='w-4/12 flex flex-row justify-between'>
-                <ChartCounter title="Carbon Credits Created" value={totalCarbonCredits} />
+                <ChartCounter title="Carbon Credits Created" value={carbonCredits} />
                 <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
               </div>
               <div className='w-4/12 flex flex-row justify-between'>
@@ -127,7 +134,7 @@ export default function Impact() {
             <LineBarChart 
               title="" 
               labels={labels} 
-              dataPoints={weeklyCarbonCredits} 
+              dataPoints={weeklyCarbonCreditsValues} 
             />
 
         </div>

@@ -27,6 +27,7 @@ type WeatherData = {
 
 interface FarmsProps {
   labels: string[];
+  weeklyFarmCount: {week: number, value: number}[];
 }
 
 interface WeeklyData {
@@ -75,12 +76,12 @@ type Rewards = {
   weekNumber: number;
 }[]
 
-export default function Farms({ labels }: FarmsProps) {
+export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
  
-  const [weeklyFarmCounts, setWeeklyFarmCounts] = useState<number[]>([]);
+  // const [weeklyFarmCounts, setWeeklyFarmCounts] = useState<number[]>([]);
   const [allFarmsData, setAllFarmsData] = useState<AllFarmsData>({});
   const [allFarmsWeeklyOutputs, setAllFarmsWeeklyOutputs] = useState<number[]>([]);
-  const [ActiveFarmsCount, setActiveFarmCount] = useState<number>(0);
+  // const [ActiveFarmsCount, setActiveFarmCount] = useState<number>(0);
   const [equipmentDetails, setEquipmentDetails] = useState<EquipmentDetails>({});
   const [equipmentList, setEquipmentList] = useState<EquipmentList>({});
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
@@ -100,6 +101,7 @@ export default function Farms({ labels }: FarmsProps) {
 
   const key:string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
+  const weeklyFarmCounts = weeklyFarmCount.map((data: {week: number, value: number}) => data.value);
 
   const dataPoints = selectedFarm ? weeklyOutputs : weeklyFarmCounts;
 
@@ -107,7 +109,9 @@ export default function Farms({ labels }: FarmsProps) {
   weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5]
   : 0;
 
-  const onboardingFarms = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) - ActiveFarmsCount : 0;
+  const ActiveFarmsCount = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) : 0;
+
+  const onboardingFarms = '0';
 
 
   const { isLoaded } = useJsApiLoader({
@@ -175,26 +179,26 @@ export default function Farms({ labels }: FarmsProps) {
   }, []);
 
   // Get active farms count
-  useEffect(() => {
-    let count = 0;
-    for (let farm in allFarmsData) {
-      if (allFarmsData[farm].totalOutput > 0) {
-        count++;
-      }
-    }
-    setActiveFarmCount(count);
-  }, [allFarmsData]);
+  // useEffect(() => {
+  //   let count = 0;
+  //   for (let farm in allFarmsData) {
+  //     if (allFarmsData[farm].totalOutput > 0) {
+  //       count++;
+  //     }
+  //   }
+  //   setActiveFarmCount(count);
+  // }, [allFarmsData]);
 
     // Get weekly farm counts
-    useEffect(() => {
-      const fetchData = async () => {
-        const data = await fetch('/api/farmCount');
-        const weeklyFarmCount = await data.json();
-        const weeklyFarmCountsDataPoints = await weeklyFarmCount.map((data: WeeklyData) => data.value);
-        setWeeklyFarmCounts(weeklyFarmCountsDataPoints);
-      };
-      fetchData();
-    }, [weekCount]);
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     const data = await fetch('/api/farmCount');
+    //     const weeklyFarmCount = await data.json();
+    //     const weeklyFarmCountsDataPoints = await weeklyFarmCount.map((data: WeeklyData) => data.value);
+    //     setWeeklyFarmCounts(weeklyFarmCountsDataPoints);
+    //   };
+    //   fetchData();
+    // }, [weekCount]);
 
   // Set WeeklyOutputs
   useEffect(() => {

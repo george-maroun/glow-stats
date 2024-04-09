@@ -5,7 +5,7 @@ import { Analytics } from '@vercel/analytics/react';
 export const fetchCache = 'force-no-store';
 export const dynamic = "force-dynamic";
 import getWeeksSinceStart from '../../lib/utils/currentWeekHelper';
-import Impact from './components/Impact';
+import ImpactCard from './components/ImpactCard';
 import PowerCard from './components/PowerCard';
 import TokenCard from './components/TokenCard';
 import Farms from './components/Farms';
@@ -18,20 +18,37 @@ export default function Home() {
   const [weekCount, setWeekCount] = useState(0);
   const [labels, setLabels] = useState<string[]>([]);
   
-  const [carbonCredits, setCarbonCredits] = useState<number>(0);
+  // const [carbonCredits, setCarbonCredits] = useState<number>(0);
   const [impactPowerOwners, setImpactPowerOwners] = useState<number>(0);
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
 
+  const [weeklyCarbonCredits, setWeeklyCarbonCredits] = useState<any[]>([]);
+  const [weeklyFarmCount, setWeeklyFarmCount] = useState<any[]>([]);
+  const [weeklyTotalOutput, setWeeklyTotalOutput] = useState<any[]>([]);
 
-  // Get carbon credits
+  // Get all data
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetch('/api/carbonCredits');
-      const carbonCredits = await data.json();
-      setCarbonCredits(carbonCredits.GCCSupply);
+      const data = await fetch('/api/allData');
+      const allData = await data.json();
+      setWeeklyCarbonCredits(allData.weeklyCarbonCredit);
+      setWeeklyFarmCount(allData.weeklyFarmCount);
+      setWeeklyTotalOutput(allData.weeklyTotalOutput);
     };
     fetchData();
   }, []);
+
+
+
+  // Get carbon credits
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = await fetch('/api/carbonCredits');
+  //     const carbonCredits = await data.json();
+  //     setCarbonCredits(carbonCredits.GCCSupply);
+  //   };
+  //   fetchData();
+  // }, []);
 
   // Get impact power owners
   useEffect(() => {
@@ -95,6 +112,8 @@ export default function Home() {
   
     fetchData();
   }, []);
+
+  const carbonCredits = weeklyCarbonCredits.reduce((acc, curr) => acc + curr.value, 0).toFixed(3);
 
   return (
     <>
@@ -175,7 +194,7 @@ export default function Home() {
         </div>
       </div>
       <div id='figures' className='flex lg:flex-row flex-col gap-2 lg:h-96'>
-        <PowerCard weekCount={weekCount} labels={labels}/>
+        <PowerCard weekCount={weekCount} weeklyTotalOutput={weeklyTotalOutput} labels={labels}/>
         <TokenCard />
       </div>
       <div id='divider' className='h-8'></div>
@@ -183,7 +202,7 @@ export default function Home() {
       <div className='text-4xl mb-8'>Explore Farms</div>
 
       
-      <Farms labels={labels.slice(0, labels.length - 1)}/>
+      <Farms labels={labels.slice(0, labels.length - 1)} weeklyFarmCount={weeklyFarmCount}/>
       <div id='divider' className='h-8'></div>
 
       <div id='divider' className='h-10'></div>
@@ -191,7 +210,7 @@ export default function Home() {
 
       <div className='mt-4 mb-4 w-full flex lg:flex-row flex-col gap-2'>
         <div className='lg:w-6/12'>
-           <Impact />
+           <ImpactCard carbonCredits={carbonCredits} weeklyCarbonCredits={weeklyCarbonCredits} />
         </div>
 
       <FeesCard />
