@@ -28,7 +28,7 @@ async function fetchWeeklyData(startWeek=0) {
   const BASE_URL = process.env.FARM_STATS_URL || '';
   const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';
 
-  let farmsHex = new Set();
+  // let farmsHex = new Set();
 
   for (let i = startWeek; i <= maxTimeslotOffset; i ++) {
 
@@ -48,6 +48,7 @@ async function fetchWeeklyData(startWeek=0) {
         body: JSON.stringify(requestBody) // Convert the JavaScript object to a JSON string
       })
       const data = await response.json();
+      const activeFarms = data.numActiveFarms;
       const farmData = data.filteredFarms;
 
       let carbonCredits = 0;
@@ -57,11 +58,11 @@ async function fetchWeeklyData(startWeek=0) {
       for (let farm of farmData) {
         carbonCredits += farm.carbonCreditsProduced;
         powerOutput += farm.powerOutput;
-        farmsHex.add(farm.hexlifiedPublicKey);
+        // farmsHex.add(farm.hexlifiedPublicKey);
       }
 
       output.weeklyCarbonCredit.push({ week: i, value: carbonCredits });
-      output.weeklyFarmCount.push({ week: i, value: farmsHex.size });
+      output.weeklyFarmCount.push({ week: i, value: activeFarms });
       output.weeklyTotalOutput.push({ week: i, value: powerOutput });
 
     } catch (error) {

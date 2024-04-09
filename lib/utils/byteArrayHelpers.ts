@@ -13,6 +13,9 @@ export function convertByteArrayStringToArray(byteArrayString: string): number[]
 }
 
 export function invertObject(obj: Record<string, string>): Record<string, string> {
+  if (!obj) {
+    return {};
+  }
   const invertedObject: Record<string, string> = {};
   Object.entries(obj).forEach(([key, value]) => {
     const byteArr = convertByteArrayStringToArray(key)
