@@ -3,11 +3,6 @@ import ChartCounter from './ChartCounter';
 import LineChart from './LineChart';
 import getPastMonthValues from '../../../lib/utils/getPastMonthValuesHelper';
 
-// type WeeklyOutput = {
-//   week: number;
-//   value: number;
-// }
-
 interface PowerCardProps {
   weekCount: number;
   labels: string[];
@@ -17,18 +12,6 @@ interface PowerCardProps {
 const PowerCard = (props:PowerCardProps) => {
   const { weekCount, labels, weeklyTotalOutput } = props;
   const [useLogScale, setUseLogScale] = useState(false);
-  // const [weeklyOutputs, setWeeklyOutputs] = useState<number[]>([]);
-
-  // Get weekly outputs
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await fetch('/api/weeklyOutput');
-  //     const weeklyOutputs = await data.json();
-  //     const weeklyOutputsDataPoints = await weeklyOutputs.map((data: WeeklyOutput) => Math.round(data.value / 1000000));
-  //     setWeeklyOutputs(weeklyOutputsDataPoints);
-  //   };
-  //   fetchData();
-  // }, [weekCount]);
 
   const weeklyOutputs = weeklyTotalOutput.map((data: { week: number; value: number }) => Number(data.value.toFixed(2)));
 

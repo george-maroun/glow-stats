@@ -2,6 +2,7 @@ import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
 export const revalidate = 600;
 
+// TODO
 // interface FarmData {
 
 // }
@@ -13,6 +14,7 @@ interface Output {
   // weeklyDataByFarm: { week: number; value: number }[];
 }
 
+// TODO: Extract more info from this URL
 
 async function fetchWeeklyData(startWeek=0) {
   const output: Output = {
@@ -22,8 +24,6 @@ async function fetchWeeklyData(startWeek=0) {
   };
 
   const maxTimeslotOffset = getWeeksSinceStart();
-  
-  // const baseUrl = process.env.DEVICE_STATS_URL || '';
 
   const BASE_URL = process.env.FARM_STATS_URL || '';
   const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';

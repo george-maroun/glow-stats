@@ -38,18 +38,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-
-
-  // Get carbon credits
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await fetch('/api/carbonCredits');
-  //     const carbonCredits = await data.json();
-  //     setCarbonCredits(carbonCredits.GCCSupply);
-  //   };
-  //   fetchData();
-  // }, []);
-
   // Get impact power owners
   useEffect(() => {
     const fetchData = async () => {

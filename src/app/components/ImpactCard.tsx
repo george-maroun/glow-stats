@@ -34,8 +34,6 @@ const createLabels = () => {
 }
 
 export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: ImpactProps) {
-  // const [weeklyCarbonCredits, setWeeklyCarbonCredits] = useState<number[]>([]);
-  // const [totalCarbonCredits, setTotalCarbonCredits] = useState<number>(0);
   const [protocolFeesPerWeek, setProtocolFeesPerWeek] = useState<ProtocolFeesPerWeek[]>([]);
   const [impactPowerCount, setImpactPowerCount] = useState<number>(0);
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
@@ -71,17 +69,6 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
       };
       fetchData();
     }, []);
-
-  // useEffect(() => {
-  //   async function fetchCarbonCredits() {
-  //     const response = await fetch('/api/carbonCredits');
-  //     const data = await response.json();
-  //     const carbonCreditsData = data.weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
-  //     setWeeklyCarbonCredits(carbonCreditsData);
-  //     setTotalCarbonCredits(data.GCCSupply);
-  //   }
-  //   fetchCarbonCredits();
-  // }, []);
 
   const labels = createLabels();
 
