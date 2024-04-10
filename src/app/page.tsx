@@ -10,6 +10,7 @@ import PowerCard from './components/PowerCard';
 import TokenCard from './components/TokenCard';
 import Farms from './components/Farms';
 import FeesCard from './components/FeesCard';
+import Videos from './components/Videos';
 
 export default function Home() {
   const [tokenHolderCount, setTokenHolderCount] = useState(0);
@@ -196,15 +197,24 @@ export default function Home() {
       <div id='divider' className='h-10'></div>
       <div className='text-4xl mb-8'>Protocol Statistics</div>
 
-      <div className='mt-4 mb-4 w-full flex lg:flex-row flex-col gap-2'>
+      <div className='mt-4 w-full flex lg:flex-row flex-col gap-2'>
         <div className='lg:w-6/12'>
            <ImpactCard carbonCredits={carbonCredits} weeklyCarbonCredits={weeklyCarbonCredits} />
         </div>
 
-      <FeesCard />
+        <FeesCard />
 
-      </div>        
+      </div>
+      <div id='divider' className='h-8'></div>
+
+      <div id='divider' className='h-10'></div>
+      <div className='text-4xl mb-8'>Media</div>
+
+      <Videos />
+      
+
       <div id='divider' className='h-16'></div>
+      <div id='divider' className='h-8'></div>
 
       <div className='mt-4 mb-6 text-md align-center' style={{color: "#777777"}}>
         <p className='text-center'>Learn more at <a className='underline' target="_blank" href='https://glowlabs.org/'>glowlabs.org</a> and <a className='underline' target="_blank" href='https://twitter.com/glowFND/'>@GlowFND.</a></p>

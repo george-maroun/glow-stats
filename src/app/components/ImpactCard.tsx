@@ -4,7 +4,6 @@ import ChartCounter from './ChartCounter';
 import { useEffect, useState } from 'react';
 
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
-import 'react-tooltip/dist/react-tooltip.css'
 export const fetchCache = 'force-no-store';
 export const dynamic = "force-dynamic";
 
@@ -102,7 +101,7 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
                 <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
               </div>
               <div className='w-4/12 flex flex-row justify-between'>
-                <ChartCounter title="Total USDC Committed" value={"25,606"} />
+                <ChartCounter title="Total USDC Committed" value={"26,623"} />
                 <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
               </div>
               <div className='w-4/12 flex flex-row justify-between'>
