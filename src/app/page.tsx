@@ -188,6 +188,7 @@ export default function Home() {
         <PowerCard weekCount={weekCount} weeklyTotalOutput={weeklyTotalOutput} labels={labels}/>
         <TokenCard />
       </div>
+
       <div id='divider' className='h-8'></div>
       <div id='divider' className='h-10'></div>
       <div className='text-4xl mb-8'>Explore Farms</div>

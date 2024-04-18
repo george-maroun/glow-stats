@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import LineChart from './LineChart';
 import ChartCounter from './ChartCounter';
 
+
 interface PriceData {
   date: number;
   price: string;
@@ -85,7 +86,6 @@ const TokenCard = () => {
     } else if (period['Max']) {
       priceSlice = getSlicedData(glowPriceData.length);
     }
-    console.log('priceSlice', priceSlice);
     if (period['1D']) {
       labels = priceSlice.map(data => getISODateFromTimestamp(data.date).substring(11,16));
     } else {
@@ -106,8 +106,15 @@ const TokenCard = () => {
 
   return (
     <div id='right-figure' className='rounded-xl h-full lg:w-6/12 border' style={{backgroundColor: "white", borderColor: "rgb(220,220,220)"}}>
-    <div className='p-4 pb-2 text-2xl'>
-      Glow Token
+    <div className='flex flex-row justify-between items-center'>
+      <div className='p-4 pb-2 text-2xl'>Glow Token</div>
+      <a 
+      href='https://app.glow.org/' 
+      target='_blank' 
+      className='text-gray underline p-4 pb-2'
+      >
+        Buy $GLW 
+      </a>
     </div>
     <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
      
