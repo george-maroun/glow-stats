@@ -4,7 +4,7 @@
 import LineChart from '../components/LineChart';
 import { useEffect, useState } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { invertObject } from '../../../lib/utils/byteArrayHelpers';
+// import { invertObject } from '../../../lib/utils/byteArrayHelpers';
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
 import getWeatherEmoji from '../../../lib/utils/getWeatherEmojiHelper'
 import getPlaceName from '../../../lib/utils/getPlaceNameHelper';
@@ -25,9 +25,18 @@ type WeatherData = {
   name: string;
 };
 
+interface WeeklyDataByFarm {
+  [key: number]: {
+    powerOutputs: { week: number; value: number }[];
+    carbonCredits: { week: number; value: number }[];
+  }
+}
+
 interface FarmsProps {
   labels: string[];
   weeklyFarmCount: {week: number, value: number}[];
+  weeklyDataByFarm: WeeklyDataByFarm;
+  currentFarmIds: number[];
 }
 
 interface WeeklyData {
@@ -76,17 +85,17 @@ type Rewards = {
   weekNumber: number;
 }[]
 
-export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
-  const [allFarmsData, setAllFarmsData] = useState<AllFarmsData>({});
+export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
+  // const [allFarmsData, setAllFarmsData] = useState<AllFarmsData>({});
   const [allFarmsWeeklyOutputs, setAllFarmsWeeklyOutputs] = useState<number[]>([]);
  
   const [equipmentDetails, setEquipmentDetails] = useState<EquipmentDetails>({});
-  const [equipmentList, setEquipmentList] = useState<EquipmentList>({});
+  // const [equipmentList, setEquipmentList] = useState<EquipmentList>({});
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
   const [farmStatus, setFarmStatus] = useState<boolean>(false);
   // TODO: Add carbon credits and rewards to the UI
-  const [carbonCreditsByFarm, setCarbonCreditsByFarm] = useState<WeeklyCarbonCreditsPerFarm[]>([]);
-  const [rewards, setRewards] = useState<Rewards>([]);
+  // const [carbonCreditsByFarm, setCarbonCreditsByFarm] = useState<WeeklyCarbonCreditsPerFarm[]>([]);
+  // const [rewards, setRewards] = useState<Rewards>([]);
 
   const [mapZoom, setMapZoom] = useState<number>(4);
   const [dataLabels, setDataLabels] = useState<string[]>([]);
@@ -118,64 +127,6 @@ export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
 
   const weatherEmoji = selectedFarmWeather ? getWeatherEmoji(selectedFarmWeather) : '';
 
-  // Get weekly outputs
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetch('/api/weeklyOutput');
-      
-      const weeklyOutputs = await data.json();
-      const allFarmsWeeklyOutputs = await weeklyOutputs.map((data: WeeklyData) => data.value / 1000000);
-      setAllFarmsWeeklyOutputs(allFarmsWeeklyOutputs);
-    };
-    fetchData();
-  }, []);
-
-  // Get farm data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetch('/api/farmData');
-        const farmData = await data.json();
-        
-        setAllFarmsData(farmData)
-      }
-      catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // Get carbon credits
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/api/carbonCredits');
-      const res = await response.json();
-      setCarbonCreditsByFarm(res.weeklyCarbonCreditsPerFarm);
-    }
-    try {
-      fetchData();
-    }
-    catch (error) {
-      console.error('Error fetching carbon credits:', error);
-    }
-  }, []);
-
-  // Get rewards data
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/api/rewards');
-      const res = await response.json();
-      setRewards(res.rewards);
-    }
-    try {
-      fetchData();
-    }
-    catch (error) {
-      console.error('Error fetching carbon credits:', error);
-    }
-  }, []);
-
   // Set WeeklyOutputs
   useEffect(() => {
     if (!allFarmsWeeklyOutputs) {
@@ -186,7 +137,7 @@ export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
   }, [allFarmsWeeklyOutputs, labels]);
   
 
-  // Get location name and weather data for the selected farm
+  // Get location name for the selected farm
   useEffect(() => {
     if (!selectedFarm) {
       return;
@@ -231,47 +182,48 @@ export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
   // Fetch equipment data from the API
   useEffect(() => {
     const fetchData = async () => {
+      const currFarmsIds = new Set(currentFarmIds);
+      // console.log({currFarmsIds})
       const response = await fetch('api/equipmentData');
       const res = await response.json();
-      const data = res.equipmentJson;
-      setEquipmentDetails(data.EquipmentDetails);
-      const parsedData = invertObject(data.EquipmentList);
-      setEquipmentList(parsedData);
+      const data = res.equipmentJson.EquipmentDetails;
+      // console.log({data});
+      const filteredEquipmentDetails: EquipmentDetails = {};
+      Object.keys(data).forEach((key: string) => {
+        if (currFarmsIds.has(Number(key))) {
+          filteredEquipmentDetails[key] = data[key];
+        }
+      });
+      // console.log({filteredEquipmentDetails});
+      setEquipmentDetails(filteredEquipmentDetails);
     }
     fetchData();
-  }, []);
+  }, [currentFarmIds]);
 
-  // Set weeklyOutputs and labels
+
   useEffect(() => {
-    const farmAddress = equipmentList[selectedFarm] ? equipmentList[selectedFarm] : 0;
-    if (allFarmsData.hasOwnProperty(farmAddress)) {
-      const outputs = allFarmsData[farmAddress].weeklyOutputs;
-
-      setWeeklyOutputs(outputs.map((output:WeeklyData) => output.value / 1000000));
-      const labels = outputs.map((output:WeeklyData) => `${output.week}`);
+    // console.log({weeklyDataByFarm});
+    // console.log({selectedFarm});
+    const selectedFarmOutput = weeklyDataByFarm[selectedFarm]?.powerOutputs;
+    // console.log({selectedFarmOutput});
+    if (selectedFarmOutput) {
+      setWeeklyOutputs(selectedFarmOutput.map((output:WeeklyData) => output.value));
+      const labels = selectedFarmOutput.map((output:WeeklyData) => `${output.week}`);
       labels.pop();
       setDataLabels(labels);
     }
-  }, [allFarmsData, selectedFarm, equipmentList]);
+  }, [weeklyDataByFarm, selectedFarm]);
 
-  // get serial number from equipmentList, get output from allFarmsData
-  // if output > 0, set status to active else onboarding
-  useEffect(() => {
-    if (selectedFarm) {
-      const farmAddress = equipmentList[selectedFarm] ? equipmentList[selectedFarm] : 0;
-      if (allFarmsData.hasOwnProperty(farmAddress)) {
-        const outputs = allFarmsData[farmAddress].totalOutput;
-        const status = outputs > 0;
-        setFarmStatus(status);
-      }
-    }
-  }, [equipmentList, selectedFarm, allFarmsData]);
+  // if (weeklyOutputs) {
+  //   console.log({weeklyOutputs});
+  //   console.log({dataLabels});
+  // }
 
 
   function handleFarmSelection(detail: Equipment) {
     setMapCenter({ lat: detail.Latitude, lng: detail.Longitude });
     setSelectedFarm(detail.ShortID);
-    setMapZoom(7);
+    setMapZoom(prev => 7);
   }
 
   function handleResetFarmSelection() {
@@ -279,7 +231,7 @@ export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
     setSelectedFarm(0);
     setWeeklyOutputs(allFarmsWeeklyOutputs);
     setDataLabels(labels);
-    setMapZoom(4);
+    setMapZoom(prev => 4);
   }
 
   const mapContainerStyle = {
@@ -403,7 +355,7 @@ export default function Farms({ labels, weeklyFarmCount }: FarmsProps) {
               
         </div>
 
-        {/* <div onClick={() => setSelectedFarm(Math.round(Math.random()*10) + 1)}>MOCK SELECT FARM</div> */}
+        {/* <div onClick={() => setSelectedFarm([20,26,50,70][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div> */}
     </>
   )
 }
