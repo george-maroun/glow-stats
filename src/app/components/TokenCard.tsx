@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LineChart from './LineChart';
 import ChartCounter from './ChartCounter';
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { FiExternalLink } from "react-icons/fi";
 
 
 interface PriceData {
