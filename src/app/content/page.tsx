@@ -122,16 +122,16 @@ const resources: Resource[] = [
   { description: "Glow Homepage", type: "Website", url: "https://glowlabs.org/" },
   { description: "Glow Foundation", type: "Website", url: "https://www.glow.org/" },
   { description: "Glow Blog", type: "Website", url: "https://glowlabs.org/blog" },
-  { description: "Glow developer documentation", type: "Website", url: "https://solidity.glowlabs.org/" },
+  { description: "Glow Developer Documentation", type: "Website", url: "https://solidity.glowlabs.org/" },
   { description: "Glow Governance", type: "Website", url: "https://www.glow-governance.com/" },
   { description: "Glow Whitepaper", type: "Document", url: "https://www.icrg.io/whitepaper.pdf" },
   { description: "Glow Audit Reports", type: "Website", url: "https://www.glow.org/audits" },
   { description: "Glow Veto Council Members", type: "Website", url: "https://www.glow.org/veto" },
   { description: "Glow Press & Media Kit", type: "Website", url: "https://glowlabs.org/press" },
-  { description: "Interest form to run a solar farm on Glow", type: "Document", url: "https://docs.google.com/forms/d/16iNCg4stGSaa9YNS3qMRMNDHOivivAfSRUA_n2ZZgTk" },
+  { description: "Interest Form to Run a Solar Farm on Glow", type: "Document", url: "https://docs.google.com/forms/d/16iNCg4stGSaa9YNS3qMRMNDHOivivAfSRUA_n2ZZgTk" },
   { description: "Buy $GLW", type: "Website", url: "https://app.glow.org/" },
-  { description: "Community-built frontend to buy $GLW", type: "Website", url: "https://glowstation.tech/" },
-  { description: "Community-built Glow statistcs dashboard", type: "Website", url: "https://www.glowstats.xyz/" }
+  { description: "Community-built Frontend to Buy $GLW", type: "Website", url: "https://glowstation.tech/" },
+  { description: "Community-built Glow Statistcs Dashboard", type: "Website", url: "https://www.glowstats.xyz/" }
 ];
 
 const Content = () => {
