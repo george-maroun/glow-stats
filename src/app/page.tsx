@@ -10,7 +10,6 @@ import PowerCard from './components/PowerCard';
 import TokenCard from './components/TokenCard';
 import Farms from './components/Farms';
 import FeesCard from './components/FeesCard';
-import Videos from './components/ContentRow';
 
 export default function Home() {
   const [tokenHolderCount, setTokenHolderCount] = useState(0);
@@ -19,13 +18,14 @@ export default function Home() {
   const [weekCount, setWeekCount] = useState(0);
   const [labels, setLabels] = useState<string[]>([]);
   
-  // const [carbonCredits, setCarbonCredits] = useState<number>(0);
   const [impactPowerOwners, setImpactPowerOwners] = useState<number>(0);
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
 
   const [weeklyCarbonCredits, setWeeklyCarbonCredits] = useState<any[]>([]);
   const [weeklyFarmCount, setWeeklyFarmCount] = useState<any[]>([]);
   const [weeklyTotalOutput, setWeeklyTotalOutput] = useState<any[]>([]);
+  const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
+  const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
   // Get all data
   useEffect(() => {
@@ -35,6 +35,8 @@ export default function Home() {
       setWeeklyCarbonCredits(allData.weeklyCarbonCredit);
       setWeeklyFarmCount(allData.weeklyFarmCount);
       setWeeklyTotalOutput(allData.weeklyTotalOutput);
+      setWeeklyDataByFarm(allData.weeklyDataByFarm);
+      setCurrentFarmIds(allData.currentFarmIds);
     };
     fetchData();
   }, []);
@@ -191,7 +193,12 @@ export default function Home() {
       <div className='text-4xl mb-8'>Explore Farms</div>
 
       
-      <Farms labels={labels.slice(0, labels.length - 1)} weeklyFarmCount={weeklyFarmCount}/>
+      <Farms 
+        labels={labels.slice(0, labels.length - 1)} 
+        weeklyFarmCount={weeklyFarmCount} 
+        weeklyDataByFarm={weeklyDataByFarm}
+        currentFarmIds={currentFarmIds}
+      />
       <div id='divider' className='h-8'></div>
 
       <div id='divider' className='h-10'></div>

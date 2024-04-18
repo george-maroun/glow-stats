@@ -1,26 +1,29 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
-export const revalidate = 600;
+export const revalidate = 120;
 
-// TODO
-// interface FarmData {
-
-// }
+interface WeeklyDataByFarm {
+  [key: number]: {
+    powerOutputs: { week: number; value: number }[];
+    carbonCredits: { week: number; value: number }[];
+  }
+}
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
   weeklyFarmCount: {week: number; value: number}[];
   weeklyTotalOutput: {week: number; value: number}[]
-  // weeklyDataByFarm: { week: number; value: number }[];
+  weeklyDataByFarm: WeeklyDataByFarm;
+  currentFarmIds: number[];
 }
-
-// TODO: Extract more info from this URL
 
 async function fetchWeeklyData(startWeek=0) {
   const output: Output = {
     weeklyCarbonCredit: [],
     weeklyFarmCount: [],
     weeklyTotalOutput: [],
+    weeklyDataByFarm: {},
+    currentFarmIds: []
   };
 
   const maxTimeslotOffset = getWeeksSinceStart();
@@ -28,14 +31,12 @@ async function fetchWeeklyData(startWeek=0) {
   const BASE_URL = process.env.FARM_STATS_URL || '';
   const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';
 
-  // let farmsHex = new Set();
-
   for (let i = startWeek; i <= maxTimeslotOffset; i ++) {
 
     const requestBody = {
       urls: [GCA_SERVER_URL], // the GCA server URLs to query
       week_number: i, // week number you're claiming for
-      with_full_data: true, // returns a list of the filtered farms and their credit production
+      with_full_data: false, // returns a list of the filtered farms and their credit production
       include_unassigned_farms: false // if true, response returns farms that have paid protocol fees that aren't online yet
     };
 
@@ -43,9 +44,9 @@ async function fetchWeeklyData(startWeek=0) {
       const response = await fetch(BASE_URL, {
         method: 'POST', // Specify the method
         headers: {
-            'Content-Type': 'application/json' // Specify the content type
+            'Content-Type': 'application/json' 
         },
-        body: JSON.stringify(requestBody) // Convert the JavaScript object to a JSON string
+        body: JSON.stringify(requestBody) 
       })
       const data = await response.json();
       const activeFarms = data.numActiveFarms;
@@ -53,12 +54,25 @@ async function fetchWeeklyData(startWeek=0) {
 
       let carbonCredits = 0;
       let powerOutput = 0;
+
+      if (i === maxTimeslotOffset) {
+        output.currentFarmIds = farmData.map((farm: any) => farm.shortId);
+      }
       
 
       for (let farm of farmData) {
         carbonCredits += farm.carbonCreditsProduced;
         powerOutput += farm.powerOutput;
-        // farmsHex.add(farm.hexlifiedPublicKey);
+
+        const farmId = farm.shortId;
+        if (!output.weeklyDataByFarm[farmId]) {
+          output.weeklyDataByFarm[farmId] = {
+            powerOutputs: [],
+            carbonCredits: [],
+          };
+        }
+        output.weeklyDataByFarm[farmId].powerOutputs.push({ week: i, value: farm.powerOutput });
+        output.weeklyDataByFarm[farmId].carbonCredits.push({ week: i, value: farm.carbonCreditsProduced });
       }
 
       output.weeklyCarbonCredit.push({ week: i, value: carbonCredits });
