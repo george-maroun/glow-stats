@@ -17,7 +17,7 @@ interface Output {
   currentFarmIds: number[];
 }
 
-async function fetchWeeklyData(startWeek=0) {
+async function fetchWeeklyData(startWeek = 0) {
   const output: Output = {
     weeklyCarbonCredit: [],
     weeklyFarmCount: [],
@@ -27,12 +27,10 @@ async function fetchWeeklyData(startWeek=0) {
   };
 
   const maxTimeslotOffset = getWeeksSinceStart();
-
   const BASE_URL = process.env.FARM_STATS_URL || '';
   const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';
 
-  for (let i = startWeek; i <= maxTimeslotOffset; i ++) {
-
+  for (let i = startWeek; i <= maxTimeslotOffset; i++) {
     const requestBody = {
       urls: [GCA_SERVER_URL], // the GCA server URLs to query
       week_number: i, // week number you're claiming for
@@ -44,21 +42,25 @@ async function fetchWeeklyData(startWeek=0) {
       const response = await fetch(BASE_URL, {
         method: 'POST', // Specify the method
         headers: {
-            'Content-Type': 'application/json' 
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody) 
-      })
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       const activeFarms = data.numActiveFarms;
       const farmData = data.filteredFarms;
 
-      let carbonCredits = 0;
-      let powerOutput = 0;
-
       if (i === maxTimeslotOffset) {
         output.currentFarmIds = farmData.map((farm: any) => farm.shortId);
       }
-      
+
+      let carbonCredits = 0;
+      let powerOutput = 0;
 
       for (let farm of farmData) {
         carbonCredits += farm.carbonCreditsProduced;
@@ -80,8 +82,8 @@ async function fetchWeeklyData(startWeek=0) {
       output.weeklyTotalOutput.push({ week: i, value: powerOutput });
 
     } catch (error) {
-        console.error('Error fetching data:', error);
-        return;
+      console.error(`Error fetching data for week ${i}:`, error);
+      // Continue processing the next weeks even if one week fails
     }
   }
 
@@ -95,6 +97,7 @@ export async function GET() {
     weeklyData = await fetchWeeklyData(0);
   } catch (error) {
     console.error('Error fetching weekly farm data:', error);
+    return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
   return NextResponse.json(weeklyData);
 }
