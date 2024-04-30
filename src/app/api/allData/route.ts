@@ -95,6 +95,7 @@ export async function GET() {
     weeklyData = await fetchWeeklyData(0);
   } catch (error) {
     console.error('Error fetching weekly farm data:', error);
+    return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
   return NextResponse.json(weeklyData);
 }
