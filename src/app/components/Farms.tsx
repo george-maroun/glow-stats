@@ -7,23 +7,15 @@ import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
 import getWeatherEmoji from '../../../lib/utils/getWeatherEmojiHelper'
 import getPlaceName from '../../../lib/utils/getPlaceNameHelper';
+import useWeather from '../hooks/useWeather';
+import useEquipmentDetails from '../hooks/useEquipment';
+import { Equipment } from '../hooks/useEquipment';
 import StatusIndicator from './StatusIndicator';
-import ChartCounter from './ChartCounter';
 import TopValues from './TopValues';
 import 'react-tooltip/dist/react-tooltip.css'
 export const fetchCache = 'force-no-store';
 export const dynamic = "force-dynamic";
 
-
-type WeatherData = {
-  main: {
-    temp: number;
-  },
-  weather: [{
-    description: string;
-  }],
-  name: string;
-};
 
 interface WeeklyDataByFarm {
   [key: number]: {
@@ -39,28 +31,6 @@ interface FarmsProps {
   currentFarmIds: number[];
 }
 
-interface WeeklyData {
-  week: number;
-  value: number;
-}
-
-interface Equipment {
-  ShortID: number;
-  PublicKey: number[];
-  Latitude: number;
-  Longitude: number;
-  Capacity: number;
-  Debt: number;
-  Expiration: number;
-  Initialization: number;
-  ProtocolFee: number;
-  Signature: number[];
-}
-
-type EquipmentDetails = {
-  [key: string]: Equipment;
-}
-
 // type Rewards = {
 //   amountInBucket: string;
 //   amountToDeduct: string;
@@ -68,31 +38,44 @@ type EquipmentDetails = {
 // }[]
 
 export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
-  const [equipmentDetails, setEquipmentDetails] = useState<EquipmentDetails>({});
+  const { equipmentDetails, equipmentError } = useEquipmentDetails(currentFarmIds);
+
+  console.log({equipmentDetails})
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
   const [selectedDataType, setSelectedDataType] = useState('powerOutput');
 
-  const [mapZoom, setMapZoom] = useState<number>(4);
+  
   const [dataLabels, setDataLabels] = useState<string[]>([]);
   const [selectedFarmOutputs, setSelectedFarmOutputs] = useState<number[]>([]);
   const [selectedFarmCarbonCredits, setselectedFarmCarbonCredits] = useState<number[]>([]);
   const weekCount = getWeeksSinceStart();
 
+  const [dataPoints, setDataPoints] = useState<number[]>([]);
   const [selectedFarmLocation, setSelectedFarmLocation] = useState<string>('');
-  const [selectedFarmWeather, setSelectedFarmWeather] = useState<WeatherData>();
+
+  // Get Weather
+  const lat = equipmentDetails[selectedFarm]?.Latitude;
+  const lon = equipmentDetails[selectedFarm]?.Longitude;
+  const { selectedFarmWeather, weatherError } = useWeather(lat, lon);
   
   const [mapCenter, setMapCenter] = useState<{lat:number; lng:number}>({ lat: 38.794810, lng: -97.058722 });
+  const [mapZoom, setMapZoom] = useState<number>(4);
   const key:string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
   
   const weeklyFarmCounts = weeklyFarmCount?.map((data: {week: number, value: number}) => data.value);
 
   console.log({weeklyFarmCount})
-  let dataPoints;
-  if (selectedFarm) {
-    dataPoints = selectedDataType === 'powerOutput' ? selectedFarmOutputs : selectedFarmCarbonCredits;
-  } else {
-    dataPoints = weeklyFarmCounts;
-  }
+
+  // useEffect(() => {
+  //   if (selectedFarm) {
+  //     let dp = selectedDataType === 'powerOutput' ? selectedFarmOutputs : selectedFarmCarbonCredits;
+  //     setDataPoints(dp);
+  //   } else {
+  //     setDataPoints(weeklyFarmCounts);
+  //   }
+  // }, [selectedFarm, selectedDataType, selectedFarmOutputs, selectedFarmCarbonCredits, weeklyFarmCounts]);
+  
+  // console.log({dataPoints})
 
   const pastMonthFarms = weeklyFarmCounts.length ? 
   weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5]
@@ -129,52 +112,8 @@ export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, curre
     }
   }, [selectedFarm, equipmentDetails])
 
-  // Get weather data for the selected farm
-  useEffect(() => {
-    const fetchWeather = async (lat:number, lon:number) => {
-      const url = `/api/weatherData?lat=${lat}&lon=${lon}`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Weather data fetch failed');
-        }
-        const data = await response.json();
-        setSelectedFarmWeather(data.weatherJson);
-      } catch (error) {
-        console.error("Error fetching weather data:", error);
-      }
-    };
-
-    const lat = equipmentDetails[selectedFarm]?.Latitude;
-    const lng = equipmentDetails[selectedFarm]?.Longitude;
-    if (lat && lng) {
-      fetchWeather(lat, lng);
-    }
-  }, [selectedFarm, equipmentDetails]); 
-
-  // Fetch equipment data from the API
-  useEffect(() => {
-    const fetchData = async () => {
-      const currFarmsIds = new Set(currentFarmIds);
-      const response = await fetch('api/equipmentData');
-      const res = await response.json();
-      const data = res.equipmentJson.EquipmentDetails;
-      const filteredEquipmentDetails: EquipmentDetails = {};
-      Object.keys(data).forEach((key: string) => {
-        if (currFarmsIds.has(Number(key))) {
-          filteredEquipmentDetails[key] = data[key];
-        }
-      });
-      setEquipmentDetails(filteredEquipmentDetails);
-    }
-    fetchData();
-  }, [currentFarmIds]);
-
-
   useEffect(() => {
     const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
-    console.log({weeklyDataByFarm})
     const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
     if (outputs && selectedDataType === 'powerOutput') {
       setSelectedFarmOutputs(outputs.map(output => output.value));
@@ -200,7 +139,7 @@ export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, curre
     setMapZoom(prev => 4);
   }
 
-  function DataTypeSelector({ onChange }:any) {
+  function DataTypeSelector({ onChange }: { onChange: (type: string) => void }){
     return (
       <select onChange={e => onChange(e.target.value)} value={selectedDataType}>
         <option value="powerOutput">Weekly Power Output (in kWh)</option>
