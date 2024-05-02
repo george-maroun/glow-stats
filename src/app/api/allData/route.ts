@@ -34,7 +34,8 @@ async function fetchWeeklyData(startWeek = 0) {
     const requestBody = {
       urls: [GCA_SERVER_URL], // the GCA server URLs to query
       week_number: i, // week number you're claiming for
-      with_full_data: false, // returns a list of the filtered farms and their credit production
+      // TODO: change this hacky logic to a proper one
+      with_full_data: i === 22 ? true: false, // returns a list of the filtered farms and their credit production
       include_unassigned_farms: false // if true, response returns farms that have paid protocol fees that aren't online yet
     };
 
