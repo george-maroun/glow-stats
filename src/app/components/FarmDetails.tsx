@@ -7,13 +7,27 @@ import useWeather from '../hooks/useWeather';
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
 import getWeatherEmoji from '../../../lib/utils/getWeatherEmojiHelper';
 
-type Output = {
+type IOutput = {
   week: number;
   value: number;
 }
 
-const FarmDetails = (props: any) => {
+interface IFarmDetailsProps {
+  selectedFarm: number;
+  equipmentDetails: any; // Define a more specific type
+  weeklyFarmCount: Array<{ week: number; value: number }>;
+  weeklyDataByFarm: any; // Define a more specific type
+  handleResetFarmSelection: () => void;
+}
 
+interface ISelectedFarmData {
+  outputs: number[];
+  carbonCredits: number[];
+}
+
+type TSelectedDataType = 'outputs' | 'carbonCredits';
+
+const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   const { 
     selectedFarm, 
     equipmentDetails,
@@ -22,45 +36,23 @@ const FarmDetails = (props: any) => {
     handleResetFarmSelection 
   } = props;
 
-  const [selectedDataType, setSelectedDataType] = useState('powerOutput');
+  const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
   const [dataLabels, setDataLabels] = useState<string[]>([]);
 
-  const [selectedFarmOutputs, setSelectedFarmOutputs] = useState<number[]>([]);
-  const [selectedFarmCarbonCredits, setselectedFarmCarbonCredits] = useState<number[]>([]);
+  const [selectedFarmData, setSelectedFarmData] = useState<ISelectedFarmData>({outputs: [], carbonCredits: []});
   
   const weekCount = getWeeksSinceStart();
 
-  const [dataPoints, setDataPoints] = useState<number[]>([]);
   const [selectedFarmLocation, setSelectedFarmLocation] = useState<string>('');
 
   // Get Weather
   const lat = equipmentDetails[selectedFarm]?.Latitude;
   const lon = equipmentDetails[selectedFarm]?.Longitude;
-  const { selectedFarmWeather, weatherError } = useWeather(lat, lon);
+  const { selectedFarmWeather } = useWeather(lat, lon);
 
   const weeklyFarmCounts = weeklyFarmCount?.map((data: {week: number, value: number}) => data.value);
 
-  const labels = useMemo(() => {
-    const weeks = weekCount;
-    const labels = [];
-    for (let i = 0; i <= weeks; i++) {
-      labels.push(`${i}`);
-    }
-    return labels;
-  }, [weekCount]);
-
-  console.log({weeklyFarmCount})
-
-  // useEffect(() => {
-  //   if (selectedFarm) {
-  //     let dp = selectedDataType === 'powerOutput' ? selectedFarmOutputs : selectedFarmCarbonCredits;
-  //     setDataPoints(dp);
-  //   } else {
-  //     setDataPoints(weeklyFarmCounts);
-  //   }
-  // }, [selectedFarm, selectedDataType, selectedFarmOutputs, selectedFarmCarbonCredits, weeklyFarmCounts]);
-  
-  // console.log({dataPoints})
+  const labels = useMemo(() => Array.from({ length: weekCount + 1 }, (_, i) => `${i}`), [weekCount]);
 
   const pastMonthFarms = weeklyFarmCounts.length ? 
   weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5]
@@ -71,9 +63,6 @@ const FarmDetails = (props: any) => {
 
 
   useEffect(() => {
-    if (!selectedFarm) {
-      return;
-    }
     const lat = equipmentDetails[selectedFarm]?.Latitude;
     const lng = equipmentDetails[selectedFarm]?.Longitude;
     if (lat && lng) {
@@ -90,31 +79,38 @@ const FarmDetails = (props: any) => {
 
   useEffect(() => {
     const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
+    const outputValues = outputs?.map((output:IOutput) => output.value);
     const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
-    if (outputs && selectedDataType === 'powerOutput') {
-      setSelectedFarmOutputs(outputs.map((output:Output) => output.value));
-    } else if (carbonCredits && selectedDataType === 'carbonCredits') {
-      setselectedFarmCarbonCredits(carbonCredits.map((output:Output) => output.value));
-    }
-    const labels = outputs?.map((output:Output) => `${output.week}`);
+    const carbonCreditsValues = carbonCredits?.map((output:IOutput) => output.value);
+    
+    setSelectedFarmData({outputs: outputValues, carbonCredits: carbonCreditsValues});
+    
+    const labels = outputs?.map((output:IOutput) => `${output.week}`);
     labels?.pop();  // Assuming you want to adjust the labels similarly for both data types
     setDataLabels(labels);
   }, [weeklyDataByFarm, selectedFarm, selectedDataType]);
 
 
-  function DataTypeSelector({ onChange }: { onChange: (type: string) => void }){
+  const DataTypeSelector = ({ onChange }: { onChange: (type: string) => void }) => {
     return (
       <select onChange={e => onChange(e.target.value)} value={selectedDataType}>
-        <option value="powerOutput">Weekly Power Output (in kWh)</option>
+        <option value="outputs">Weekly Power Output (in kWh)</option>
         <option value="carbonCredits">Weekly Carbon Credits</option>
       </select>
     );
   }
 
-
   const getWeatherString = () => {
     const weatherEmoji = selectedFarmWeather ? getWeatherEmoji(selectedFarmWeather) : '';
     return selectedFarmWeather ? `${weatherEmoji} ${selectedFarmWeather?.main.temp.toFixed(1)}°F` : '';
+  }
+
+  const getLatestWeekOutput = () => {
+    if (!selectedFarmData.outputs?.length) {
+      return '';
+    }
+    const latestWeekOutput = selectedFarmData.outputs[selectedFarmData.outputs.length - 1];
+    return `${latestWeekOutput.toFixed(0)} kWh`;
   }
 
   return (
@@ -145,7 +141,7 @@ const FarmDetails = (props: any) => {
         title2='Weather'
         value2={getWeatherString()}
         title3={`Week ${weekCount} Output (so far)`}
-        value3={`${selectedFarmOutputs.length ? selectedFarmOutputs[selectedFarmOutputs.length - 1].toFixed(0) : ''} kWh`}
+        value3={getLatestWeekOutput()}
         />) :
       (<TopValues 
         title1='Active' 
@@ -165,16 +161,18 @@ const FarmDetails = (props: any) => {
           <LineChart 
           title="" 
           labels={dataLabels} 
-          dataPoints={selectedDataType === 'powerOutput' ? selectedFarmOutputs : selectedFarmCarbonCredits}
+          dataPoints={selectedFarmData[selectedDataType]}
         /></>
         ) : (
           <>
-          <div>Weekly Farm Count</div>
-        <LineChart 
-          title="" 
-          labels={dataLabels} 
-          dataPoints={dataPoints}
-        /></>)}
+            <div>Weekly Farm Count</div>
+            <LineChart 
+                title="" 
+                labels={labels} 
+                dataPoints={weeklyFarmCounts}
+            />
+          </>
+          )}
       </div>
     </div>
   )
