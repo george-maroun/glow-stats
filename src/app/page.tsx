@@ -41,7 +41,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-  console.log({weeklyDataByFarm})
   // Get impact power owners
   useEffect(() => {
     const fetchData = async () => {
