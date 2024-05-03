@@ -1,16 +1,13 @@
 "use client"
-// TODO: Refactor this file
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 import useEquipmentDetails from '../hooks/useEquipment';
 import { Equipment } from '../hooks/useEquipment';
-// import StatusIndicator from './StatusIndicator';
 import FarmDetails from './FarmDetails';
 
 
-// import TopValues from './TopValues';
 import 'react-tooltip/dist/react-tooltip.css'
 export const fetchCache = 'force-no-store';
 export const dynamic = "force-dynamic";
@@ -36,29 +33,18 @@ interface FarmsProps {
 //   weekNumber: number;
 // }[]
 
-export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
-  const { equipmentDetails, equipmentError } = useEquipmentDetails(currentFarmIds);
+export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
+  const { equipmentDetails } = useEquipmentDetails(currentFarmIds);
 
-  console.log({equipmentDetails})
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
-  
-  // const [dataLabels, setDataLabels] = useState<string[]>([]);
-  
+
   const [mapCenter, setMapCenter] = useState<{lat:number; lng:number}>({ lat: 38.794810, lng: -97.058722 });
   const [mapZoom, setMapZoom] = useState<number>(4);
   const key:string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-  
-
-  console.log({weeklyFarmCount})
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: key,
   });
-
-  // useEffect(() => {
-  //   setDataLabels(labels);
-  // }, [labels]);
-
 
   function handleFarmSelection(detail: Equipment) {
     setMapCenter({ lat: detail.Latitude, lng: detail.Longitude });
@@ -69,10 +55,8 @@ export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, curre
   function handleResetFarmSelection() {
     setMapCenter({ lat: 38.794810, lng: -97.058722 } );
     setSelectedFarm(0);
-    // setDataLabels(labels);
     setMapZoom(prev => 4);
   }
-
 
   const mapContainerStyle = {
     width: '100%',
@@ -112,7 +96,7 @@ export default function Farms({ labels, weeklyFarmCount, weeklyDataByFarm, curre
         />
       </div>
 
-      <div onClick={() => setSelectedFarm([20,26,50,70][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div>
+      {/* <div onClick={() => setSelectedFarm([20,26,50,70][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div> */}
     </>
   )
 }
