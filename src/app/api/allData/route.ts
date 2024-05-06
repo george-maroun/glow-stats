@@ -32,16 +32,15 @@ async function fetchWeeklyData(startWeek = 0) {
 
   for (let i = startWeek; i <= maxTimeslotOffset; i++) {
     const requestBody = {
-      urls: [GCA_SERVER_URL], // the GCA server URLs to query
-      week_number: i, // week number you're claiming for
-      // TODO: change this hacky logic to a proper one
-      with_full_data: i === 22 ? true: false, // returns a list of the filtered farms and their credit production
-      include_unassigned_farms: false // if true, response returns farms that have paid protocol fees that aren't online yet
+      urls: [GCA_SERVER_URL],
+      week_number: i,
+      with_full_data: true,
+      include_unassigned_farms: false
     };
 
     try {
       const response = await fetch(BASE_URL, {
-        method: 'POST', // Specify the method
+        method: 'POST', 
         headers: {
           'Content-Type': 'application/json'
         },
