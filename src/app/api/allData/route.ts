@@ -1,6 +1,6 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
-export const revalidate = 120;
+export const revalidate = 60;
 
 interface WeeklyDataByFarm {
   [key: number]: {

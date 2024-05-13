@@ -8,7 +8,7 @@ const twitterUrls = [
     author: '@GlowFND',
     url: 'https://twitter.com/i/spaces/1OdKrjmzWewKX',
     type: 'x',
-    thumbnail: './x-logo.png',
+    thumbnail: '/x-logo.png',
   },
 ];
 
@@ -108,7 +108,7 @@ const blogData = [
     author: 'David Vorick',
     url: 'https://glowlabs.org/blog/why-glow-excites-me',
     type: 'blog',
-    thumbnail: './why-glow-excites-me.png'
+    thumbnail: '/why-glow-excites-me.png'
   },
 ]
 

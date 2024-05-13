@@ -1,4 +1,5 @@
 import React from "react"
+import Image from 'next/image';
 
 interface ContentInfo {
   title: string;
@@ -58,10 +59,12 @@ const renderBlogPost = (info:ContentInfo) => {
       target="_blank"
       title="YouTube video player"
       >
-      <div className="h-auto">
-        <img 
+      <div className="h-auto relative">
+        <Image 
           src={thumbnail}
-          className="lg:h-64"
+          width={500}
+          height={300}
+          className="lg:h-60 md:h-60 h-52"
           style={{
             width: '100%',
             borderRadius: '8px',
@@ -69,7 +72,7 @@ const renderBlogPost = (info:ContentInfo) => {
           alt={title}
         >
 
-        </img>
+        </Image>
       </div>
       <div className="max-w-8/12 mt-2 hover:opacity-80">
         <p className="mb-1" style={{color: 'gray'}}>{author}</p>
