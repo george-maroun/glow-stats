@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LineChart from './LineChart';
 import ChartCounter from './ChartCounter';
-
+import TopValues from './TopValues';
 
 interface PriceData {
   date: number;
@@ -118,28 +118,15 @@ const TokenCard = () => {
     </div>
     <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
      
-    <div id='top-values' className='flex flex-row'>
-      <div className='w-4/12 flex flex-row justify-between'>
-        <ChartCounter 
-          title={"Total Supply"} 
-          value={totalSupply ? totalSupply.toLocaleString() : ''}
-        />
-        <div className='h-full w-px' style={{backgroundColor: "rgb(230,230,230"}}></div>
-      </div>
-      <div className='w-4/12 flex flex-row justify-between'>
-        <ChartCounter 
-          title={"Circulating Supply"} 
-          value={circSupply ? circSupply.toLocaleString() : ''}
-        />
-        <div className='h-full w-px' style={{backgroundColor: "rgb(230,230,230"}}></div>
-      </div>
-      <div className='w-4/12 flex flex-row justify-between'>
-        <ChartCounter 
-          title={"Market Cap"} 
-          value={marketCap ? `$${(marketCap).toLocaleString()}` : ''} 
-          />
-      </div>
-    </div>
+    <TopValues 
+      title1='Total Supply'
+      value1={totalSupply ? totalSupply.toLocaleString() : ''}
+      title2='Circulating Supply'
+      value2={circSupply ? circSupply.toLocaleString() : ''}
+      title3={'Market Cap'}
+      value3={marketCap ? `$${(marketCap).toLocaleString()}` : ''}
+    />
+    
     <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
     <div className='pl-4 pb-2 pt-2 pr-4 text-gray text-md flex flex-row justify-between items-center'>
       <div>Daily Price of GLW</div>
