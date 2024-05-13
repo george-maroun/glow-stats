@@ -2,6 +2,7 @@
 import LineBarChart from './LineBarChart';
 import ChartCounter from './ChartCounter';
 import { useEffect, useState } from 'react';
+import TopValues from './TopValues';
 
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
 export const fetchCache = 'force-no-store';
@@ -95,24 +96,17 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
             Impact
           </div>
           <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
-          <div id='top-values' className='flex flex-row'>
-              <div className='w-4/12 flex flex-row justify-between'>
-                <ChartCounter title="Carbon Credits Created" value={carbonCredits} />
-                <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
-              </div>
-              <div className='w-4/12 flex flex-row justify-between'>
-                <ChartCounter title="Total USDC Committed" value={"26,623"} />
-                <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
-              </div>
-              <div className='w-4/12 flex flex-row justify-between'>
-                <ChartCounter 
-                  title={"Impact Multiplier"} 
-                  value={`x ${impactMultiplier.toFixed(0)}`} 
-                  info={true}
-                  infoMessage={`The Impact Multiplier measures the efficiency of impact power investment. Currently, for every dollar spent, $${impactMultiplier.toFixed(0)} of solar energy is deployed.`}
-                />
-              </div>
-            </div>
+          <TopValues
+            title1="Carbon Credits Created"
+            value1={carbonCredits}
+            title2="Total USDC Committed"
+            value2={"26,623"}
+            title3="Impact Multiplier"
+            value3={impactMultiplier.toFixed(0)}
+            isInfo3={true}
+            infoMessage3={`The Impact Multiplier measures the efficiency of impact power investment. Currently, for every dollar spent on Impact Power, $${impactMultiplier.toFixed(0)} of solar energy is deployed.`}
+          />
+    
           <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
           <div className='pl-4 pb-2 pt-2 text-slate-400 text-md' style={{color: "#777777"}}>
               Weekly Carbon Credits

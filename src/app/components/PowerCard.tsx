@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import ChartCounter from './ChartCounter';
 import LineChart from './LineChart';
 import getPastMonthValues from '../../../lib/utils/getPastMonthValuesHelper';
+import TopValues from './TopValues';
 
 interface PowerCardProps {
   weekCount: number;
@@ -31,27 +32,18 @@ const PowerCard = (props:PowerCardProps) => {
         Power Output of Glow Farms
       </div>
       <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
-      <div id='top-values' className='flex flex-row'>
-        <div className='w-4/12 flex flex-row justify-between'>
-          <ChartCounter 
-            title={`Week ${weekCount} Output (so far)`} 
-            value={currentWeekOutput && Number(currentWeekOutput).toFixed(0) + " kWh"} 
-          />
-          <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
-        </div>
-        <div className='w-4/12 flex flex-row justify-between'>
-          <ChartCounter title="Past Month Output" value={pastMonthOutput && Number(pastMonthOutput.toFixed(0)) + " kWh"} />
-          <div className='h-full w-px bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
-        </div>
-        <div className='w-4/12 flex flex-row justify-between'>
-          <ChartCounter 
-            title={"Equivalent in Homes"} 
-            value={pastMonthOutput && Math.round(pastMonthOutput / 900)} 
-            info={true} 
-            infoMessage="The number of homes that Glow farms could serve based on the power generated last month."
-            />
-        </div>
-      </div>
+      
+      <TopValues
+        title1={`Week ${weekCount} Output (so far)`} 
+        value1={currentWeekOutput && Number(currentWeekOutput).toFixed(0) + " kWh"}
+        title2="Past Month Output"
+        value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)) + " kWh"}
+        title3="Equivalent in Homes"
+        value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}
+        isInfo3={true}
+        infoMessage3="The number of homes that Glow farms could serve based on the power generated last month."
+      />
+      
       <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
       <div className='flex flex-row justify-between items-center pl-4 pb-2 pt-2 pr-4'>
         <div className='text-slate-400 text-md' style={{color: "#777777"}}>
