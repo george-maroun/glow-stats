@@ -15,6 +15,7 @@ interface Output {
   weeklyTotalOutput: {week: number; value: number}[]
   weeklyDataByFarm: WeeklyDataByFarm;
   currentFarmIds: number[];
+  weeklyPayments: {week: number; value: number}[];
 }
 
 async function fetchWeeklyData(startWeek = 0) {
@@ -23,7 +24,8 @@ async function fetchWeeklyData(startWeek = 0) {
     weeklyFarmCount: [],
     weeklyTotalOutput: [],
     weeklyDataByFarm: {},
-    currentFarmIds: []
+    currentFarmIds: [],
+    weeklyPayments: []
   };
 
   const maxTimeslotOffset = getWeeksSinceStart();
@@ -61,10 +63,12 @@ async function fetchWeeklyData(startWeek = 0) {
 
       let carbonCredits = 0;
       let powerOutput = 0;
+      let totalPayments = 0;
 
       for (let farm of farmData) {
         carbonCredits += farm.carbonCreditsProduced;
         powerOutput += farm.powerOutput;
+        totalPayments += farm.weeklyPayment;
 
         const farmId = farm.shortId;
         if (!output.weeklyDataByFarm[farmId]) {
@@ -80,6 +84,7 @@ async function fetchWeeklyData(startWeek = 0) {
       output.weeklyCarbonCredit.push({ week: i, value: carbonCredits });
       output.weeklyFarmCount.push({ week: i, value: activeFarms });
       output.weeklyTotalOutput.push({ week: i, value: powerOutput });
+      output.weeklyPayments.push({ week: i, value: totalPayments });
 
     } catch (error) {
       console.error(`Error fetching data for week ${i}:`, error);
