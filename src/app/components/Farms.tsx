@@ -15,8 +15,10 @@ export const dynamic = "force-dynamic";
 
 interface WeeklyDataByFarm {
   [key: number]: {
-    powerOutputs: { week: number; value: number }[];
     carbonCredits: { week: number; value: number }[];
+    powerOutputs: { week: number; value: number }[];
+    weeklyPayments: { week: number; value: number }[];
+    weeklyTokenRewards: { week: number; value: number }[];
   }
 }
 
@@ -96,7 +98,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
         />
       </div>
 
-      {/* <div onClick={() => setSelectedFarm([20,26,50,70][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div> */}
+      <div onClick={() => setSelectedFarm([60,26,19,65][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div>
     </>
   )
 }

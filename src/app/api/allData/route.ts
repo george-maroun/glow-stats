@@ -1,11 +1,13 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
+import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 export const revalidate = 60;
 
 interface WeeklyDataByFarm {
   [key: number]: {
     powerOutputs: { week: number; value: number }[];
     carbonCredits: { week: number; value: number }[];
+    weeklyPayments: { week: number; value: number }[];
   }
 }
 
@@ -13,9 +15,8 @@ interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
   weeklyFarmCount: {week: number; value: number}[];
   weeklyTotalOutput: {week: number; value: number}[]
-  weeklyDataByFarm: WeeklyDataByFarm;
+  weeklyDataByFarm: any;
   currentFarmIds: number[];
-  weeklyPayments: {week: number; value: number}[];
 }
 
 async function fetchWeeklyData(startWeek = 0) {
@@ -25,7 +26,6 @@ async function fetchWeeklyData(startWeek = 0) {
     weeklyTotalOutput: [],
     weeklyDataByFarm: {},
     currentFarmIds: [],
-    weeklyPayments: []
   };
 
   const maxTimeslotOffset = getWeeksSinceStart();
@@ -75,21 +75,31 @@ async function fetchWeeklyData(startWeek = 0) {
           output.weeklyDataByFarm[farmId] = {
             powerOutputs: [],
             carbonCredits: [],
+            weeklyPayments: []
           };
         }
+
         output.weeklyDataByFarm[farmId].powerOutputs.push({ week: i, value: farm.powerOutput });
         output.weeklyDataByFarm[farmId].carbonCredits.push({ week: i, value: farm.carbonCreditsProduced });
+        output.weeklyDataByFarm[farmId].weeklyPayments.push({ week: i, value: farm.weeklyPayment });
       }
 
       output.weeklyCarbonCredit.push({ week: i, value: carbonCredits });
       output.weeklyFarmCount.push({ week: i, value: activeFarms });
       output.weeklyTotalOutput.push({ week: i, value: powerOutput });
-      output.weeklyPayments.push({ week: i, value: totalPayments });
+      
 
     } catch (error) {
       console.error(`Error fetching data for week ${i}:`, error);
       // Continue processing the next weeks even if one week fails
     }
+  }
+
+  // Get weekly token rewards
+  const weeklyTokenRewards = calculateWeeklyTokenRewards(output.weeklyDataByFarm);
+
+  for (let farmId in weeklyTokenRewards) {
+    output.weeklyDataByFarm[farmId].weeklyTokenRewards = weeklyTokenRewards[farmId].weeklyTokenRewards;
   }
 
   return output;

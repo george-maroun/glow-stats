@@ -35,9 +35,9 @@ const PowerCard = (props:PowerCardProps) => {
       
       <TopValues
         title1={`Week ${weekCount} Output (so far)`} 
-        value1={currentWeekOutput && Number(currentWeekOutput).toFixed(0) + " kWh"}
+        value1={currentWeekOutput && Number(currentWeekOutput).toFixed(0).toLocaleString() + " kWh"}
         title2="Past Month Output"
-        value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)) + " kWh"}
+        value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)).toLocaleString() + " kWh"}
         title3="Equivalent in Homes"
         value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}
         isInfo3={true}
