@@ -30,8 +30,9 @@ export default function Home() {
   // Get all data
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetch('/api/allData');
+      const data = await fetch('/api/allData', { cache: 'no-store' });
       const allData = await data.json();
+      // console.log(allData);
       setWeeklyCarbonCredits(allData.weeklyCarbonCredit);
       setWeeklyFarmCount(allData.weeklyFarmCount);
       setWeeklyTotalOutput(allData.weeklyTotalOutput);

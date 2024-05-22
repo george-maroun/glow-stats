@@ -23,6 +23,7 @@ interface IFarmDetailsProps {
 interface ISelectedFarmData {
   outputs: number[];
   carbonCredits: number[];
+  tokenRewards: number[];
 }
 
 type TSelectedDataType = 'outputs' | 'carbonCredits';
@@ -39,7 +40,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
   const [dataLabels, setDataLabels] = useState<string[]>([]);
 
-  const [selectedFarmData, setSelectedFarmData] = useState<ISelectedFarmData>({outputs: [], carbonCredits: []});
+  const [selectedFarmData, setSelectedFarmData] = useState<ISelectedFarmData>({outputs: [], carbonCredits: [], tokenRewards: []});
   
   const weekCount = getWeeksSinceStart();
 
@@ -62,6 +63,13 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   const onboardingFarms = '0';
 
 
+  const dataTypeName = {
+    outputs: ['Output', 'kWh'],
+    carbonCredits: ['Carbon Credits', ''],
+    tokenRewards: ['Token Rewards', 'GLW']
+  }
+
+
   useEffect(() => {
     const lat = equipmentDetails[selectedFarm]?.Latitude;
     const lng = equipmentDetails[selectedFarm]?.Longitude;
@@ -77,18 +85,57 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   }, [selectedFarm, equipmentDetails])
 
 
-  useEffect(() => {
-    const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
-    const outputValues = outputs?.map((output:IOutput) => output.value);
-    const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
-    const carbonCreditsValues = carbonCredits?.map((output:IOutput) => output.value);
+  // useEffect(() => {
+  //   const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
+  //   const outputValues = outputs?.map((output:IOutput) => output.value);
+  //   const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
+  //   const carbonCreditsValues = carbonCredits?.map((output:IOutput) => output.value);
+  //   const weeklyTokenRewards = weeklyDataByFarm[selectedFarm]?.weeklyTokenRewards;
+  //   const tokenRewardsValues = weeklyTokenRewards?.map((output:IOutput) => output.value);
     
-    setSelectedFarmData({outputs: outputValues, carbonCredits: carbonCreditsValues});
+  //   setSelectedFarmData({outputs: outputValues, carbonCredits: carbonCreditsValues, tokenRewards: tokenRewardsValues});
     
-    const labels = outputs?.map((output:IOutput) => `${output.week}`);
-    labels?.pop();  // Assuming you want to adjust the labels similarly for both data types
+  //   const labels = outputs?.map((output:IOutput) => `${output.week}`);
+  //   labels?.pop();  // Assuming you want to adjust the labels similarly for both data types
+  //   setDataLabels(labels);
+  // }, [weeklyDataByFarm, selectedFarm, selectedDataType]);
+
+
+
+const getFilteredValues = (data:any, key:any) => {
+  if (!data) return [];
+
+  const values = data[key]?.map((item:any) => item.value) || [];
+  const firstNonZeroIndex = values.findIndex((value:any) => value !== 0);
+  return values.slice(firstNonZeroIndex);
+};
+
+const getFilteredLabels = (data:any) => {
+  if (!data) return [];
+
+  const firstNonZeroIndex = data.findIndex((item:any) => item.value !== 0);
+  return data.slice(firstNonZeroIndex).map((item:any) => `${item.week}`);
+};
+
+useEffect(() => {
+  const selectedFarmData = weeklyDataByFarm[selectedFarm];
+
+  if (selectedFarmData) {
+    const outputs = getFilteredValues(selectedFarmData, 'powerOutputs');
+    const carbonCredits = getFilteredValues(selectedFarmData, 'carbonCredits');
+    const weeklyTokenRewards = getFilteredValues(selectedFarmData, 'weeklyTokenRewards');
+
+    setSelectedFarmData({
+      outputs,
+      carbonCredits,
+      tokenRewards: weeklyTokenRewards
+    });
+
+    const labels = getFilteredLabels(selectedFarmData.powerOutputs);
     setDataLabels(labels);
-  }, [weeklyDataByFarm, selectedFarm, selectedDataType]);
+  }
+}, [weeklyDataByFarm, selectedFarm, selectedDataType]);
+
 
 
   const DataTypeSelector = ({ onChange }: { onChange: (type: string) => void }) => {
@@ -96,6 +143,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
       <select onChange={e => onChange(e.target.value)} value={selectedDataType}>
         <option value="outputs">Weekly Power Output (in kWh)</option>
         <option value="carbonCredits">Weekly Carbon Credits</option>
+        <option value="tokenRewards">Weekly Token Rewards (in GLW)</option>
       </select>
     );
   }
@@ -105,12 +153,19 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
     return selectedFarmWeather ? `${weatherEmoji} ${selectedFarmWeather?.main.temp.toFixed(1)}°F` : '';
   }
 
-  const getLatestWeekOutput = () => {
-    if (!selectedFarmData.outputs?.length) {
+  const getLatestWeekDataPoint = () => {
+    if (!selectedFarmData[selectedDataType]?.length) {
       return '';
     }
-    const latestWeekOutput = selectedFarmData.outputs[selectedFarmData.outputs.length - 1];
-    return `${latestWeekOutput.toFixed(0)} kWh`;
+    const latestWeekDataPoint = selectedFarmData[selectedDataType][selectedFarmData[selectedDataType].length - 1];
+    let value;
+    if (selectedDataType === 'carbonCredits') {
+      value = latestWeekDataPoint.toFixed(3);
+    } else {
+      value = latestWeekDataPoint.toFixed(0).toLocaleString();
+    }
+    
+    return `${value} ${dataTypeName[selectedDataType][1]}`;
   }
 
   return (
@@ -140,8 +195,8 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
         value1={selectedFarmLocation}
         title2='Weather'
         value2={getWeatherString()}
-        title3={`Week ${weekCount} Output (so far)`}
-        value3={getLatestWeekOutput()}
+        title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]} (so far)`}
+        value3={getLatestWeekDataPoint()}
         />) :
       (<TopValues 
         title1='Active' 
