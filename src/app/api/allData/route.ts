@@ -19,6 +19,37 @@ interface Output {
   currentFarmIds: number[];
 }
 
+const maxTimeslotOffset = getWeeksSinceStart();
+const BASE_URL = process.env.FARM_STATS_URL || '';
+const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';
+
+const getRequestBody = (week: number) => ({
+  urls: [GCA_SERVER_URL],
+  week_number: week,
+  with_full_data: true,
+  include_unassigned_farms: false
+});
+
+const getCurrentFarmIds = async () => {
+  const requestBody = getRequestBody(maxTimeslotOffset);
+  const response = await fetch(BASE_URL, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  if (!response.ok) {
+    console.error(`HTTP error! status: ${response.status}`);
+    return [];
+  }
+
+  const data = await response.json();
+  return data.filteredFarms.map((farm: any) => farm.shortId);
+}
+
+
 async function fetchWeeklyData(startWeek = 0) {
   const output: Output = {
     weeklyCarbonCredit: [],
@@ -28,17 +59,12 @@ async function fetchWeeklyData(startWeek = 0) {
     currentFarmIds: [],
   };
 
-  const maxTimeslotOffset = getWeeksSinceStart();
-  const BASE_URL = process.env.FARM_STATS_URL || '';
-  const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';
+  output.currentFarmIds = await getCurrentFarmIds();
+
+  const currentFarmIdsSet = new Set(output.currentFarmIds);
 
   for (let i = startWeek; i <= maxTimeslotOffset; i++) {
-    const requestBody = {
-      urls: [GCA_SERVER_URL],
-      week_number: i,
-      with_full_data: true,
-      include_unassigned_farms: false
-    };
+    const requestBody = getRequestBody(i);
 
     try {
       const response = await fetch(BASE_URL, {
@@ -57,10 +83,6 @@ async function fetchWeeklyData(startWeek = 0) {
       const activeFarms = data.numActiveFarms;
       const farmData = data.filteredFarms;
 
-      if (i === maxTimeslotOffset) {
-        output.currentFarmIds = farmData.map((farm: any) => farm.shortId);
-      }
-
       let carbonCredits = 0;
       let powerOutput = 0;
       let totalPayments = 0;
@@ -71,6 +93,11 @@ async function fetchWeeklyData(startWeek = 0) {
         totalPayments += farm.weeklyPayment;
 
         const farmId = farm.shortId;
+
+        if (!currentFarmIdsSet.has(farmId)) {
+          continue;
+        }
+
         if (!output.weeklyDataByFarm[farmId]) {
           output.weeklyDataByFarm[farmId] = {
             powerOutputs: [],

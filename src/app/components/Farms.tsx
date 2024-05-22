@@ -98,7 +98,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
         />
       </div>
 
-      <div onClick={() => setSelectedFarm([60,26,19,65][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div>
+      {/* <div onClick={() => setSelectedFarm([60,26,19,65][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div> */}
     </>
   )
 }

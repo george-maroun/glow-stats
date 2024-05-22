@@ -85,20 +85,57 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   }, [selectedFarm, equipmentDetails])
 
 
-  useEffect(() => {
-    const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
-    const outputValues = outputs?.map((output:IOutput) => output.value);
-    const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
-    const carbonCreditsValues = carbonCredits?.map((output:IOutput) => output.value);
-    const weeklyTokenRewards = weeklyDataByFarm[selectedFarm]?.weeklyTokenRewards;
-    const tokenRewardsValues = weeklyTokenRewards?.map((output:IOutput) => output.value);
+  // useEffect(() => {
+  //   const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
+  //   const outputValues = outputs?.map((output:IOutput) => output.value);
+  //   const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
+  //   const carbonCreditsValues = carbonCredits?.map((output:IOutput) => output.value);
+  //   const weeklyTokenRewards = weeklyDataByFarm[selectedFarm]?.weeklyTokenRewards;
+  //   const tokenRewardsValues = weeklyTokenRewards?.map((output:IOutput) => output.value);
     
-    setSelectedFarmData({outputs: outputValues, carbonCredits: carbonCreditsValues, tokenRewards: tokenRewardsValues});
+  //   setSelectedFarmData({outputs: outputValues, carbonCredits: carbonCreditsValues, tokenRewards: tokenRewardsValues});
     
-    const labels = outputs?.map((output:IOutput) => `${output.week}`);
-    labels?.pop();  // Assuming you want to adjust the labels similarly for both data types
+  //   const labels = outputs?.map((output:IOutput) => `${output.week}`);
+  //   labels?.pop();  // Assuming you want to adjust the labels similarly for both data types
+  //   setDataLabels(labels);
+  // }, [weeklyDataByFarm, selectedFarm, selectedDataType]);
+
+
+
+const getFilteredValues = (data:any, key:any) => {
+  if (!data) return [];
+
+  const values = data[key]?.map((item:any) => item.value) || [];
+  const firstNonZeroIndex = values.findIndex((value:any) => value !== 0);
+  return values.slice(firstNonZeroIndex);
+};
+
+const getFilteredLabels = (data:any) => {
+  if (!data) return [];
+
+  const firstNonZeroIndex = data.findIndex((item:any) => item.value !== 0);
+  return data.slice(firstNonZeroIndex).map((item:any) => `${item.week}`);
+};
+
+useEffect(() => {
+  const selectedFarmData = weeklyDataByFarm[selectedFarm];
+
+  if (selectedFarmData) {
+    const outputs = getFilteredValues(selectedFarmData, 'powerOutputs');
+    const carbonCredits = getFilteredValues(selectedFarmData, 'carbonCredits');
+    const weeklyTokenRewards = getFilteredValues(selectedFarmData, 'weeklyTokenRewards');
+
+    setSelectedFarmData({
+      outputs,
+      carbonCredits,
+      tokenRewards: weeklyTokenRewards
+    });
+
+    const labels = getFilteredLabels(selectedFarmData.powerOutputs);
     setDataLabels(labels);
-  }, [weeklyDataByFarm, selectedFarm, selectedDataType]);
+  }
+}, [weeklyDataByFarm, selectedFarm, selectedDataType]);
+
 
 
   const DataTypeSelector = ({ onChange }: { onChange: (type: string) => void }) => {
@@ -106,7 +143,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
       <select onChange={e => onChange(e.target.value)} value={selectedDataType}>
         <option value="outputs">Weekly Power Output (in kWh)</option>
         <option value="carbonCredits">Weekly Carbon Credits</option>
-        <option value="tokenRewards">Weekly Token Rewards</option>
+        <option value="tokenRewards">Weekly Token Rewards (in GLW)</option>
       </select>
     );
   }
@@ -121,7 +158,14 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
       return '';
     }
     const latestWeekDataPoint = selectedFarmData[selectedDataType][selectedFarmData[selectedDataType].length - 1];
-    return `${latestWeekDataPoint.toFixed(0).toLocaleString()} ${dataTypeName[selectedDataType][1]}`;
+    let value;
+    if (selectedDataType === 'carbonCredits') {
+      value = latestWeekDataPoint.toFixed(3);
+    } else {
+      value = latestWeekDataPoint.toFixed(0).toLocaleString();
+    }
+    
+    return `${value} ${dataTypeName[selectedDataType][1]}`;
   }
 
   return (
