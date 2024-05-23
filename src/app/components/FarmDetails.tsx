@@ -6,6 +6,7 @@ import getPlaceName from '../../../lib/utils/getPlaceNameHelper';
 import useWeather from '../hooks/useWeather';
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
 import getWeatherEmoji from '../../../lib/utils/getWeatherEmojiHelper';
+import LineBarChart from './LineBarChart';
 
 type IOutput = {
   week: number;
@@ -26,7 +27,7 @@ interface ISelectedFarmData {
   tokenRewards: number[];
 }
 
-type TSelectedDataType = 'outputs' | 'carbonCredits';
+type TSelectedDataType = 'outputs' | 'carbonCredits' | 'tokenRewards';
 
 const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   const { 
@@ -60,7 +61,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
   : 0;
 
   const ActiveFarmsCount = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) : 0;
-  const onboardingFarms = '0';
+  const onboardingFarms = '2';
 
 
   const dataTypeName = {
@@ -83,23 +84,6 @@ const FarmDetails: React.FC<IFarmDetailsProps> = (props) => {
       });
     }
   }, [selectedFarm, equipmentDetails])
-
-
-  // useEffect(() => {
-  //   const outputs = weeklyDataByFarm[selectedFarm]?.powerOutputs;
-  //   const outputValues = outputs?.map((output:IOutput) => output.value);
-  //   const carbonCredits = weeklyDataByFarm[selectedFarm]?.carbonCredits;
-  //   const carbonCreditsValues = carbonCredits?.map((output:IOutput) => output.value);
-  //   const weeklyTokenRewards = weeklyDataByFarm[selectedFarm]?.weeklyTokenRewards;
-  //   const tokenRewardsValues = weeklyTokenRewards?.map((output:IOutput) => output.value);
-    
-  //   setSelectedFarmData({outputs: outputValues, carbonCredits: carbonCreditsValues, tokenRewards: tokenRewardsValues});
-    
-  //   const labels = outputs?.map((output:IOutput) => `${output.week}`);
-  //   labels?.pop();  // Assuming you want to adjust the labels similarly for both data types
-  //   setDataLabels(labels);
-  // }, [weeklyDataByFarm, selectedFarm, selectedDataType]);
-
 
 
 const getFilteredValues = (data:any, key:any) => {
@@ -181,9 +165,13 @@ useEffect(() => {
           :  
           "Farms"}
         </div>
-        {selectedFarm > 0 && (
+        {selectedFarm > 0 ? (
           <div onClick={handleResetFarmSelection} className='pl-4 pb-0 p-1 text-gray text-base cursor-pointer underline decoration-1 underline-offset-1'>
             Back to all farms
+          </div>
+        ) : (
+          <div className='pl-4 pb-0 p-1 text-gray opacity-60 text-right italic text-base text-italic underline-offset-1'>
+            Click on a pin to view farm details
           </div>
         )}
       </div>
@@ -212,22 +200,32 @@ useEffect(() => {
       <div className='pl-4 pb-2 pt-2 text-gray text-md'>
       {selectedFarm ? (
         <>
-          <DataTypeSelector onChange={(type:any) => setSelectedDataType(type)} />
-          <LineChart 
-          title="" 
-          labels={dataLabels} 
-          dataPoints={selectedFarmData[selectedDataType]}
-        /></>
-        ) : (
-          <>
-            <div>Weekly Farm Count</div>
-            <LineChart 
-                title="" 
-                labels={labels} 
-                dataPoints={weeklyFarmCounts}
+          <DataTypeSelector onChange={(type: any) => setSelectedDataType(type)} />
+          {selectedDataType === 'tokenRewards' ? (
+            <LineBarChart 
+              title="" 
+              labels={dataLabels} 
+              dataPoints={selectedFarmData[selectedDataType]} 
             />
-          </>
+          ) : (
+            <LineChart 
+              title="" 
+              labels={dataLabels} 
+              dataPoints={selectedFarmData[selectedDataType]} 
+            />
           )}
+        </>
+      ) : (
+        <>
+          <div>Weekly Farm Count</div>
+          <LineChart 
+            title="" 
+            labels={labels} 
+            dataPoints={weeklyFarmCounts} 
+          />
+        </>
+      )}
+
       </div>
     </div>
   )
