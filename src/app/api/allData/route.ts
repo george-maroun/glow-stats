@@ -1,21 +1,15 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
+import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
+import { IWeeklyDataByFarm } from '../../types';
 export const revalidate = 60;
-
-interface WeeklyDataByFarm {
-  [key: number]: {
-    powerOutputs: { week: number; value: number }[];
-    carbonCredits: { week: number; value: number }[];
-    weeklyPayments: { week: number; value: number }[];
-  }
-}
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
   weeklyFarmCount: {week: number; value: number}[];
   weeklyTotalOutput: {week: number; value: number}[]
-  weeklyDataByFarm: any;
+  weeklyDataByFarm: IWeeklyDataByFarm;
   currentFarmIds: number[];
 }
 
@@ -55,7 +49,7 @@ async function fetchWeeklyData(startWeek = 0) {
     weeklyCarbonCredit: [],
     weeklyFarmCount: [],
     weeklyTotalOutput: [],
-    weeklyDataByFarm: {},
+    weeklyDataByFarm: {} as IWeeklyDataByFarm,
     currentFarmIds: [],
   };
 
@@ -102,7 +96,9 @@ async function fetchWeeklyData(startWeek = 0) {
           output.weeklyDataByFarm[farmId] = {
             powerOutputs: [],
             carbonCredits: [],
-            weeklyPayments: []
+            weeklyPayments: [],
+            weeklyTokenRewards: [],
+            weeklyCashRewards: [],
           };
         }
 
@@ -127,6 +123,12 @@ async function fetchWeeklyData(startWeek = 0) {
 
   for (let farmId in weeklyTokenRewards) {
     output.weeklyDataByFarm[farmId].weeklyTokenRewards = weeklyTokenRewards[farmId].weeklyTokenRewards;
+  }
+
+  const weeklyCashRewards = calculateWeeklyCashRewards(output.weeklyDataByFarm);
+
+  for (let farmId in weeklyCashRewards) {
+    output.weeklyDataByFarm[farmId].weeklyCashRewards = weeklyCashRewards[farmId].weeklyCashRewards;
   }
 
   return output;

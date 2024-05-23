@@ -8,7 +8,7 @@ import getWeeksSinceStart from '../../lib/utils/currentWeekHelper';
 import ImpactCard from './components/ImpactCard';
 import PowerCard from './components/PowerCard';
 import TokenCard from './components/TokenCard';
-import Farms from './components/Farms';
+import Farms from './components/farms/Farms';
 import FeesCard from './components/FeesCard';
 
 export default function Home() {
