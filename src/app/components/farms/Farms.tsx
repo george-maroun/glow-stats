@@ -3,37 +3,22 @@
 import { useState } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
-import useEquipmentDetails from '../hooks/useEquipment';
-import { Equipment } from '../hooks/useEquipment';
+import useEquipmentDetails from '../../hooks/useEquipment';
+import { Equipment } from '../../hooks/useEquipment';
 import FarmDetails from './FarmDetails';
-
+import { IWeeklyDataByFarm } from '../../types';
 
 import 'react-tooltip/dist/react-tooltip.css'
 export const fetchCache = 'force-no-store';
 export const dynamic = "force-dynamic";
 
 
-interface WeeklyDataByFarm {
-  [key: number]: {
-    carbonCredits: { week: number; value: number }[];
-    powerOutputs: { week: number; value: number }[];
-    weeklyPayments: { week: number; value: number }[];
-    weeklyTokenRewards: { week: number; value: number }[];
-  }
-}
-
 interface FarmsProps {
   labels: string[];
   weeklyFarmCount: {week: number, value: number}[];
-  weeklyDataByFarm: WeeklyDataByFarm;
+  weeklyDataByFarm: IWeeklyDataByFarm;
   currentFarmIds: number[];
 }
-
-// type Rewards = {
-//   amountInBucket: string;
-//   amountToDeduct: string;
-//   weekNumber: number;
-// }[]
 
 export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
   const { equipmentDetails } = useEquipmentDetails(currentFarmIds);
@@ -98,7 +83,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
         />
       </div>
 
-      {/* <div onClick={() => setSelectedFarm([60,26,19,65][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div> */}
+      <div onClick={() => setSelectedFarm([60,26,19,65][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div>
     </>
   )
 }

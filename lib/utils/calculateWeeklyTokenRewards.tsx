@@ -1,26 +1,18 @@
-interface WeeklyPayment {
-  week: number;
-  value: number;
-}
-
-interface WeeklyTokenReward {
-  week: number;
-  value: number;
-}
+import { IWeeklyDataByFarm, TDataPoint } from '../../src/app/types';
 
 interface FarmTokenRewards {
   [farmId: number]: {
-    weeklyTokenRewards: WeeklyTokenReward[];
+    weeklyTokenRewards: TDataPoint[];
   };
 }
 
-function calculateWeeklyTokenRewards(weeklyDataByFarm:any): FarmTokenRewards {
+function calculateWeeklyTokenRewards(weeklyDataByFarm:IWeeklyDataByFarm): FarmTokenRewards {
   const totalWeeklyPayments: { [week: number]: number } = {};
   const farmTokenRewards: FarmTokenRewards = {};
 
   // Calculate total weekly payments across all farms
   for (const farmId in weeklyDataByFarm) {
-    weeklyDataByFarm[farmId].weeklyPayments.forEach(({ week, value }: WeeklyPayment) => {
+    weeklyDataByFarm[farmId].weeklyPayments.forEach(({ week, value }: TDataPoint) => {
       if (!totalWeeklyPayments[week]) {
         totalWeeklyPayments[week] = 0;
       }
@@ -30,8 +22,8 @@ function calculateWeeklyTokenRewards(weeklyDataByFarm:any): FarmTokenRewards {
 
   // Calculate weekly token rewards for each farm
   for (const farmId in weeklyDataByFarm) {
-    const weeklyTokenRewards: WeeklyTokenReward[] = [];
-    weeklyDataByFarm[farmId].weeklyPayments.forEach(({ week, value }: WeeklyPayment) => {
+    const weeklyTokenRewards: TDataPoint[] = [];
+    weeklyDataByFarm[farmId].weeklyPayments.forEach(({ week, value }: TDataPoint) => {
       const sumAllWeeklyPayments = totalWeeklyPayments[week];
       const tokenRewardValue = (175000 * value) / sumAllWeeklyPayments;
       weeklyTokenRewards.push({ week, value: tokenRewardValue || 0 });

@@ -1,15 +1,8 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
+import { IWeeklyDataByFarm } from '../../types';
 export const revalidate = 60;
-
-interface WeeklyDataByFarm {
-  [key: number]: {
-    powerOutputs: { week: number; value: number }[];
-    carbonCredits: { week: number; value: number }[];
-    weeklyPayments: { week: number; value: number }[];
-  }
-}
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -55,7 +48,7 @@ async function fetchWeeklyData(startWeek = 0) {
     weeklyCarbonCredit: [],
     weeklyFarmCount: [],
     weeklyTotalOutput: [],
-    weeklyDataByFarm: {},
+    weeklyDataByFarm: {} as IWeeklyDataByFarm,
     currentFarmIds: [],
   };
 
