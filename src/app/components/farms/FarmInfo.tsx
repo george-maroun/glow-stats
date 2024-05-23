@@ -34,7 +34,8 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
   const dataTypeName = {
     outputs: ['Output', 'kWh'],
     carbonCredits: ['Carbon Credits', ''],
-    tokenRewards: ['Token Rewards', 'GLW']
+    tokenRewards: ['Token Rewards', 'GLW'],
+    cashRewards: ['USDG Rewards', 'USDG'],
   }
 
   const getLatestWeekDataPoint = () => {

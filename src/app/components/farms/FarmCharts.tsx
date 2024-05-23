@@ -29,7 +29,7 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
   return selectedFarm ? (
     <>
       <DataTypeSelector selectedDataType={selectedDataType} onChange={(type: any) => handleSetSelectedDataType(type)} />
-      {selectedDataType === 'tokenRewards' ? (
+      {selectedDataType.includes('Reward') ? (
         <LineBarChart
           title=""
           labels={dataLabels}
