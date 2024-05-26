@@ -74,7 +74,7 @@ async function fetchWeeklyData(startWeek = 0) {
       }
 
       const data = await response.json();
-      const activeFarms = data.numActiveFarms;
+      const activeFarms = data.filteredFarms.filter((farm:any) => currentFarmIdsSet.has(farm.shortId)).length;
       const farmData = data.filteredFarms;
 
       let carbonCredits = 0;
