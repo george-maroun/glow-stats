@@ -100,7 +100,7 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
             title1="Carbon Credits Created"
             value1={carbonCredits}
             title2="Total USDC Committed"
-            value2={"26,623"}
+            value2={"27,393"}
             title3="Impact Multiplier"
             value3={impactMultiplier.toFixed(0)}
             isInfo3={true}
