@@ -53,6 +53,7 @@ async function fetchWeeklyData(startWeek = 0) {
     currentFarmIds: [],
   };
 
+  // Get the short ids of all the farms that are active in the current week
   output.currentFarmIds = await getCurrentFarmIds();
 
   const currentFarmIdsSet = new Set(output.currentFarmIds);
@@ -74,7 +75,8 @@ async function fetchWeeklyData(startWeek = 0) {
       }
 
       const data = await response.json();
-      const activeFarms = data.filteredFarms.filter((farm:any) => currentFarmIdsSet.has(farm.shortId)).length;
+
+      const activeFarms = data.numActiveFarms;
       const farmData = data.filteredFarms;
 
       let carbonCredits = 0;
@@ -108,7 +110,10 @@ async function fetchWeeklyData(startWeek = 0) {
       }
 
       output.weeklyCarbonCredit.push({ week: i, value: carbonCredits });
+
+      // Add the weekly farm count to the output object
       output.weeklyFarmCount.push({ week: i, value: activeFarms });
+
       output.weeklyTotalOutput.push({ week: i, value: powerOutput });
       
 
