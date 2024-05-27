@@ -56,7 +56,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
   const pastMonthFarms = weeklyFarmCounts.length ? 
     weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5] : 0;
   const ActiveFarmsCount = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) : 0;
-  const newFarms = weeklyFarmCounts.length ? weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 2] : 0;
+  const newFarms = weeklyFarmCounts.length ? weeklyFarmCounts[weeklyFarmCounts.length - 2] - weeklyFarmCounts[weeklyFarmCounts.length - 3] : 0;
 
   return selectedFarm > 0 ? (
     <TopValues
@@ -71,7 +71,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     <TopValues
       title1='Active'
       value1={ActiveFarmsCount}
-      title2='New This Week'
+      title2='Added Last Week'
       value2={newFarms.toString()}
       title3='Past Month Increase'
       value3={weeklyFarmCounts.length ? pastMonthFarms.toString() : '0'}
