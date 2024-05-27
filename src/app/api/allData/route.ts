@@ -76,9 +76,7 @@ async function fetchWeeklyData(startWeek = 0) {
 
       const data = await response.json();
 
-      // Here, I am getting the list of active farms for week i from filteredFarms
-      // and filtering out the farms that are not currently active
-      const activeFarms = data.filteredFarms.filter((farm:any) => currentFarmIdsSet.has(farm.shortId)).length;
+      const activeFarms = data.numActiveFarms;
       const farmData = data.filteredFarms;
 
       let carbonCredits = 0;
@@ -115,7 +113,7 @@ async function fetchWeeklyData(startWeek = 0) {
 
       // Add the weekly farm count to the output object
       output.weeklyFarmCount.push({ week: i, value: activeFarms });
-      
+
       output.weeklyTotalOutput.push({ week: i, value: powerOutput });
       
 
