@@ -24,7 +24,11 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
   weekCount
 }) => {
   const weeklyFarmCounts = weeklyFarmCount.map(data => data.value);
-  const labels = useMemo(() => Array.from({ length: weekCount + 1 }, (_, i) => `${i}`), [weekCount]);
+  const labels = useMemo(() => Array.from({ length: weekCount }, (_, i) => `${i}`), [weekCount]);
+
+  const removeLastElement = (arr: any[]) => {
+    return arr.slice(0, arr.length - 1);
+  }
 
   return selectedFarm ? (
     <>
@@ -33,13 +37,13 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
         <LineBarChart
           title=""
           labels={dataLabels}
-          dataPoints={selectedFarmData[selectedDataType]}
+          dataPoints={removeLastElement(selectedFarmData[selectedDataType])}
         />
       ) : (
         <LineChart
           title=""
           labels={dataLabels}
-          dataPoints={selectedFarmData[selectedDataType]}
+          dataPoints={removeLastElement(selectedFarmData[selectedDataType])}
         />
       )}
     </>
@@ -49,7 +53,7 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
       <LineChart
         title=""
         labels={labels}
-        dataPoints={weeklyFarmCounts}
+        dataPoints={removeLastElement(weeklyFarmCounts)}
       />
     </>
   );

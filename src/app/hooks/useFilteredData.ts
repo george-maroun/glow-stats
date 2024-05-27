@@ -14,7 +14,7 @@ const getFirstNonZeroIndex = (data: any) => {
 
 const getFilteredLabels = (data: any, firstNonZeroIndex: number) => {
   if (!data) return [];
-  return data.slice(firstNonZeroIndex).map((item: any) => `${item.week}`);
+  return data.slice(firstNonZeroIndex, -1).map((item: any) => `${item.week}`);
 };
 
 const useFilteredData = (weeklyDataByFarm: any, selectedFarm: number) => {
