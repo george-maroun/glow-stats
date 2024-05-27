@@ -71,7 +71,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     <TopValues
       title1='Active'
       value1={ActiveFarmsCount}
-      title2='New Farms This Week'
+      title2='New This Week'
       value2={newFarms.toString()}
       title3='Past Month Increase'
       value3={weeklyFarmCounts.length ? pastMonthFarms.toString() : '0'}
