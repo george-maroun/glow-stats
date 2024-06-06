@@ -74,7 +74,6 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
     borderRadius: '12px',
   };
 
-  console.log(view)
   return (
     <>
       <div>

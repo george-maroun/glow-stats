@@ -54,7 +54,6 @@ const getFarmLocations = async () => {
 export async function GET() {
   try {
     const farmLocations = await getFarmLocations();
-    console.log(farmLocations);
     return NextResponse.json(farmLocations);
   } catch (error: any) {
     console.error(error); // Log the error for debugging
