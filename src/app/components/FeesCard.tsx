@@ -76,7 +76,7 @@ const FeesCard = () => {
         </div>
       </div>
       <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
-      <div className='lg:h-64 overflow-y-auto' style={{height: '272px'}}>
+      <div className='lg:h-64 overflow-y-auto mb-2' style={{height: '272px'}}>
         {protocolFeesPerWeek.length > 0 ? listProtocolFees() : <div className='p-4 '>Loading...</div>}
       </div>
     </div>

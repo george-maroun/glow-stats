@@ -4,7 +4,6 @@ import useFarmLocation from '../../hooks/useFarmLocation';
 import getWeatherEmoji from '../../../../lib/utils/getWeatherEmojiHelper';
 import { ISelectedFarmData, TSelectedDataType } from '../../types';
 
-
 interface FarmInfoProps {
   selectedFarm: number;
   equipmentDetails: any;
@@ -69,7 +68,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     />
   ) : (
     <TopValues
-      title1='Active'
+      title1='Active Farms'
       value1={ActiveFarmsCount}
       title2='Added Last Week'
       value2={newFarms.toString()}

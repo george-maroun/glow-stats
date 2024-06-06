@@ -1,11 +1,11 @@
 "use client"
-
 import { useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 import useEquipmentDetails from '../../hooks/useEquipment';
 import { Equipment } from '../../hooks/useEquipment';
 import FarmDetails from './FarmDetails';
+import FarmList from './FarmList'; // Import the new FarmList component
 import { IWeeklyDataByFarm } from '../../types';
 
 import 'react-tooltip/dist/react-tooltip.css'
@@ -25,12 +25,28 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 38.794810, lng: -97.058722 });
   const [mapZoom, setMapZoom] = useState<number>(4);
+  const [view, setView] = useState<string>('map'); // State to manage the selected view
+  const [protocolFeesByFarm, setProtocolFeesByFarm] = useState<{[key: string]: number;} | null>(null);
+
+  useEffect(() => {
+    const getProtocolFeesByFarm = async () => {
+      let protocolFees = {};
+      try {
+        const response = await fetch('api/protocolFeesByFarm');
+        const res = await response.json();
+        protocolFees = res;
+      } catch (err) {
+        console.error(err);
+      }
+      setProtocolFeesByFarm(protocolFees);
+    };
+    getProtocolFeesByFarm();
+  }, []);
 
   const key:string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: key,
-    
   });
 
   useEffect(() => {
@@ -38,8 +54,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
       return;
     }
     setMapZoom(prev => 7);
-  }
-  , [selectedFarm]);
+  }, [selectedFarm]);
 
   function handleFarmSelection(detail: Equipment) {
     setMapCenter({ lat: detail.Latitude, lng: detail.Longitude });
@@ -59,12 +74,28 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
     borderRadius: '12px',
   };
 
-
   return (
     <>
+      <div>
+        <button
+          className={`px-4 w-16 py-2 border-y border-l rounded-l-lg`}
+          style={{backgroundColor: `${view === 'map' ? '#f7f7f7' : 'white'}`, borderColor: 'rgb(220,220,220)'}}
+          onClick={() => setView(prev => 'map')}
+        >
+          Map
+        </button>
+        <button
+          className={`px-4 w-16 py-2 border ${view === 'list' ? 'bg-gray-300' : 'bg-white'} rounded-r-lg`}
+          style={{backgroundColor: `${view === 'list' ? '#f7f7f7' : 'white'}`, borderColor: 'rgb(220,220,220)'}}
+          onClick={() => setView(prev => 'list')}
+        >
+          List
+        </button>
+      </div>
+
       <div id='figures' className='flex lg:flex-row flex-col gap-2 lg:h-96 mt-4'>
-        <div id='left-figure' className='rounded-xl lg:h-full h-80 lg:w-6/12 border ' style={{ backgroundColor: "white", borderColor: "rgb(220,220,220" }}>
-          {isLoaded && (
+        <div id='left-figure' className='rounded-xl lg:h-full h-auto lg:w-6/12 border' style={{ backgroundColor: "white", borderColor: "rgb(220,220,220)" }}>
+          {view === 'map' && isLoaded && (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={mapCenter}
@@ -81,6 +112,14 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
               })}
             </GoogleMap>
           )}
+          {view === 'list' && (
+            <FarmList
+              equipmentDetails={equipmentDetails}
+              handleSelectFarm={setSelectedFarm}
+              protocolFeesByFarm={protocolFeesByFarm}
+              selectedFarm={selectedFarm}
+            />
+          )}
         </div>
 
         <FarmDetails
@@ -91,7 +130,6 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
           handleResetFarmSelection={handleResetFarmSelection}
         />
       </div>
-      {/* <div onClick={() => setSelectedFarm([60,26,19,65][Math.floor(Math.random()*4)])}>MOCK SELECT FARM</div> */}
     </>
   )
 }
