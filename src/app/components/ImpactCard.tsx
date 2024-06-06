@@ -98,7 +98,7 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
           <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
           <TopValues
             title1="Carbon Credits Created"
-            value1={carbonCredits}
+            value1={Number(carbonCredits).toFixed(1)}
             title2="Total USDC Committed"
             value2={"27,393"}
             title3="Impact Multiplier"

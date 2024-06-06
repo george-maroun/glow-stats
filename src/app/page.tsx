@@ -32,7 +32,6 @@ export default function Home() {
     const fetchData = async () => {
       const data = await fetch('/api/allData', { cache: 'no-store' });
       const allData = await data.json();
-      // console.log(allData);
       setWeeklyCarbonCredits(allData.weeklyCarbonCredit);
       setWeeklyFarmCount(allData.weeklyFarmCount);
       setWeeklyTotalOutput(allData.weeklyTotalOutput);
@@ -124,7 +123,7 @@ export default function Home() {
               Carbon Credits Created
             </div>
             <div className='text-6xl' style={{color: "#374151"}}>
-              {carbonCredits}
+              {Number(carbonCredits).toFixed(1)}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
