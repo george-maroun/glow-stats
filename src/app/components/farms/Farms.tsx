@@ -70,7 +70,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
 
   const mapContainerStyle = {
     width: '100%',
-    height: '100%',
+    height: '380px',
     borderRadius: '12px',
   };
 
@@ -94,7 +94,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
       </div>
 
       <div id='figures' className='flex lg:flex-row flex-col gap-2 lg:h-96 mt-4'>
-        <div id='left-figure' className='rounded-xl lg:h-full h-auto lg:w-6/12 border' style={{ backgroundColor: "white", borderColor: "rgb(220,220,220)" }}>
+        <div id='left-figure' className='rounded-xl lg:h-full lg:w-6/12 border' style={{ backgroundColor: "white", borderColor: "rgb(220,220,220)" }}>
           {view === 'map' && isLoaded && (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
