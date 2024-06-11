@@ -26,6 +26,8 @@ const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selec
     return (
       <div>
         {Object.keys(equipmentDetails).map((farmId, index) => {
+          let farmFeesExist = protocolFeesByFarm && farmId in protocolFeesByFarm
+          let fees = farmFeesExist ? Number(protocolFeesByFarm?.[farmId].toFixed(2)).toLocaleString() : "";
           return (
             <div 
               key={index} 
@@ -50,7 +52,7 @@ const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selec
                   {getfarmLocation(farmId)}
                 </div>
                 <div className='pl-4 text-gray text-md w-4/12'>
-                  {protocolFeesByFarm ? protocolFeesByFarm[farmId].toFixed(2).toLocaleString() : ""}
+                  {fees}
                 </div>
               </div>
               <div className='h-px w-full' style={{backgroundColor: "rgb(240,240,240"}}></div>
