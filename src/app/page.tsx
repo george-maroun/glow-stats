@@ -165,7 +165,7 @@ export default function Home() {
               Carbon Credits Created
             </div>
             <div className='text-5xl' style={{color: "#374151"}}>
-              {Number(carbonCredits).toFixed(1)}
+              {carbonCredits ? Number(carbonCredits).toFixed(1) : 'loading...'}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
@@ -174,7 +174,7 @@ export default function Home() {
               Total Power Produced
             </div>
             <div className='text-5xl' style={{color: "#374151"}}>
-              {totalPowerProduced} kWh
+              {totalPowerProduced ? totalPowerProduced : 'loading...'} kWh
             </div>
           </div>
         </div>
@@ -196,7 +196,7 @@ export default function Home() {
                 CO2 CAPTURE EQUIVALENT IN TREES
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                {getEquivalentInTrees()}
+                {getEquivalentInTrees() === '0' ? 'loading...' : getEquivalentInTrees()}
               </div>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function Home() {
                 SOLAR PANEL COUNT
               </div>
               <div className=' text-4xl text-[#374151]'>
-                {totalPanelCount}
+                {totalPanelCount ? totalPanelCount : 'loading...'}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
@@ -219,7 +219,7 @@ export default function Home() {
                 GLW TOKEN PRICE (UNI)
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                ${tokenPriceUniswap}
+                ${tokenPriceUniswap ? tokenPriceUniswap : 'loading...'}
               </div>
             </div>
           </div>
