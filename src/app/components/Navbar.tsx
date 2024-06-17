@@ -49,7 +49,7 @@ export const Navbar: React.FC<Props> = ({ children }) => {
       <div id='divider' className='h-10'></div>
 
       <div className='mt-4 mb-6 text-md align-center' style={{color: "#777777"}}>
-        <p className='text-center'>Learn more at <a className='underline' target="_blank" href='https://glowlabs.org/'>glowlabs.org</a> and <a className='underline' target="_blank" href='https://twitter.com/glowFND/'>@GlowFND.</a></p>
+        <p className='text-center'>Learn more at <a className='underline' target="_blank" href='https://glow.org/'>glow.org</a> and <a className='underline' target="_blank" href='https://twitter.com/glowFND/'>@GlowFND.</a></p>
       </div>
     </div>
   );

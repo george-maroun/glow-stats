@@ -30,7 +30,7 @@ const getISODateFromTimestamp = (timestamp: number) => {
   return formattedDate;
 }
 
-const TokenCard = () => {
+const TokenCard = ({glwPriceUni, glwPriceContract}:any) => {
   const [glowPriceData, setGlowPriceData] = useState<PriceData[]>([]);
   const [tokenStats, setTokenStats] = useState<TokenStats>({} as TokenStats);
   const [period, setPeriod] = useState<Period>({ '1D': false, '1W': false, '1M': false, '3M': false, '1Y': false, 'Max': true });
@@ -105,7 +105,7 @@ const TokenCard = () => {
   const marketCap = Math.round(tokenStats.marketCap || 0);
 
   return (
-    <div id='right-figure' className='rounded-xl h-full lg:w-6/12 border' style={{backgroundColor: "white", borderColor: "rgb(220,220,220)"}}>
+    <div id='right-figure' className='rounded-xl lg:h-96 h-full lg:w-6/12 border' style={{backgroundColor: "white", borderColor: "rgb(220,220,220)"}}>
     <div className='flex flex-row justify-between items-center'>
       <div className='p-4 pb-2 text-2xl'>Glow Token</div>
       <a 
@@ -119,10 +119,10 @@ const TokenCard = () => {
     <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
      
     <TopValues 
-      title1='Total Supply'
-      value1={totalSupply ? totalSupply.toLocaleString() : ''}
-      title2='Circulating Supply'
-      value2={circSupply ? circSupply.toLocaleString() : ''}
+      title1='Pice (Uniswap)'
+      value1={`$${glwPriceUni}`}
+      title2='Price (Contract)'
+      value2={`$${glwPriceContract}`}
       title3={'Market Cap'}
       value3={marketCap ? `$${(marketCap).toLocaleString()}` : ''}
     />

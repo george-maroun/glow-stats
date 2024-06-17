@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import 'react-tooltip/dist/react-tooltip.css'
 import { Analytics } from '@vercel/analytics/react';
 export const fetchCache = 'force-no-store';
@@ -10,6 +10,8 @@ import PowerCard from './components/PowerCard';
 import TokenCard from './components/TokenCard';
 import Farms from './components/farms/Farms';
 import FeesCard from './components/FeesCard';
+import TokenStats from './components/TokenStats';
+import { IPanelCountPerFarm } from './types';
 
 export default function Home() {
   const [tokenHolderCount, setTokenHolderCount] = useState(0);
@@ -20,12 +22,15 @@ export default function Home() {
   
   const [impactPowerOwners, setImpactPowerOwners] = useState<number>(0);
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
+  const [tokenStats, setTokenStats] = useState<any>({});
 
   const [weeklyCarbonCredits, setWeeklyCarbonCredits] = useState<any[]>([]);
   const [weeklyFarmCount, setWeeklyFarmCount] = useState<any[]>([]);
   const [weeklyTotalOutput, setWeeklyTotalOutput] = useState<any[]>([]);
   const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
+
+  const [panelCountPerFarm, setPanelCountPerFarm] = useState<IPanelCountPerFarm>({});
 
   // Get all data
   useEffect(() => {
@@ -37,6 +42,26 @@ export default function Home() {
       setWeeklyTotalOutput(allData.weeklyTotalOutput);
       setWeeklyDataByFarm(allData.weeklyDataByFarm);
       setCurrentFarmIds(allData.currentFarmIds);
+    };
+    fetchData();
+  }, []);
+
+  // Get token stats: circulating supply, total supply, market cap
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/glowStats');
+      const data = await res.json();
+      setTokenStats(data);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/panelsPerFarm');
+      const data = await res.json();
+      const panelsPerFarm = data.panelsPerFarm;
+      setPanelCountPerFarm(panelsPerFarm);
     };
     fetchData();
   }, []);
@@ -105,6 +130,23 @@ export default function Home() {
   }, []);
 
   const carbonCredits = weeklyCarbonCredits.reduce((acc, curr) => acc + curr.value, 0).toFixed(3);
+  let totalPowerProduced = weeklyTotalOutput.reduce((acc, curr) => acc + curr.value, 0);
+  totalPowerProduced = Math.round(totalPowerProduced).toLocaleString();
+
+  const totalPanelCount:number = useMemo(() => {
+    if (!panelCountPerFarm) return 0;
+    return Object.values(panelCountPerFarm).reduce((acc:number, curr:any) => acc + curr, 0);
+  }, [panelCountPerFarm]);
+
+  const getEquivalentInTrees = () => {
+    const CO2_ABSORPTION_PER_TREE_PER_WEEK_IN_KG = 0.19231;
+    const KG_OF_CO2_PER_CARBON_CREDIT = 1000;
+    let lastWeekCarbonCredits = weeklyCarbonCredits[weeklyCarbonCredits.length - 2]?.value;
+    if (!lastWeekCarbonCredits) return 0;
+    const equivalentInTrees = (Number(lastWeekCarbonCredits) * KG_OF_CO2_PER_CARBON_CREDIT) / CO2_ABSORPTION_PER_TREE_PER_WEEK_IN_KG;
+    return Math.round(equivalentInTrees).toLocaleString();
+  };
+
 
   return (
     <>
@@ -118,21 +160,21 @@ export default function Home() {
         style={{borderRadius: "0.75rem"}}
       >
         <div id='left-subsection' className='flex flex-col lg:w-6/12'>
-          <div className='p-3 pb-1 grow max-w-xl flex flex-col justify-between lg:h-auto h-32'>
+          <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-32'>
             <div className='text-2xl'>
               Carbon Credits Created
             </div>
-            <div className='text-6xl' style={{color: "#374151"}}>
+            <div className='text-5xl' style={{color: "#374151"}}>
               {Number(carbonCredits).toFixed(1)}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
-          <div className='p-3 pb-1 grow max-w-xl flex flex-col justify-between lg:h-auto h-32'>
+          <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-32'>
             <div className='text-2xl'>
-              Impact Power Owners
+              Total Power Produced
             </div>
-            <div className='text-6xl' style={{color: "#374151"}}>
-              {impactPowerOwners}
+            <div className='text-5xl' style={{color: "#374151"}}>
+              {totalPowerProduced} kWh
             </div>
           </div>
         </div>
@@ -142,19 +184,19 @@ export default function Home() {
           <div className='flex flex-col lg:w-6/12 w-full'>
             <div className='p-3 grow flex flex-col justify-between h-28'>
               <div className='font-semibold text-md'>
-                GLW HOLDERS
+                ACTIVE SOLAR FARMS
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                {tokenHolderCount}
+                {weeklyFarmCount.length ? weeklyFarmCount[weeklyFarmCount.length - 1].value : "loading..."}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
             <div className='p-3 grow flex flex-col justify-between h-28'>
               <div className='font-semibold text-md'>
-                IMPACT POWER PRICE
+                CO2 CAPTURE EQUIVALENT IN TREES
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                ${impactPowerPrice}
+                {getEquivalentInTrees()}
               </div>
             </div>
           </div>
@@ -165,16 +207,16 @@ export default function Home() {
           <div className='flex flex-col grow'>
             <div className='p-3 grow flex flex-col justify-between h-28'>
               <div className='font-semibold text-md'>
-                GLW PRICE (CONTRACT)
+                SOLAR PANEL COUNT
               </div>
               <div className=' text-4xl text-[#374151]'>
-                ${tokenPriceContract}
+                {totalPanelCount}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
             <div className='p-3 grow flex flex-col justify-between h-28'>
               <div className='font-semibold text-md'>
-                GLW PRICE (UNISWAP)
+                GLW TOKEN PRICE (UNI)
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
                 ${tokenPriceUniswap}
@@ -186,11 +228,11 @@ export default function Home() {
       </div>
       <div id='figures' className='flex lg:flex-row flex-col gap-2 lg:h-96'>
         <PowerCard weekCount={weekCount} weeklyTotalOutput={weeklyTotalOutput} labels={labels}/>
-        <TokenCard />
+        <ImpactCard weekCount={weekCount} weeklyCarbonCredits={weeklyCarbonCredits} />
       </div>
 
-      <div id='divider' className='h-8'></div>
-      <div id='divider' className='h-10'></div>
+      <div className='h-8'></div>
+      <div className='h-10'></div>
       <div className='text-4xl mb-8'>Explore Farms</div>
 
       
@@ -199,23 +241,29 @@ export default function Home() {
         weeklyFarmCount={weeklyFarmCount} 
         weeklyDataByFarm={weeklyDataByFarm}
         currentFarmIds={currentFarmIds}
+        panelCountPerFarm={panelCountPerFarm}
       />
       <div id='divider' className='h-8'></div>
 
       <div id='divider' className='h-10'></div>
-      <div className='text-4xl mb-8'>Protocol Statistics</div>
+      <div className='text-4xl mb-8'>Financials</div>
 
-      <div className='mt-4 w-full flex lg:flex-row flex-col gap-2'>
-        <div className='lg:w-6/12'>
-           <ImpactCard carbonCredits={carbonCredits} weeklyCarbonCredits={weeklyCarbonCredits} />
+      <div className='mt-4'>
+
+        <TokenStats 
+          impactPowerPrice={impactPowerPrice}
+          impactPowerOwners={impactPowerOwners}
+          tokenStats={tokenStats}
+          tokenHolderCount={tokenHolderCount}
+        />
+
+        <div className='mt-2 w-full flex lg:flex-row flex-col gap-2'>
+          <TokenCard glwPriceUni={tokenPriceUniswap} glwPriceContract={tokenPriceContract} />
+          <FeesCard />
         </div>
 
-        <FeesCard />
-
       </div>
-      
 
-      
     </main>
     <Analytics />
     </>

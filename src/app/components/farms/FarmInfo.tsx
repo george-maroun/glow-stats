@@ -12,6 +12,7 @@ interface FarmInfoProps {
   selectedFarmData: ISelectedFarmData;
   selectedDataType: TSelectedDataType;
   selectedFarmWeather: any;
+  panelCountPerFarm: any;
 }
 
 const FarmInfo: React.FC<FarmInfoProps> = ({
@@ -22,6 +23,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
   selectedFarmData,
   selectedDataType,
   selectedFarmWeather,
+  panelCountPerFarm
 }) => {
   const selectedFarmLocation = useFarmLocation(selectedFarm, equipmentDetails);
 
@@ -61,8 +63,8 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     <TopValues
       title1='Location'
       value1={selectedFarmLocation}
-      title2='Weather'
-      value2={getWeatherString()}
+      title2='Solar Panel Count'
+      value2={panelCountPerFarm[selectedFarm]}
       title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]} (so far)`}
       value3={getLatestWeekDataPoint()}
     />
