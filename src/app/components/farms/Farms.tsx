@@ -17,9 +17,10 @@ interface FarmsProps {
   weeklyFarmCount: { week: number, value: number }[];
   weeklyDataByFarm: IWeeklyDataByFarm;
   currentFarmIds: number[];
+  panelCountPerFarm: any;
 }
 
-export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
+export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds, panelCountPerFarm }: FarmsProps) {
   const { equipmentDetails } = useEquipmentDetails(currentFarmIds);
 
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
@@ -128,6 +129,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
           weeklyFarmCount={weeklyFarmCount}
           weeklyDataByFarm={weeklyDataByFarm}
           handleResetFarmSelection={handleResetFarmSelection}
+          panelCountPerFarm={panelCountPerFarm}
         />
       </div>
     </>

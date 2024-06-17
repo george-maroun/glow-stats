@@ -18,3 +18,7 @@ export interface IWeeklyDataByFarm {
     weeklyCashRewards: TDataPoint[];
   }
 }
+
+export interface IPanelCountPerFarm {
+  [key: string]: number;
+}

@@ -19,7 +19,7 @@ interface WeeklyCarbonCredits {
 }
 
 interface ImpactProps {
-  carbonCredits: number;
+  weekCount: number;
   weeklyCarbonCredits: {week: number, value: number}[];
 }
 
@@ -33,13 +33,16 @@ const createLabels = () => {
   return labels;
 }
 
-export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: ImpactProps) {
+export default function ImpactCard({ weekCount, weeklyCarbonCredits }: ImpactProps) {
   const [protocolFeesPerWeek, setProtocolFeesPerWeek] = useState<ProtocolFeesPerWeek[]>([]);
   const [impactPowerCount, setImpactPowerCount] = useState<number>(0);
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
   const [impactMultiplier, setImpactMultiplier] = useState<number>(0);
 
     const weeklyCarbonCreditsValues = weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
+    const currentWeekCarbonCredits = weeklyCarbonCreditsValues 
+    ? weeklyCarbonCreditsValues[weeklyCarbonCreditsValues.length - 1]
+    : 0;
 
     // Get impact power price
     useEffect(() => {
@@ -87,18 +90,18 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
   }, [protocolFeesPerWeek, impactPowerCount, impactPowerPrice]);
   
   return (
-    <>
+    <div className='lg:w-6/12'>
       <main className='w-full flex lg:flex-row flex-col justify-start gap-2' style={{maxWidth: "1244px"}}> 
         
 
         <div id='right-figure' className='rounded-xl lg:h-96 h-auto border w-full' style={{backgroundColor: "white", borderColor: "rgb(220,220,220"}}>
           <div className='p-4 pb-2 text-2xl'>
-            Impact
+            Carbon Credits
           </div>
           <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
           <TopValues
-            title1="Carbon Credits Created"
-            value1={Number(carbonCredits).toFixed(1)}
+            title1={`Week ${weekCount} Carbon Credits`} 
+            value1={currentWeekCarbonCredits && Number(currentWeekCarbonCredits).toFixed(1)}
             title2="Total USDC Committed"
             value2={"27,393"}
             title3="Impact Multiplier"
@@ -119,7 +122,7 @@ export default function ImpactCard({ carbonCredits, weeklyCarbonCredits }: Impac
 
         </div>
       </main>
-    </>
+    </div>
   )
 }
 
