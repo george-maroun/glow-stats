@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-export const revalidate = 3600;
+export const revalidate = 60;
 
 type Param = number | string;
 
