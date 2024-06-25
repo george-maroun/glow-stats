@@ -185,7 +185,7 @@ export default function Home() {
               Total Power Produced
             </div>
             <div className='text-5xl' style={{color: "#374151"}}>
-              {totalPowerProduced == 0 ? totalPowerProduced : 'loading...'} kWh
+              {totalPowerProduced !== '0' ? `${totalPowerProduced} kWh` : 'loading...'}
             </div>
           </div>
         </div>
@@ -230,7 +230,7 @@ export default function Home() {
                 GLW TOKEN PRICE (UNI)
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                ${tokenPriceUniswap ? tokenPriceUniswap : 'loading...'}
+                {tokenPriceUniswap ? `$${tokenPriceUniswap}` : 'loading...'}
               </div>
             </div>
           </div>
