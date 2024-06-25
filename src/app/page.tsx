@@ -185,7 +185,7 @@ export default function Home() {
               Total Power Produced
             </div>
             <div className='text-5xl' style={{color: "#374151"}}>
-              {totalPowerProduced ? totalPowerProduced : 'loading...'} kWh
+              {totalPowerProduced == 0 ? totalPowerProduced : 'loading...'} kWh
             </div>
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function Home() {
           tokenHolderCount={tokenHolderCount}
         />
 
-        <div className='mt-2 w-full flex lg:flex-row flex-col gap-2'>
+        <div className='mt-8 w-full flex lg:flex-row flex-col gap-2'>
           <TokenCard glwPriceUni={tokenPriceUniswap} glwPriceContract={tokenPriceContract} />
           <FeesCard />
         </div>
