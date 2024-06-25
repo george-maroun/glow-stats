@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { NextResponse } from "next/server";
-export const revalidate = 120;
+export const revalidate = 60;
 import { glowContractABI } from "../../../../constants/abis/glow.abi";
 import { usdgGlwPairABI } from "../../../../constants/abis/usdgGlwPair.abi";
 

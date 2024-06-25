@@ -1,5 +1,5 @@
 "use client"
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, use } from 'react';
 import 'react-tooltip/dist/react-tooltip.css'
 import { Analytics } from '@vercel/analytics/react';
 export const fetchCache = 'force-no-store';
@@ -31,6 +31,17 @@ export default function Home() {
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
   const [panelCountPerFarm, setPanelCountPerFarm] = useState<IPanelCountPerFarm>({});
+
+  // const [time, setTime] = useState<string>('');
+
+  // useEffect(() => {
+  //   const fetchTime = async () => {
+  //     const res = await fetch('/api/testRoute');
+  //     const data = await res.json();
+  //     setTime(data.time);
+  //   }
+  //   fetchTime();
+  // }, []);
 
   // Get all data
   useEffect(() => {
@@ -129,7 +140,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const carbonCredits = weeklyCarbonCredits.reduce((acc, curr) => acc + curr.value, 0).toFixed(3);
+  const carbonCredits = weeklyCarbonCredits.reduce((acc, curr) => acc + curr.value, 0);
   let totalPowerProduced = weeklyTotalOutput.reduce((acc, curr) => acc + curr.value, 0);
   totalPowerProduced = Math.round(totalPowerProduced).toLocaleString();
 
@@ -196,7 +207,7 @@ export default function Home() {
                 CO2 CAPTURE EQUIVALENT IN TREES
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                {getEquivalentInTrees() === '0' ? 'loading...' : getEquivalentInTrees()}
+                {getEquivalentInTrees() == 0 ? 'loading...' : getEquivalentInTrees()}
               </div>
             </div>
           </div>
