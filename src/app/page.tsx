@@ -12,6 +12,7 @@ import Farms from './components/farms/Farms';
 import FeesCard from './components/FeesCard';
 import TokenStats from './components/TokenStats';
 import { IPanelCountPerFarm } from './types';
+import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
 
 export default function Home() {
   const [tokenHolderCount, setTokenHolderCount] = useState(0);
@@ -30,7 +31,7 @@ export default function Home() {
   const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
-  const [panelCountPerFarm, setPanelCountPerFarm] = useState<IPanelCountPerFarm>({});
+  const [AllFarmsInfo, setAllFarmsInfo] = useState<any>({});
 
   // const [time, setTime] = useState<string>('');
 
@@ -67,12 +68,15 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Wrap allFarmsInfo with a context api
+  // Retrieve allFarmsInfo (panels) in FarmDetails
+  // Retrieve allFarmsInfo (locations) in FarmList
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/panelsPerFarm');
+      const res = await fetch('/api/allFarmsInfo');
       const data = await res.json();
-      const panelsPerFarm = data.panelsPerFarm;
-      setPanelCountPerFarm(panelsPerFarm);
+      const allFarmsInfo = data.allFarmsInfo;
+      setAllFarmsInfo(allFarmsInfo);
     };
     fetchData();
   }, []);
@@ -145,9 +149,9 @@ export default function Home() {
   totalPowerProduced = Math.round(totalPowerProduced).toLocaleString();
 
   const totalPanelCount:number = useMemo(() => {
-    if (!panelCountPerFarm) return 0;
-    return Object.values(panelCountPerFarm).reduce((acc:number, curr:any) => acc + curr, 0);
-  }, [panelCountPerFarm]);
+    if (!AllFarmsInfo) return 0;
+    return Object.values(AllFarmsInfo).reduce((acc:number, curr:any) => acc + curr.panelCount, 0);
+  }, [AllFarmsInfo]);
 
   const getEquivalentInTrees = () => {
     const CO2_ABSORPTION_PER_TREE_PER_WEEK_IN_KG = 0.19231;
@@ -160,7 +164,7 @@ export default function Home() {
 
 
   return (
-    <>
+    <FarmsInfoContext.Provider value={AllFarmsInfo}>
     <main className='w-full' style={{maxWidth: "1244px"}}> 
       <div className='mt-4 mb-4 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
         <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glowlabs.org/#about'>Glow Protocol</a>.</div>
@@ -252,7 +256,6 @@ export default function Home() {
         weeklyFarmCount={weeklyFarmCount} 
         weeklyDataByFarm={weeklyDataByFarm}
         currentFarmIds={currentFarmIds}
-        panelCountPerFarm={panelCountPerFarm}
       />
       <div id='divider' className='h-8'></div>
 
@@ -277,6 +280,6 @@ export default function Home() {
 
     </main>
     <Analytics />
-    </>
+    </FarmsInfoContext.Provider>
   )
 }

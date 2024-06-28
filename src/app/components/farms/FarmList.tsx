@@ -1,25 +1,15 @@
-import React, { useState, useEffect } from "react";
-import farmLocations from "./locationsTemp";
+import React, { useState } from "react";
+import formatLocation from "./helpers/formatLocationHelper";
 
 type FarmListProps = {
   equipmentDetails: any;
   handleSelectFarm: (farm: number) => void;
   protocolFeesByFarm: {[key: string]: number} | null;
   selectedFarm: number;
+  farmLocations: any;
 }
 
-const getfarmLocation = (farmId: string) => {
-  if (!(farmId in farmLocations)) return ('USA');
-
-  const rawLocation = farmLocations[farmId];
-  const locationArr = rawLocation.split(',');
-  const city = locationArr[1].trim();
-  const state = locationArr[2].trim().split(' ')[0];
-
-  return `${city}, ${state}`;
-}
-
-const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selectedFarm }: FarmListProps) => {
+const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selectedFarm, farmLocations }: FarmListProps) => {
   const [hoveredFarm, setHoveredFarm] = useState<number | null>(null);
 
   function listFarms() {
@@ -49,7 +39,7 @@ const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selec
                   {farmId}
                 </div>
                 <div className='pl-4 text-gray text-md w-5/12'>
-                  {getfarmLocation(farmId)}
+                  {formatLocation(farmLocations[farmId])}
                 </div>
                 <div className='pl-4 text-gray text-md w-4/12'>
                   {fees}

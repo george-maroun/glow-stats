@@ -33,3 +33,9 @@ model PriceContract {
   date      DateTime
   price     Decimal
 }
+
+model FarmLocations {
+  id        String     @default(cuid()) @id
+  farmId    Int
+  location  String
+}
