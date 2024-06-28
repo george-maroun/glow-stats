@@ -3,6 +3,7 @@ import TopValues from '../TopValues';
 import useFarmLocation from '../../hooks/useFarmLocation';
 import getWeatherEmoji from '../../../../lib/utils/getWeatherEmojiHelper';
 import { ISelectedFarmData, TSelectedDataType } from '../../types';
+import { useFarmsInfo } from '../../providers/allFarmsInfoProvider'
 
 interface FarmInfoProps {
   selectedFarm: number;
@@ -12,7 +13,6 @@ interface FarmInfoProps {
   selectedFarmData: ISelectedFarmData;
   selectedDataType: TSelectedDataType;
   selectedFarmWeather: any;
-  panelCountPerFarm: any;
 }
 
 const FarmInfo: React.FC<FarmInfoProps> = ({
@@ -23,14 +23,17 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
   selectedFarmData,
   selectedDataType,
   selectedFarmWeather,
-  panelCountPerFarm
 }) => {
-  const selectedFarmLocation = useFarmLocation(selectedFarm, equipmentDetails);
 
-  const getWeatherString = () => {
-    const weatherEmoji = selectedFarmWeather ? getWeatherEmoji(selectedFarmWeather) : '';
-    return selectedFarmWeather ? `${weatherEmoji} ${selectedFarmWeather?.main.temp.toFixed(1)}°F` : '';
-  };
+  const allFarmsInfo = useFarmsInfo();
+
+  const selectedFarmLocation = allFarmsInfo[selectedFarm]?.location;
+
+  
+  // const getWeatherString = () => {
+  //   const weatherEmoji = selectedFarmWeather ? getWeatherEmoji(selectedFarmWeather) : '';
+  //   return selectedFarmWeather ? `${weatherEmoji} ${selectedFarmWeather?.main.temp.toFixed(1)}°F` : '';
+  // };
 
   const dataTypeName = {
     outputs: ['Output', 'kWh'],
@@ -64,7 +67,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
       title1='Location'
       value1={selectedFarmLocation}
       title2='Solar Panel Count'
-      value2={panelCountPerFarm[selectedFarm]}
+      value2={allFarmsInfo[selectedFarm]?.panelCount}
       title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]} (so far)`}
       value3={getLatestWeekDataPoint()}
     />
