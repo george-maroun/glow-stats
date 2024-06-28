@@ -13,6 +13,7 @@ interface IFarmDetailsProps {
   weeklyFarmCount: TDataPoint[];
   weeklyDataByFarm: IWeeklyDataByFarm; // Define a more specific type
   handleResetFarmSelection: () => void;
+  farmLocations: any;
 }
 
 const FarmDetails: React.FC<IFarmDetailsProps> = ({
@@ -21,6 +22,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
   weeklyFarmCount,
   weeklyDataByFarm,
   handleResetFarmSelection,
+  farmLocations,
 }) => {
   const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
 
@@ -44,6 +46,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
         selectedFarmData={selectedFarmData}
         selectedDataType={selectedDataType}
         selectedFarmWeather={selectedFarmWeather}
+        farmLocations={farmLocations}
       />
       <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
       <div className='pl-4 pb-2 pt-2 text-gray text-md'>

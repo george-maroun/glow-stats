@@ -13,10 +13,9 @@ async function fetchLocationData(lat: number, lon: number) {
 
 const getPlaceName = async (lat: number, lon: number): Promise<string> => {
   try {
-    const response = await fetchLocationData(lat, lon);
-    const data = await response.json();
-    if (data.locationJson.status === 'OK') {
-      const placeName = data.locationJson.results[0]?.formatted_address ?? 'Location name not found';
+    const data = await fetchLocationData(lat, lon);
+    if (data.status === 'OK') {
+      const placeName = data.results[0]?.formatted_address ?? 'Location name not found';
       return placeName;
     } else {
       console.error('Geocoding API error:', data.status);

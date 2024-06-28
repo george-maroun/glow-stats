@@ -40,36 +40,36 @@ export const revalidate = 60;
 const getFarmCoordinates = async () => {
   const farmCoordinates:any = {};
   try {
-    const res = await fetch("https://www.glow.org/api/audits");
-    const data = await res.json();
-    const audits = data.audits;
-    
-    audits.forEach((audit:any) => {
-      farmCoordinates[audit.id] = {};
-      farmCoordinates[audit.id].panelCount = audit.summary.address.coordinates;
+    const url = process.env.EQUIPMENT_STATS_URL || '';
+
+    const equipmentData = await fetch(url);
+    const equipmentJson = await equipmentData.json();
+
+    if (!equipmentData.ok) {
+      throw new Error(`Error fetching equipment data: ${equipmentData.statusText}`);
+    }
+
+    const equipmentDetails = equipmentJson.EquipmentDetails;
+
+    Object.values(equipmentDetails).forEach((equipment:any) => {
+      farmCoordinates[equipment.ShortID] = [equipment.Latitude, equipment.Longitude];
     });
-  }
-  catch (error) {
-    console.error('Error fetching data:', error);
+
+  } catch (error:any) {
+    console.error(error); // Log the error for debugging
   }
 
   return farmCoordinates;
 }
 
-const getLatLon = (coordinates: string) => {
-  // Split the string by comma to separate latitude and longitude
-  const parts = coordinates.split(', ');
+// const getLatLon = (coordinates: string) => {
+//   const parts = coordinates.split(', ');
+//   const lat = parseFloat(parts[0].replace('° N', ''));
+//   const lon = parseFloat(parts[1].replace('° W', ''));
+//   if (lon > 0) return [lat, -lon];
 
-  // Extract latitude and longitude values and remove the directional letters
-  const lat = parseFloat(parts[0].replace('° N', ''));
-  const lon = parseFloat(parts[1].replace('° W', ''));
-
-  // Adjust the sign for the longitude as it is west
-  const lonAdjusted = -lon;
-
-  // Return the values as an array [lat, lon]
-  return [lat, lonAdjusted];
-};
+//   return [lat, lon];
+// };
 
 export async function GET() {
   try {
@@ -77,28 +77,36 @@ export async function GET() {
     const farmCoordinates = await getFarmCoordinates();
     // Get the locations of all the farms from the db
     let farmLocations = await prisma.farmLocations.findMany({});
+
     // Compare the list of farms in the db and in the list returned from the audit api
-    if (Object.keys(farmCoordinates).length !== Object.keys(farmLocations).length) {
-      const farmIds = new Set(Object.keys(farmCoordinates));
+    if (Object.keys(farmCoordinates).length !== farmLocations.length) {
+      const farmIds = new Set(farmLocations.map((farm) => farm.farmId));
       // for each farm that is not present in the db, get its location using the google api
-      for (let id in farmLocations) {
-        if (!farmIds.has(id)) {
-          const [lat, lon] = getLatLon(farmCoordinates[id])
-          const formattedLocation = getPlaceName(lat, lon);
-          // add the new farms to the db
-          await prisma.farmLocations.create({
-            data: {
-              farmId: id,
-              location: formattedLocation
-            },
-          });
+      for (let id in farmCoordinates) {
+        if (farmIds.has(Number(id))) {
+          continue;
         }
+        const [lat, lon] = farmCoordinates[id];
+
+        const formattedLocation = await getPlaceName(lat, lon);
+        // add the new farms to the db
+        await prisma.farmLocations.create({
+          data: {
+            farmId: Number(id),
+            location: formattedLocation
+          },
+        });
       }
       // Get the locations of all the farms from the db
       farmLocations = await prisma.farmLocations.findMany({});
     }
 
-    return NextResponse.json({ farmLocations });
+    const locationsObj:any = {};
+    farmLocations.forEach((farm) => {
+      locationsObj[farm.farmId] = farm.location;
+    });
+
+    return NextResponse.json({ farmLocations: locationsObj });
   } catch (error: any) {
     console.error(error); // Log the error for debugging
     return NextResponse.json({ error: error.message }, { status: 500 }); // Return error response with status code 500

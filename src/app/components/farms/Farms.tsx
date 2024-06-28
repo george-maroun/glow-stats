@@ -27,6 +27,21 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
   const [mapZoom, setMapZoom] = useState<number>(4);
   const [view, setView] = useState<string>('map'); // State to manage the selected view
   const [protocolFeesByFarm, setProtocolFeesByFarm] = useState<{[key: string]: number;} | null>(null);
+  const [farmLocations, setFarmLocations] = useState<any>(null);
+
+  useEffect(() => {
+    const getFarmLocations = async () => {
+      try {
+        const response = await fetch('api/locationData');
+        const locations = await response.json();
+        setFarmLocations(locations.farmLocations);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getFarmLocations();
+  }, []);
+
 
   useEffect(() => {
     const getProtocolFeesByFarm = async () => {
@@ -118,6 +133,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
               handleSelectFarm={setSelectedFarm}
               protocolFeesByFarm={protocolFeesByFarm}
               selectedFarm={selectedFarm}
+              farmLocations={farmLocations}
             />
           )}
         </div>
@@ -128,6 +144,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
           weeklyFarmCount={weeklyFarmCount}
           weeklyDataByFarm={weeklyDataByFarm}
           handleResetFarmSelection={handleResetFarmSelection}
+          farmLocations={farmLocations}
         />
       </div>
     </>
