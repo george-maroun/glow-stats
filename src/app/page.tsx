@@ -33,16 +33,18 @@ export default function Home() {
 
   const [AllFarmsInfo, setAllFarmsInfo] = useState<any>({});
 
-  // const [time, setTime] = useState<string>('');
+  const [time, setTime] = useState<string>('');
 
-  // useEffect(() => {
-  //   const fetchTime = async () => {
-  //     const res = await fetch('/api/testRoute', { cache: 'no-store' });
-  //     const data = await res.json();
-  //     setTime(data.time);
-  //   }
-  //   fetchTime();
-  // }, []);
+  useEffect(() => {
+    const fetchTime = async () => {
+      const res = await fetch('/api/testRoute', { cache: 'no-store' });
+      const data = await res.json();
+      setTime(data.time);
+    }
+    fetchTime();
+  }, []);
+
+  console.log('time', time);
 
   // Get all data
   useEffect(() => {
