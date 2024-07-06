@@ -33,16 +33,16 @@ export default function Home() {
 
   const [AllFarmsInfo, setAllFarmsInfo] = useState<any>({});
 
-  const [time, setTime] = useState<string>('');
+  // const [time, setTime] = useState<string>('');
 
-  useEffect(() => {
-    const fetchTime = async () => {
-      const res = await fetch('/api/testRoute', { cache: 'no-store' });
-      const data = await res.json();
-      setTime(data.time);
-    }
-    fetchTime();
-  }, []);
+  // useEffect(() => {
+  //   const fetchTime = async () => {
+  //     const res = await fetch('/api/testRoute', { cache: 'no-store' });
+  //     const data = await res.json();
+  //     setTime(data.time);
+  //   }
+  //   fetchTime();
+  // }, []);
 
   // Get all data
   useEffect(() => {
@@ -171,7 +171,7 @@ export default function Home() {
       <div className='mt-4 mb-4 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
         <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glowlabs.org/#about'>Glow Protocol</a>.</div>
       </div>
-      <div>{time}</div>
+      {/* <div>time {time}</div> */}
       <div 
         id='green-section' 
         className='lg:h-60 flex lg:flex-row justify-between lg:gap-0 flex-col mb-4 bg-[#A0DF01]' 

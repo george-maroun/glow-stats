@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -91,6 +91,7 @@ async function fetchWeeklyData(startWeek = 0) {
         const farmId = farm.shortId;
 
         if (!currentFarmIdsSet.has(farmId)) {
+          console.log(farmId)
           continue;
         }
 
