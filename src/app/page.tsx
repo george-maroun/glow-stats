@@ -162,7 +162,6 @@ export default function Home() {
     return Math.round(equivalentInTrees).toLocaleString();
   };
 
-  console.log(time);
 
   return (
     <FarmsInfoContext.Provider value={AllFarmsInfo}>
