@@ -37,7 +37,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchTime = async () => {
-      const res = await fetch('/api/testRoute', { cache: 'no-store' });
+      const res = await fetch('/api/testRoute');
       const data = await res.json();
       setTime(data.time);
     }
