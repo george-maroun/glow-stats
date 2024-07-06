@@ -162,14 +162,16 @@ export default function Home() {
     return Math.round(equivalentInTrees).toLocaleString();
   };
 
+  console.log(time);
 
   return (
     <FarmsInfoContext.Provider value={AllFarmsInfo}>
-      <div>{time}</div>
+      
     <main className='w-full' style={{maxWidth: "1244px"}}> 
       <div className='mt-4 mb-4 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
         <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glowlabs.org/#about'>Glow Protocol</a>.</div>
       </div>
+      <div>{time}</div>
       <div 
         id='green-section' 
         className='lg:h-60 flex lg:flex-row justify-between lg:gap-0 flex-col mb-4 bg-[#A0DF01]' 
