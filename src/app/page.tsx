@@ -167,8 +167,8 @@ export default function Home() {
     <FarmsInfoContext.Provider value={AllFarmsInfo}>
       
     <main className='w-full' style={{maxWidth: "1244px"}}> 
-      <div className='mt-4 mb-4 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
-        <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glow.org/'>Glow Protocol</a>.</div>
+      <div className='mt-2 mb-0 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
+        {/* <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glow.org/'>Glow Protocol</a>.</div> */}
       </div>
       {/* <div>time {time}</div> */}
       <div 
@@ -249,8 +249,8 @@ export default function Home() {
       </div>
 
       <div className='h-8'></div>
-      <div className='h-10'></div>
-      <div className='text-4xl mb-8'>Explore Farms</div>
+      <div id='farms' className='h-10'></div>
+      <div  className='text-4xl mb-8'>Explore Farms</div>
 
       
       <Farms 
@@ -261,8 +261,8 @@ export default function Home() {
       />
       <div id='divider' className='h-8'></div>
 
-      <div id='divider' className='h-10'></div>
-      <div className='text-4xl mb-8'>Financials</div>
+      <div id='financials' className='h-10'></div>
+      <div  className='text-4xl mb-8 '>Financials</div>
 
       <div className='mt-4'>
 

@@ -2,6 +2,14 @@
 import { ReactNode } from "react";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { MdOutlineQueryStats } from "react-icons/md";
+import { IoSunnyOutline, IoSunnySharp } from "react-icons/io5";
+import { GiStripedSun } from "react-icons/gi";
+import { FaSun } from "react-icons/fa";
+import { PiSunHorizonFill } from "react-icons/pi";
+import { TbSunLow } from "react-icons/tb";
+import { GiBoomerangSun } from "react-icons/gi";
+import { GiUbisoftSun } from "react-icons/gi";
 
 interface Props {
   children?: ReactNode
@@ -13,29 +21,51 @@ const navItems = [
     description: 'Main dashboard for Glow stats',
     path: '/'
   },
+  // {
+  //   label: 'Farms',
+  //   description: 'Main dashboard for Glow stats',
+  //   path: '#farms'
+  // },
+  // {
+  //   label: 'Financials',
+  //   description: 'Main dashboard for Glow stats',
+  //   path: '#financials'
+  // },
   {
     label: 'Content',
     description: 'Media content for Glow',
     path: '/content'
   },
+  // {
+  //   label: 'About',
+  //   description: 'Media content for Glow',
+  //   path: 'https://glow.org/'
+  // },
 ];
 
 export const Navbar: React.FC<Props> = ({ children }) => {
   const currentPath = usePathname();
 
   return (
-    <div className={`relative font-manrope min-h-screen bg-beige items-center justify-start p-4`}>
+    <div className={`relative font-manrope bg-beige items-center justify-start pb-12 pt-2 px-4`}>
       <header 
-        className='w-full mb-2 flex flex-row justify-between items-end z-40 relative gap-3'
+        className='w-full mb-2 flex flex-row items-center justify-between items-end z-40 relative lg:py-5 py-6 pl-4 pr-4 border border-[#E5E5E5] rounded-[15px]'
+        style={{backgroundColor: "#ffffff"}}
       >
         <Link href={'/'}>
-          <div className={`text-2xl mr-2`}>Glow Stats</div>
+          <div className='lg:text-3xl text-2xl mr-2 flex flex-row gap-2 items-center'>
+            {/* <MdOutlineQueryStats/> */}<IoSunnySharp />
+            Glow Stats
+            
+          </div>
         </Link>
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-6">
           {navItems.map((item, index) => (
             <Link key={index} href={item.path}>
               <div 
-                className={`text-lg ${currentPath === item.path ? "underline decoration-1 underline-offset-1" : ""}`}
+                className={`text-lg ${currentPath === item.path ? "underline decoration-1 underline-offset-4" : ""}`}
+                // className={`text-lg `}
+
               >
                 {item.label}
               </div>  
@@ -51,6 +81,7 @@ export const Navbar: React.FC<Props> = ({ children }) => {
       <div id='divider' className='h-10'></div>
 
       <div className='mt-4 mb-6 text-md align-center' style={{color: "#777777"}}>
+        <p className='text-center mb-4'>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glow.org/'>Glow Protocol.</a></p>
         <p className='text-center'>Learn more at <a className='underline' target="_blank" href='https://glow.org/'>glow.org</a> and <a className='underline' target="_blank" href='https://twitter.com/glowFND/'>@GlowFND.</a></p>
       </div>
     </div>
