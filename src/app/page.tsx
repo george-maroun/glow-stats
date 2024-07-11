@@ -11,8 +11,10 @@ import TokenCard from './components/TokenCard';
 import Farms from './components/farms/Farms';
 import FeesCard from './components/FeesCard';
 import TokenStats from './components/TokenStats';
+import FAQ from './components/faq';
 // import { IPanelCountPerFarm } from './types';
 import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
+
 
 export default function Home() {
   const [tokenHolderCount, setTokenHolderCount] = useState(0);
@@ -278,6 +280,15 @@ export default function Home() {
           <FeesCard />
         </div>
 
+      </div>
+
+      <div id='divider' className='h-8'></div>
+
+      <div id='FAQ' className='h-10'></div>
+      <div  className='text-4xl mb-8 '>FAQ</div>
+
+      <div className='mt-4'>
+        <FAQ />
       </div>
 
     </main>

@@ -28,7 +28,7 @@ export const Navbar: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollPos = window.pageYOffset;
+      const currentScrollPos = window.scrollY;
       setHidden(scrollPosition < currentScrollPos && currentScrollPos > 100);
       setScrollPosition(currentScrollPos);
     };
@@ -40,29 +40,31 @@ export const Navbar: React.FC<Props> = ({ children }) => {
   }, [scrollPosition]);
 
   return (
-    <div className={`relative font-manrope bg-beige items-center justify-start pb-12 pt-2 px-4`}>
-      <header 
-        className={`w-full mb-2 flex flex-row items-center justify-between z-40 relative lg:py-5 py-6 pl-4 pr-4 border border-[#E5E5E5] rounded-[15px] transition-transform duration-500 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
-        style={{backgroundColor: "#ffffff"}}
-      >
-        <Link href={'/'}>
-          <div className='lg:text-3xl text-2xl mr-2 flex flex-row gap-2 items-center'>
-            <IoSunnySharp />
-            Glow Stats
+    <div className={`relative font-manrope bg-beige items-center justify-start pb-12 pt-2 px-4`} >
+      <div className="max-w-[1244px] mx-auto">
+        <header 
+          className={`w-full mb-2 flex flex-row items-center justify-between z-40 relative lg:py-5 py-6 pl-4 pr-4 border border-[#E5E5E5] rounded-[15px] transition-transform duration-500 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
+          style={{backgroundColor: "#ffffff"}}
+        >
+          <Link href={'/'}>
+            <div className='lg:text-3xl text-2xl mr-2 flex flex-row gap-2 items-center'>
+              <IoSunnySharp />
+              Glow Stats
+            </div>
+          </Link>
+          <div className="flex flex-row gap-6">
+            {navItems.map((item, index) => (
+              <Link key={index} href={item.path}>
+                <div 
+                  className={`text-xl ${currentPath === item.path ? "underline decoration-1 underline-offset-4" : ""}`}
+                >
+                  {item.label}
+                </div>  
+              </Link>
+            ))}
           </div>
-        </Link>
-        <div className="flex flex-row gap-6">
-          {navItems.map((item, index) => (
-            <Link key={index} href={item.path}>
-              <div 
-                className={`text-lg ${currentPath === item.path ? "underline decoration-1 underline-offset-4" : ""}`}
-              >
-                {item.label}
-              </div>  
-            </Link>
-          ))}
-        </div>
-      </header>
+        </header>
+      </div>
       <main className={`flex justify-center transition-opacity duration-300 ease-in-out z-20`}>
         {children}
       </main>
