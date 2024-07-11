@@ -25,7 +25,9 @@ export const Navbar: React.FC<Props> = ({ children }) => {
 
   return (
     <div className={`relative font-manrope min-h-screen bg-beige items-center justify-start p-4`}>
-      <header className='w-full mb-2 flex flex-row justify-between items-end z-40 relative gap-3'>
+      <header 
+        className='w-full mb-2 flex flex-row justify-between items-end z-40 relative gap-3'
+      >
         <Link href={'/'}>
           <div className={`text-2xl mr-2`}>Glow Stats</div>
         </Link>

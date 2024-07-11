@@ -11,7 +11,7 @@ import TokenCard from './components/TokenCard';
 import Farms from './components/farms/Farms';
 import FeesCard from './components/FeesCard';
 import TokenStats from './components/TokenStats';
-import { IPanelCountPerFarm } from './types';
+// import { IPanelCountPerFarm } from './types';
 import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
 
 export default function Home() {
@@ -35,21 +35,19 @@ export default function Home() {
 
   const [time, setTime] = useState<string>('');
 
-  useEffect(() => {
-    const fetchTime = async () => {
-      const res = await fetch('/api/testRoute');
-      const data = await res.json();
-      setTime(data.time);
-    }
-    fetchTime();
-  }, []);
-
-  console.log('time', time);
+  // useEffect(() => {
+  //   const fetchTime = async () => {
+  //     const res = await fetch('/api/testRoute');
+  //     const data = await res.json();
+  //     setTime(data.time);
+  //   }
+  //   fetchTime();
+  // }, []);
 
   // Get all data
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetch('/api/allData', { cache: 'no-store' });
+      const data = await fetch('/api/allData');
       const allData = await data.json();
       setWeeklyCarbonCredits(allData.weeklyCarbonCredit);
       setWeeklyFarmCount(allData.weeklyFarmCount);
@@ -170,7 +168,7 @@ export default function Home() {
       
     <main className='w-full' style={{maxWidth: "1244px"}}> 
       <div className='mt-4 mb-4 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
-        <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glowlabs.org/#about'>Glow Protocol</a>.</div>
+        <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glow.org/'>Glow Protocol</a>.</div>
       </div>
       {/* <div>time {time}</div> */}
       <div 
@@ -179,21 +177,21 @@ export default function Home() {
         style={{borderRadius: "0.75rem"}}
       >
         <div id='left-subsection' className='flex flex-col lg:w-6/12'>
-          <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-32'>
+          <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-28'>
             <div className='text-2xl'>
               Carbon Credits Created
             </div>
-            <div className='text-5xl' style={{color: "#374151"}}>
-              {carbonCredits ? Number(carbonCredits).toFixed(1) : 'loading...'}
+            <div className='lg:text-5xl text-4xl' style={{color: "#374151"}}>
+              {carbonCredits ? Number(carbonCredits).toFixed(1) : 'Loading...'}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
-          <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-32'>
+          <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-28'>
             <div className='text-2xl'>
               Total Power Produced
             </div>
-            <div className='text-5xl' style={{color: "#374151"}}>
-              {totalPowerProduced !== '0' ? `${totalPowerProduced} kWh` : 'loading...'}
+            <div className='lg:text-5xl text-4xl' style={{color: "#374151"}}>
+              {totalPowerProduced !== '0' ? `${totalPowerProduced} kWh` : 'Loading...'}
             </div>
           </div>
         </div>
@@ -202,20 +200,20 @@ export default function Home() {
         <div id='right-subsection' className='flex lg:flex-row flex-col grow'>
           <div className='flex flex-col lg:w-6/12 w-full'>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='font-semibold text-md'>
-                ACTIVE SOLAR FARMS
+              <div className='lg:font-semibold lg:text-lg text-2xl'>
+                Active Solar Farms
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                {weeklyFarmCount.length ? weeklyFarmCount[weeklyFarmCount.length - 1].value : "loading..."}
+                {weeklyFarmCount.length ? weeklyFarmCount[weeklyFarmCount.length - 1].value : "Loading..."}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='font-semibold text-md'>
-                CO2 CAPTURE EQUIVALENT IN TREES
+              <div className='lg:font-semibold lg:text-lg text-2xl'>
+                CO2 Capture Equivalent in Trees
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                {getEquivalentInTrees() == 0 ? 'loading...' : getEquivalentInTrees()}
+                {getEquivalentInTrees() == 0 ? 'Loading...' : getEquivalentInTrees()}
               </div>
             </div>
           </div>
@@ -225,20 +223,20 @@ export default function Home() {
 
           <div className='flex flex-col grow'>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='font-semibold text-md'>
-                SOLAR PANEL COUNT
+              <div className='lg:font-semibold lg:text-lg text-2xl'>
+                Solar Panel Count
               </div>
               <div className=' text-4xl text-[#374151]'>
-                {totalPanelCount ? totalPanelCount : 'loading...'}
+                {totalPanelCount ? totalPanelCount : 'Loading...'}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='font-semibold text-md'>
-                GLW TOKEN PRICE (UNI)
+              <div className='lg:font-semibold lg:text-lg text-2xl'>
+                Glow Token Price (UNI)
               </div>
               <div className=' text-4xl' style={{color: "#374151"}}>
-                {tokenPriceUniswap ? `$${tokenPriceUniswap}` : 'loading...'}
+                {tokenPriceUniswap ? `$${tokenPriceUniswap}` : 'Loading...'}
               </div>
             </div>
           </div>
