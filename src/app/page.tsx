@@ -285,7 +285,7 @@ export default function Home() {
       <div id='divider' className='h-8'></div>
 
       <div id='FAQ' className='h-10'></div>
-      <div  className='text-4xl mb-8 '>FAQ</div>
+      <div  className='text-4xl mb-8 '>Q&A</div>
 
       <div className='mt-4'>
         <FAQ />
