@@ -41,9 +41,9 @@ export const Navbar: React.FC<Props> = ({ children }) => {
 
   return (
     <div className={`relative font-manrope bg-beige items-center justify-start pb-12 pt-2 px-4`} >
-      <div className="max-w-[1244px] mx-auto">
+      <div className="max-w-[1246px] mx-auto">
         <header 
-          className={`w-full mb-2 flex flex-row items-center justify-between z-40 relative lg:py-5 py-6 pl-4 pr-4 border border-[#E5E5E5] rounded-[15px] transition-transform duration-500 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
+          className={`w-full mb-2 flex flex-row items-center justify-between z-40 relative lg:py-5 py-6 pl-4 pr-6 border border-[#E5E5E5] rounded-[15px] transition-transform duration-500 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
           style={{backgroundColor: "#ffffff"}}
         >
           <Link href={'/'}>
@@ -52,11 +52,11 @@ export const Navbar: React.FC<Props> = ({ children }) => {
               Glow Stats
             </div>
           </Link>
-          <div className="flex flex-row gap-6">
+          <div className="flex flex-row lg:gap-6 gap-4">
             {navItems.map((item, index) => (
               <Link key={index} href={item.path}>
                 <div 
-                  className={`text-xl ${currentPath === item.path ? "underline decoration-1 underline-offset-4" : ""}`}
+                  className={`lg:text-xl text-lg ${currentPath === item.path ? "underline decoration-2 underline-offset-4" : ""}`}
                 >
                   {item.label}
                 </div>  

@@ -8,7 +8,7 @@ interface QA {
 const qa: QA[] = [
   {
     question: "What is Glow?",
-    answer: "Glow is a crypto-economic protocol aimed at accelerating the transition to clean energy, particularly solar. It incentivizes the deployment of solar farms by rewarding them with cash and Glow tokens when they produce electricity. This approach aims to make solar energy economically viable where it might not be otherwise, ultimately creating an abundance of affordable clean power that can outcompete carbon-emitting energy sources."
+    answer: "Glow is a crypto-economic protocol accelerating the transition to clean energy, with a focus on solar power. Glow rewards solar farms with cash and tokens for producing electricity, making solar economically viable in more regions. The goal is to create abundant and affordable clean power to outcompete carbon-intensive energy sources."
   },
   {
     question: "How does Glow work?",
@@ -16,11 +16,11 @@ const qa: QA[] = [
   },
   {
     question: "What is a carbon credit?",
-    answer: "A carbon credit represents one metric ton of CO2 prevented from being emitted into the atmosphere. It's used to incentivize the reduction of global CO2 emissions."
+    answer: "A carbon credit is a tradable certificate that represents one metric tonne of CO2 (or an equivalent amount in other greenhouse gases) captured or prevented from entering the atmosphere. It is used to incentivize the reduction of global CO2 emissions."
   },
   {
     question: "Where does the demand for carbon credits come from?",
-    answer: "Demand for carbon credits primarily comes from companies, organizations, and governments seeking to offset greenhouse gas emissions and meet climate targets. This includes businesses with net-zero commitments, entities demonstrating environmental responsibility, participants in compliance markets, and individuals offsetting personal carbon footprints."
+    answer: "Carbon credits are purchased by various entities to offset emissions and meet climate targets. Buyers include corporations with net-zero or strict commitments, governments complying with international agreements, and environmentally conscious individuals offsetting personal carbon footprints."
   },
   {
     question: "What makes Glow Carbon Credits different?",
