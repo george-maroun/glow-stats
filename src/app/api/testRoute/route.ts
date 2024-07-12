@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-export const revalidate = 0;
 
 export async function GET() {
   const parisTime = await fetch("http://worldtimeapi.org/api/timezone/Europe/Paris", {next: { revalidate: 10 }});

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
-export const revalidate = 60;
+export const revalidate = 3600;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -24,25 +24,24 @@ const getRequestBody = (week: number) => ({
   include_unassigned_farms: false
 });
 
-const getCurrentFarmIds = async () => {
-  const requestBody = getRequestBody(maxTimeslotOffset);
-  const response = await fetch(BASE_URL, {
-    method: 'POST', 
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(requestBody)
-  });
+// const getCurrentFarmIds = async () => {
+//   const requestBody = getRequestBody(maxTimeslotOffset);
+//   const response = await fetch(BASE_URL, {
+//     method: 'POST', 
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify(requestBody)
+//   });
 
-  if (!response.ok) {
-    console.error(`HTTP error! status: ${response.status}`);
-    return [];
-  }
+//   if (!response.ok) {
+//     console.error(`HTTP error! status: ${response.status}`);
+//     return [];
+//   }
 
-  const data = await response.json();
-  return data.filteredFarms.map((farm: any) => farm.shortId);
-}
-
+//   const data = await response.json();
+//   return data.filteredFarms.map((farm: any) => farm.shortId);
+// }
 
 async function fetchWeeklyData(startWeek = 0) {
   const output: Output = {
@@ -53,10 +52,9 @@ async function fetchWeeklyData(startWeek = 0) {
     currentFarmIds: [],
   };
 
-  // Get the short ids of all the farms that are active in the current week
-  output.currentFarmIds = await getCurrentFarmIds();
+  const BAD_FARMS = [1, 6, 5, 7, 8, 13, 11, 25, 22, 23, 55, 100];
 
-  const currentFarmIdsSet = new Set(output.currentFarmIds);
+  const badFarmsSet = new Set(BAD_FARMS);
 
   for (let i = startWeek; i <= maxTimeslotOffset; i++) {
     const requestBody = getRequestBody(i);
@@ -83,6 +81,10 @@ async function fetchWeeklyData(startWeek = 0) {
       let powerOutput = 0;
       let totalPayments = 0;
 
+      if (i === maxTimeslotOffset) {
+        output.currentFarmIds = farmData.map((farm: any) => farm.shortId);
+      }
+
       for (let farm of farmData) {
         carbonCredits += farm.carbonCreditsProduced;
         powerOutput += farm.powerOutput;
@@ -90,8 +92,7 @@ async function fetchWeeklyData(startWeek = 0) {
 
         const farmId = farm.shortId;
 
-        if (!currentFarmIdsSet.has(farmId)) {
-          console.log(farmId)
+        if (badFarmsSet.has(farmId)) {
           continue;
         }
 
