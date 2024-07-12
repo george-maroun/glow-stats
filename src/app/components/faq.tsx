@@ -8,7 +8,7 @@ interface QA {
 const qa: QA[] = [
   {
     question: "What is Glow?",
-    answer: "Glow is a crypto-economic protocol aimed at accelerating the transition to clean energy, particularly solar. It incentivizes the deployment of solar farms by rewarding them with cash and Glow tokens when they produce carbon credits. This approach aims to make solar energy economically viable where it might not be otherwise, ultimately creating an abundance of affordable clean power that can outcompete carbon-emitting energy sources."
+    answer: "Glow is a crypto-economic protocol aimed at accelerating the transition to clean energy, particularly solar. It incentivizes the deployment of solar farms by rewarding them with cash and Glow tokens when they produce electricity. This approach aims to make solar energy economically viable where it might not be otherwise, ultimately creating an abundance of affordable clean power that can outcompete carbon-emitting energy sources."
   },
   {
     question: "How does Glow work?",
