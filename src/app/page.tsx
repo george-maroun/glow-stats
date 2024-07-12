@@ -180,19 +180,19 @@ export default function Home() {
       >
         <div id='left-subsection' className='flex flex-col lg:w-6/12'>
           <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-28'>
-            <div className='text-2xl'>
+            <div className='lg:text-2xl text-xl'>
               Carbon Credits Created
             </div>
-            <div className='lg:text-5xl text-4xl' style={{color: "#374151"}}>
+            <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
               {carbonCredits ? Number(carbonCredits).toFixed(1) : 'Loading...'}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
           <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-28'>
-            <div className='text-2xl'>
+            <div className='lg:text-2xl text-xl'>
               Total Power Produced
             </div>
-            <div className='lg:text-5xl text-4xl' style={{color: "#374151"}}>
+            <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
               {totalPowerProduced !== '0' ? `${totalPowerProduced} kWh` : 'Loading...'}
             </div>
           </div>
@@ -202,19 +202,19 @@ export default function Home() {
         <div id='right-subsection' className='flex lg:flex-row flex-col grow'>
           <div className='flex flex-col lg:w-6/12 w-full'>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='lg:font-semibold lg:text-lg text-2xl'>
+              <div className='lg:font-semibold lg:text-lg text-xl'>
                 Active Solar Farms
               </div>
-              <div className=' text-4xl' style={{color: "#374151"}}>
+              <div className='lg:text-4xl text-3xl' style={{color: "#374151"}}>
                 {weeklyFarmCount.length ? weeklyFarmCount[weeklyFarmCount.length - 1].value : "Loading..."}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='lg:font-semibold lg:text-lg text-2xl'>
+              <div className='lg:font-semibold lg:text-lg text-xl'>
                 CO2 Capture Equivalent in Trees
               </div>
-              <div className=' text-4xl' style={{color: "#374151"}}>
+              <div className='lg:text-4xl text-3xl' style={{color: "#374151"}}>
                 {getEquivalentInTrees() == 0 ? 'Loading...' : getEquivalentInTrees()}
               </div>
             </div>
@@ -225,19 +225,19 @@ export default function Home() {
 
           <div className='flex flex-col grow'>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='lg:font-semibold lg:text-lg text-2xl'>
+              <div className='lg:font-semibold lg:text-lg text-xl'>
                 Solar Panel Count
               </div>
-              <div className=' text-4xl text-[#374151]'>
+              <div className='lg:text-4xl text-3xl text-[#374151]'>
                 {totalPanelCount ? totalPanelCount : 'Loading...'}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
             <div className='p-3 grow flex flex-col justify-between h-28'>
-              <div className='lg:font-semibold lg:text-lg text-2xl'>
+              <div className='lg:font-semibold lg:text-lg text-xl'>
                 Glow Token Price (UNI)
               </div>
-              <div className=' text-4xl' style={{color: "#374151"}}>
+              <div className='lg:text-4xl text-3xl' style={{color: "#374151"}}>
                 {tokenPriceUniswap ? `$${tokenPriceUniswap}` : 'Loading...'}
               </div>
             </div>
@@ -285,11 +285,10 @@ export default function Home() {
       <div id='divider' className='h-8'></div>
 
       <div id='FAQ' className='h-10'></div>
-      <div  className='text-4xl mb-8 '>Q&A</div>
+      
+      <div  className='text-4xl'>Q&A</div>
+      <FAQ />
 
-      <div className='mt-4'>
-        <FAQ />
-      </div>
 
     </main>
     <Analytics />
