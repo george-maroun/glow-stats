@@ -8,7 +8,7 @@ interface QA {
 const qa: QA[] = [
   {
     question: "What is Glow?",
-    answer: "Glow is a crypto-economic protocol accelerating the transition to clean energy, with a focus on solar power. Glow rewards solar farms with cash and tokens for producing electricity, making solar economically viable in more regions. The goal is to create abundant and affordable clean power to outcompete carbon-intensive energy sources."
+    answer: "Glow is a crypto-economic protocol accelerating the transition to clean energy, with a focus on solar. Glow rewards solar farms with cash and tokens for producing electricity, making solar economically viable in more regions. The goal is to create abundant and affordable clean power to outcompete carbon-intensive energy sources."
   },
   {
     question: "How does Glow work?",
@@ -66,7 +66,7 @@ const FAQ: React.FC = () => {
               className="flex justify-between items-center cursor-pointer"
               onClick={() => toggleQuestion(index)}
             >
-              <h3 className="text-2xl font-lg">{item.question}</h3>
+              <h3 className="lg:text-2xl text-xl font-lg">{item.question}</h3>
               <button className="text-2xl focus:outline-none">
                 {openQuestions.has(index) ? '−' : '+'}
               </button>
@@ -76,7 +76,7 @@ const FAQ: React.FC = () => {
                 openQuestions.has(index) ? 'max-h-96' : 'max-h-0'
               }`}
             >
-              <p className="text-xl leading-relaxed opacity-80">{item.answer}</p>
+              <p className="lg:text-xl text-lg leading-relaxed opacity-80">{item.answer}</p>
             </div>
           </div>
         ))}
