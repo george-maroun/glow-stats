@@ -245,11 +245,12 @@ export default function Home() {
 
         </div>
       </div>
+  
       <div id='figures' className='flex lg:flex-row flex-col gap-2 lg:h-96'>
         <PowerCard weekCount={weekCount} weeklyTotalOutput={weeklyTotalOutput} labels={labels}/>
         <ImpactCard weekCount={weekCount} weeklyCarbonCredits={weeklyCarbonCredits} />
       </div>
-
+    
       <div className='h-8'></div>
       <div id='farms' className='h-10'></div>
       <div  className='text-4xl mb-8'>Explore Farms</div>

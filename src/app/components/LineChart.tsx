@@ -3,6 +3,7 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import Chart, { ChartOptions, ChartData } from 'chart.js/auto';
 import { CategoryScale, LinearScale, LogarithmicScale } from 'chart.js'; 
+import getDateForWeek from '../../../lib/utils/getDateForWeekHelper';
 Chart.register(CategoryScale, LinearScale, LogarithmicScale);
 
 interface LineChartProps {
@@ -64,7 +65,11 @@ const LineChart = (props: LineChartProps) => {
         callbacks: {
           title: function(tooltipItems: any) {
             let label = tooltipItems[0].label;
-            return `${interval} ${label}`;
+            if (interval === 'Date'){
+              return `${interval} ${label}`;
+            }
+            let date = getDateForWeek(parseInt(label));
+            return `Week ${label}\n(${date})`;
           },
         },
       },
@@ -83,15 +88,6 @@ const LineChart = (props: LineChartProps) => {
       borderColor: color || "rgb(34,197,94)",
       borderWidth: 2,
       pointRadius: 0,
-      // segment: {
-      //   borderDash: (ctx) => {
-      //     // Make the last segment dashed
-      //     if (ctx.p0DataIndex === data.datasets[0].data.length - 2) {
-      //       return [5, 5]; // Dash pattern [line length, gap length]
-      //     }
-      //     return undefined; // Default to solid line
-      //   },
-      // },
     }
   ];
   

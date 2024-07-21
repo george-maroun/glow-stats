@@ -6,8 +6,8 @@ const CounterRow = ({
   value2
 }: any) => {
   return (
-    <div className="flex flex-row h-4/12"> 
-      <div className="p-2 pb-1 pl-4 w-6/12">
+    <div className="flex flex-row lg:h-20 h-24"> 
+      <div className="flex flex-col justify-between p-2 pb-1 pl-4 w-6/12">
         <div className="text-gray mb-1">
           {title1}
         </div>
@@ -16,7 +16,7 @@ const CounterRow = ({
         </div>
       </div>
       <div className='w-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
-      <div className="p-2 pb-1 pr-4 w-6/12">
+      <div className="flex flex-col justify-between p-2 pb-1 pr-4 w-6/12">
         <div className="text-gray mb-1">
           {title2}
         </div>
@@ -48,7 +48,7 @@ const TokenStats = ({
       <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
       <div className="flex flex-col justify-between ">
         <CounterRow 
-          title1={"GLW Holders"}
+          title1={"Glow Token Holders"}
           value1={tokenHolderCount}
           title2={"Market Cap"}
           value2={marketCap ? marketCap.toLocaleString() : ''}
