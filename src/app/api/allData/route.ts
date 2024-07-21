@@ -16,6 +16,8 @@ interface Output {
 const maxTimeslotOffset = getWeeksSinceStart();
 const BASE_URL = process.env.FARM_STATS_URL || '';
 const GCA_SERVER_URL = process.env.GCA_SERVER_URL || '';
+const FARM_STATUS_URL = process.env.FARM_STATUS_URL || '';
+const DEFAULT_BANNED_FARMS = [1, 5, 8, 6, 7, 11, 13];
 
 const getRequestBody = (week: number) => ({
   urls: [GCA_SERVER_URL],
@@ -43,6 +45,30 @@ const getRequestBody = (week: number) => ({
 //   return data.filteredFarms.map((farm: any) => farm.shortId);
 // }
 
+// TODO:
+// Copy https://github.com/0xSimbo/fun-rust/tree/master/bindings into this dir
+// (TS types)
+
+
+
+const getBannedFarms = async (): Promise<number[]> => {
+  try {
+    const response = await fetch(FARM_STATUS_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.legacy
+      .filter((farm: { status: Record<string, unknown> }) => 'Banned' in farm.status)
+      .map((farm: { short_id: string }) => Number(farm.short_id));
+  } catch (error) {
+    console.error('Error fetching banned farms:', error);
+    return DEFAULT_BANNED_FARMS;
+  }
+};
+
+
 async function fetchWeeklyData(startWeek = 0) {
   const output: Output = {
     weeklyCarbonCredit: [],
@@ -52,9 +78,10 @@ async function fetchWeeklyData(startWeek = 0) {
     currentFarmIds: [],
   };
 
-  const BAD_FARMS = [1, 6, 5, 7, 8, 13, 11, 25, 22, 23, 55, 100];
 
-  const badFarmsSet = new Set(BAD_FARMS);
+  const BANNED_FARMS = await getBannedFarms();
+
+  const bannedFarmsSet = new Set(BANNED_FARMS);
 
   for (let i = startWeek; i <= maxTimeslotOffset; i++) {
     const requestBody = getRequestBody(i);
@@ -74,7 +101,6 @@ async function fetchWeeklyData(startWeek = 0) {
 
       const data = await response.json();
 
-      const activeFarms = data.numActiveFarms;
       const farmData = data.filteredFarms;
 
       let carbonCredits = 0;
@@ -85,6 +111,7 @@ async function fetchWeeklyData(startWeek = 0) {
         output.currentFarmIds = farmData.map((farm: any) => farm.shortId);
       }
 
+      let activeFarms = 0;
       for (let farm of farmData) {
         carbonCredits += farm.carbonCreditsProduced;
         powerOutput += farm.powerOutput;
@@ -92,9 +119,11 @@ async function fetchWeeklyData(startWeek = 0) {
 
         const farmId = farm.shortId;
 
-        if (badFarmsSet.has(farmId)) {
+        if (bannedFarmsSet.has(farmId)) {
           continue;
         }
+
+        activeFarms++;
 
         if (!output.weeklyDataByFarm[farmId]) {
           output.weeklyDataByFarm[farmId] = {

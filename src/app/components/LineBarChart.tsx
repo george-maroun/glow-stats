@@ -1,9 +1,8 @@
-'use client'
 import React from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js'; 
 import { Chart } from 'react-chartjs-2';
+import getDateForWeek from '../../../lib/utils/getDateForWeekHelper';
 
-// Register the components needed for our chart
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,13 +24,11 @@ interface LineChartProps {
 const LineBarChart = (props: LineChartProps) => {
   const { title, labels, dataPoints, styles } = props;
 
-  // Calculate cumulative data for the line chart
   const cumulativeData = dataPoints.reduce<number[]>((acc, curr, i) => [...acc, (acc[i - 1] || 0) + curr], []);
-
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Set to false to fill the container
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -41,14 +38,11 @@ const LineBarChart = (props: LineChartProps) => {
         mode: 'nearest',
         intersect: false,
         callbacks: {
-          title: function(tooltipItems:any) {
-            let label = tooltipItems[0].label;
-            return `Week ${label}`; // Customizing the title to prepend "Week"
+          title: function(tooltipItems: any) {
+            let weekNumber = tooltipItems[0].label;
+            let date = getDateForWeek(parseInt(weekNumber));
+            return `Week ${weekNumber}\n(${date})`;
           },
-          // If you want to customize the label displayed in the tooltip as well, uncomment and modify below
-          // label: function(tooltipItem) {
-          //   return `Your custom label text here: ${tooltipItem.formattedValue}`;
-          // },
         },
       },
     },
@@ -63,7 +57,7 @@ const LineBarChart = (props: LineChartProps) => {
         },
         ticks: {
           autoSkip: true,
-          maxTicksLimit: 10 // Adjust this number to control the maximum amount of labels displayed
+          maxTicksLimit: 10
         },
       },
       y: {
@@ -71,9 +65,7 @@ const LineBarChart = (props: LineChartProps) => {
         display: true,
         position: 'left',
       },
-      
     },
-    
   } as any;
 
   const data = {

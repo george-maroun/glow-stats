@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import ChartCounter from './ChartCounter';
+import React, { useMemo, useState } from 'react';
 import LineChart from './LineChart';
 import getPastMonthValues from '../../../lib/utils/getPastMonthValuesHelper';
 import TopValues from './TopValues';
@@ -34,9 +33,9 @@ const PowerCard = (props:PowerCardProps) => {
       <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
       
       <TopValues
-        title1={`Week ${weekCount} Output (so far)`} 
+        title1={`Week ${weekCount} (Current)`} 
         value1={currentWeekOutput && Number(currentWeekOutput).toFixed(0).toLocaleString() + " kWh"}
-        title2="Past Month Output"
+        title2="Past Month"
         value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)).toLocaleString() + " kWh"}
         title3="Equivalent in Homes"
         value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}

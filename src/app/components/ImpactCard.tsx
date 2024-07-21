@@ -1,10 +1,10 @@
 "use client"
 import LineBarChart from './LineBarChart';
-import ChartCounter from './ChartCounter';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import TopValues from './TopValues';
 
 import getWeeksSinceStart from '../../../lib/utils/currentWeekHelper';
+import getPastMonthValues from '../../../lib/utils/getPastMonthValuesHelper';
 export const fetchCache = 'force-no-store';
 export const dynamic = "force-dynamic";
 
@@ -39,39 +39,43 @@ export default function ImpactCard({ weekCount, weeklyCarbonCredits }: ImpactPro
   const [impactPowerPrice, setImpactPowerPrice] = useState<number>(0);
   const [impactMultiplier, setImpactMultiplier] = useState<number>(0);
 
-    const weeklyCarbonCreditsValues = weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
-    const currentWeekCarbonCredits = weeklyCarbonCreditsValues 
-    ? weeklyCarbonCreditsValues[weeklyCarbonCreditsValues.length - 1]
-    : 0;
+  const weeklyCarbonCreditsValues = weeklyCarbonCredits.map((obj:WeeklyCarbonCredits) => obj.value);
+  const currentWeekCarbonCredits = weeklyCarbonCreditsValues 
+  ? weeklyCarbonCreditsValues[weeklyCarbonCreditsValues.length - 1]
+  : 0;
 
-    // Get impact power price
-    useEffect(() => {
-      const fetchData = async () => {
-        const res = await fetch('/api/impactPowerPrice');
-        const data = await res.json();
-        setImpactPowerPrice(data.impactPowerPrice);
-      };
-      fetchData();
-    }, []);
+  // Get impact power price
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/impactPowerPrice');
+      const data = await res.json();
+      setImpactPowerPrice(data.impactPowerPrice);
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-      async function fetchImpactPowerCount() {
-        const response = await fetch('/api/impactPowerCount');
-        const data = await response.json();
-        setImpactPowerCount(data.impactPowerCount);
-      }
-      fetchImpactPowerCount();
-    }, []);
+  useEffect(() => {
+    async function fetchImpactPowerCount() {
+      const response = await fetch('/api/impactPowerCount');
+      const data = await response.json();
+      setImpactPowerCount(data.impactPowerCount);
+    }
+    fetchImpactPowerCount();
+  }, []);
 
-    // Get protocol fees per week
-    useEffect(() => {
-      const fetchData = async () => {
-        const data = await fetch('/api/protocolFeesPerWeek');
-        const protocolFees = await data.json();
-        setProtocolFeesPerWeek(protocolFees.protocolFeesPerWeek);
-      };
-      fetchData();
-    }, []);
+  // Get protocol fees per week
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetch('/api/protocolFeesPerWeek');
+      const protocolFees = await data.json();
+      setProtocolFeesPerWeek(protocolFees.protocolFeesPerWeek);
+    };
+    fetchData();
+  }, []);
+
+  const pastMonthOutput = useMemo(() => {
+    return getPastMonthValues(weeklyCarbonCreditsValues);
+  }, [weeklyCarbonCredits]);
 
   const labels = createLabels();
 
@@ -96,14 +100,14 @@ export default function ImpactCard({ weekCount, weeklyCarbonCredits }: ImpactPro
 
         <div id='right-figure' className='rounded-xl lg:h-96 h-auto border w-full' style={{backgroundColor: "white", borderColor: "rgb(220,220,220"}}>
           <div className='p-4 pb-2 text-2xl'>
-            Carbon Credits
+            Carbon Credits Created
           </div>
           <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
           <TopValues
-            title1={`Week ${weekCount} Carbon Credits`} 
+            title1={`Week ${weekCount} (Current)`} 
             value1={currentWeekCarbonCredits && Number(currentWeekCarbonCredits).toFixed(1)}
-            title2="Total USDC Committed"
-            value2={"27,393"}
+            title2="Past Month"
+            value2={pastMonthOutput.toFixed(1)}
             title3="Impact Multiplier"
             value3={impactMultiplier.toFixed(0)}
             isInfo3={true}
