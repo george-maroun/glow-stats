@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
+export const revalidate = 100;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -31,7 +32,9 @@ const getRequestBody = (week: number) => ({
 
 const getBannedFarms = async (): Promise<number[]> => {
   try {
-    const response = await fetch(FARM_STATUS_URL, {next: { revalidate: 100 }});
+    const response = await fetch(FARM_STATUS_URL, 
+      // {next: { revalidate: 100 }}
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -71,7 +74,7 @@ async function fetchWeeklyData(startWeek = 0) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody),
-        next: { revalidate: 100 }
+        // next: { revalidate: 100 }
       });
 
       if (!response.ok) {
@@ -160,5 +163,3 @@ export async function GET() {
   }
   return NextResponse.json(weeklyData);
 }
-
-// export const revalidate = 3600;
