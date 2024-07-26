@@ -1,5 +1,5 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
@@ -149,20 +149,15 @@ async function fetchWeeklyData(startWeek = 0) {
 }
 
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   let weeklyData;
   try {
     weeklyData = await fetchWeeklyData(0);
   } catch (error) {
     console.error('Error fetching weekly farm data:', error);
-    return NextResponse.json({ error: 'Error fetching weekly farm data' }, { status: 500 });
+    return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
-  
-  return NextResponse.json(weeklyData, {
-    headers: {
-      'Cache-Control': 's-maxage=3600, stale-while-revalidate'
-    }
-  });
+  return NextResponse.json(weeklyData);
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
