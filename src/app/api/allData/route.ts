@@ -1,9 +1,8 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
-export const revalidate = 3600;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -26,30 +25,9 @@ const getRequestBody = (week: number) => ({
   include_unassigned_farms: false
 });
 
-// const getCurrentFarmIds = async () => {
-//   const requestBody = getRequestBody(maxTimeslotOffset);
-//   const response = await fetch(BASE_URL, {
-//     method: 'POST', 
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify(requestBody)
-//   });
-
-//   if (!response.ok) {
-//     console.error(`HTTP error! status: ${response.status}`);
-//     return [];
-//   }
-
-//   const data = await response.json();
-//   return data.filteredFarms.map((farm: any) => farm.shortId);
-// }
-
 // TODO:
 // Copy https://github.com/0xSimbo/fun-rust/tree/master/bindings into this dir
 // (TS types)
-
-
 
 const getBannedFarms = async (): Promise<number[]> => {
   try {
@@ -171,13 +149,20 @@ async function fetchWeeklyData(startWeek = 0) {
 }
 
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   let weeklyData;
   try {
     weeklyData = await fetchWeeklyData(0);
   } catch (error) {
     console.error('Error fetching weekly farm data:', error);
-    return NextResponse.json({ error: 'Error fetching weekly farm data' });
+    return NextResponse.json({ error: 'Error fetching weekly farm data' }, { status: 500 });
   }
-  return NextResponse.json(weeklyData);
+  
+  return NextResponse.json(weeklyData, {
+    headers: {
+      'Cache-Control': 's-maxage=3600, stale-while-revalidate'
+    }
+  });
 }
+
+export const dynamic = 'force-dynamic';
