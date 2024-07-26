@@ -31,7 +31,7 @@ const getRequestBody = (week: number) => ({
 
 const getBannedFarms = async (): Promise<number[]> => {
   try {
-    const response = await fetch(FARM_STATUS_URL);
+    const response = await fetch(FARM_STATUS_URL, {next: { revalidate: 100 }});
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -70,7 +70,8 @@ async function fetchWeeklyData(startWeek = 0) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        next: { revalidate: 100 }
       });
 
       if (!response.ok) {
@@ -160,4 +161,4 @@ export async function GET() {
   return NextResponse.json(weeklyData);
 }
 
-export const revalidate = 3600;
+// export const revalidate = 3600;
