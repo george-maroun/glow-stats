@@ -6,8 +6,6 @@ import { IWeeklyDataByFarm } from '../../types';
 import type { NextRequest } from 'next/server';
 import { revalidatePath } from 'next/cache'
 
-// export const revalidate = 100;
-
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
   weeklyFarmCount: {week: number; value: number}[];
@@ -28,10 +26,6 @@ const getRequestBody = (week: number) => ({
   with_full_data: true,
   include_unassigned_farms: false
 });
-
-// TODO:
-// Copy https://github.com/0xSimbo/fun-rust/tree/master/bindings into this dir
-// (TS types)
 
 const getBannedFarms = async (): Promise<number[]> => {
   try {
@@ -54,8 +48,83 @@ const getBannedFarms = async (): Promise<number[]> => {
   }
 };
 
+async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
+  const requestBody = getRequestBody(week);
+  const response = await fetch(BASE_URL, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const farmData = data.filteredFarms;
+
+  let carbonCredits = 0;
+  let powerOutput = 0;
+  let totalPayments = 0;
+  let activeFarms = 0;
+  let weeklyDataByFarm: IWeeklyDataByFarm = {};
+  let currentFarmIds: number[] = [];
+
+  for (let farm of farmData) {
+    carbonCredits += farm.carbonCreditsProduced;
+    powerOutput += farm.powerOutput;
+    totalPayments += farm.weeklyPayment;
+
+    const farmId = farm.shortId;
+
+    if (bannedFarmsSet.has(farmId)) {
+      continue;
+    }
+
+    activeFarms++;
+
+    if (!weeklyDataByFarm[farmId]) {
+      weeklyDataByFarm[farmId] = {
+        powerOutputs: [],
+        carbonCredits: [],
+        weeklyPayments: [],
+        weeklyTokenRewards: [],
+        weeklyCashRewards: [],
+      };
+    }
+
+    weeklyDataByFarm[farmId].powerOutputs.push({ week, value: farm.powerOutput });
+    weeklyDataByFarm[farmId].carbonCredits.push({ week, value: farm.carbonCreditsProduced });
+    weeklyDataByFarm[farmId].weeklyPayments.push({ week, value: farm.weeklyPayment });
+
+    if (week === maxTimeslotOffset) {
+      currentFarmIds.push(farmId);
+    }
+  }
+
+  return {
+    week,
+    carbonCredits,
+    powerOutput,
+    activeFarms,
+    weeklyDataByFarm,
+    currentFarmIds,
+  };
+}
 
 async function fetchWeeklyData(startWeek = 0) {
+  const BANNED_FARMS = await getBannedFarms();
+  const bannedFarmsSet = new Set(BANNED_FARMS);
+
+  const weekPromises = [];
+  for (let i = startWeek; i <= maxTimeslotOffset; i++) {
+    weekPromises.push(fetchWeekData(i, bannedFarmsSet));
+  }
+
+  const weekResults = await Promise.all(weekPromises);
+
   const output: Output = {
     weeklyCarbonCredit: [],
     weeklyFarmCount: [],
@@ -64,102 +133,43 @@ async function fetchWeeklyData(startWeek = 0) {
     currentFarmIds: [],
   };
 
+  for (const result of weekResults) {
+    output.weeklyCarbonCredit.push({ week: result.week, value: result.carbonCredits });
+    output.weeklyFarmCount.push({ week: result.week, value: result.activeFarms });
+    output.weeklyTotalOutput.push({ week: result.week, value: result.powerOutput });
 
-  const BANNED_FARMS = await getBannedFarms();
-
-  const bannedFarmsSet = new Set(BANNED_FARMS);
-
-  for (let i = startWeek; i <= maxTimeslotOffset; i++) {
-    const requestBody = getRequestBody(i);
-
-    try {
-      const response = await fetch(BASE_URL, {
-        method: 'POST', 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody),
-        // next: { revalidate: 100 }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    for (const [farmId, farmData] of Object.entries(result.weeklyDataByFarm)) {
+      if (!output.weeklyDataByFarm[farmId]) {
+        output.weeklyDataByFarm[farmId] = {
+          powerOutputs: [],
+          carbonCredits: [],
+          weeklyPayments: [],
+          weeklyTokenRewards: [],
+          weeklyCashRewards: [],
+        };
       }
+      output.weeklyDataByFarm[farmId].powerOutputs.push(...farmData.powerOutputs);
+      output.weeklyDataByFarm[farmId].carbonCredits.push(...farmData.carbonCredits);
+      output.weeklyDataByFarm[farmId].weeklyPayments.push(...farmData.weeklyPayments);
+    }
 
-      const data = await response.json();
-
-      const farmData = data.filteredFarms;
-
-      let carbonCredits = 0;
-      let powerOutput = 0;
-      let totalPayments = 0;
-
-      if (i === maxTimeslotOffset) {
-        output.currentFarmIds = farmData.map((farm: any) => farm.shortId);
-      }
-
-      let activeFarms = 0;
-      for (let farm of farmData) {
-        carbonCredits += farm.carbonCreditsProduced;
-        powerOutput += farm.powerOutput;
-        totalPayments += farm.weeklyPayment;
-
-        const farmId = farm.shortId;
-
-        if (bannedFarmsSet.has(farmId)) {
-          continue;
-        }
-
-        activeFarms++;
-
-        if (!output.weeklyDataByFarm[farmId]) {
-          output.weeklyDataByFarm[farmId] = {
-            powerOutputs: [],
-            carbonCredits: [],
-            weeklyPayments: [],
-            weeklyTokenRewards: [],
-            weeklyCashRewards: [],
-          };
-        }
-
-        output.weeklyDataByFarm[farmId].powerOutputs.push({ week: i, value: farm.powerOutput });
-        output.weeklyDataByFarm[farmId].carbonCredits.push({ week: i, value: farm.carbonCreditsProduced });
-        output.weeklyDataByFarm[farmId].weeklyPayments.push({ week: i, value: farm.weeklyPayment });
-      }
-
-      output.weeklyCarbonCredit.push({ week: i, value: carbonCredits });
-
-      // Add the weekly farm count to the output object
-      output.weeklyFarmCount.push({ week: i, value: activeFarms });
-
-      output.weeklyTotalOutput.push({ week: i, value: powerOutput });
-      
-
-    } catch (error) {
-      console.error(`Error fetching data for week ${i}:`, error);
-      // Continue processing the next weeks even if one week fails
+    if (result.week === maxTimeslotOffset) {
+      output.currentFarmIds = result.currentFarmIds;
     }
   }
 
-  // Get weekly token rewards
   const weeklyTokenRewards = calculateWeeklyTokenRewards(output.weeklyDataByFarm);
+  const weeklyCashRewards = calculateWeeklyCashRewards(output.weeklyDataByFarm);
 
   for (let farmId in weeklyTokenRewards) {
     output.weeklyDataByFarm[farmId].weeklyTokenRewards = weeklyTokenRewards[farmId].weeklyTokenRewards;
-  }
-
-  const weeklyCashRewards = calculateWeeklyCashRewards(output.weeklyDataByFarm);
-
-  for (let farmId in weeklyCashRewards) {
     output.weeklyDataByFarm[farmId].weeklyCashRewards = weeklyCashRewards[farmId].weeklyCashRewards;
   }
 
   return output;
 }
 
-
 export async function GET(request: NextRequest) {
-
   const authHeader = request.headers.get('authorization');
   
   if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
@@ -167,13 +177,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({Revalidated: true});
   }
 
-  let weeklyData;
   try {
-    weeklyData = await fetchWeeklyData(0);
+    const weeklyData = await fetchWeeklyData(0);
+    return NextResponse.json(weeklyData);
   } catch (error) {
     console.error('Error fetching weekly farm data:', error);
     return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
-  return NextResponse.json(weeklyData);
 }
-
