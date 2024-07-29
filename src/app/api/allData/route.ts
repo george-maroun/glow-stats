@@ -162,6 +162,7 @@ export async function GET(request: NextRequest) {
   
   if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
     revalidatePath('/api/allData');
+    return NextResponse.json({Revalidated: true});
   }
 
   let weeklyData;
