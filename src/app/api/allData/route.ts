@@ -5,7 +5,6 @@ import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCas
 import { IWeeklyDataByFarm } from '../../types';
 import type { NextRequest } from 'next/server';
 import { revalidatePath } from 'next/cache'
-
 // export const revalidate = 100;
 
 interface Output {
