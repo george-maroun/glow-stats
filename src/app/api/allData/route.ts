@@ -4,7 +4,8 @@ import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTo
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
 import type { NextRequest } from 'next/server';
-import { revalidatePath } from 'next/cache'
+export const revalidate = 600
+// import { revalidatePath } from 'next/cache'
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -170,13 +171,14 @@ async function fetchWeeklyData(startWeek = 0) {
   return output;
 }
 
-export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  
-  if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
-    revalidatePath('/api/allData');
-    return NextResponse.json({Revalidated: true});
-  }
+export async function GET() {
+
+  // This was used for the CRON job
+  // const authHeader = request.headers.get('authorization');
+  // if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
+  //   revalidatePath('/api/allData');
+  //   return NextResponse.json({Revalidated: true});
+  // }
 
   try {
     const weeklyData = await fetchWeeklyData(0);
