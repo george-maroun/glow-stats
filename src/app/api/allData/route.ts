@@ -35,16 +35,18 @@ const getRequestBody = (week: number) => ({
 
 const getBannedFarms = async (): Promise<number[]> => {
   try {
-    const response = await fetch(FARM_STATUS_URL, 
-      // {next: { revalidate: 100 }}
-    );
+    const response = await fetch(FARM_STATUS_URL);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     return data.legacy
-      .filter((farm: { status: Record<string, unknown> }) => 'Banned' in farm.status)
+      .filter((farm: { status: unknown }) => {
+        return typeof farm.status === 'object' && 
+               farm.status !== null && 
+               'Banned' in farm.status;
+      })
       .map((farm: { short_id: string }) => Number(farm.short_id));
   } catch (error) {
     console.error('Error fetching banned farms:', error);
