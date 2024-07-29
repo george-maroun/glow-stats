@@ -139,8 +139,9 @@ async function fetchWeeklyData(startWeek = 0) {
     output.weeklyTotalOutput.push({ week: result.week, value: result.powerOutput });
 
     for (const [farmId, farmData] of Object.entries(result.weeklyDataByFarm)) {
-      if (!output.weeklyDataByFarm[farmId]) {
-        output.weeklyDataByFarm[farmId] = {
+      const id = Number(farmId);
+      if (!output.weeklyDataByFarm[Number(id)]) {
+        output.weeklyDataByFarm[id] = {
           powerOutputs: [],
           carbonCredits: [],
           weeklyPayments: [],
@@ -148,9 +149,9 @@ async function fetchWeeklyData(startWeek = 0) {
           weeklyCashRewards: [],
         };
       }
-      output.weeklyDataByFarm[farmId].powerOutputs.push(...farmData.powerOutputs);
-      output.weeklyDataByFarm[farmId].carbonCredits.push(...farmData.carbonCredits);
-      output.weeklyDataByFarm[farmId].weeklyPayments.push(...farmData.weeklyPayments);
+      output.weeklyDataByFarm[id].powerOutputs.push(...farmData.powerOutputs);
+      output.weeklyDataByFarm[id].carbonCredits.push(...farmData.carbonCredits);
+      output.weeklyDataByFarm[id].weeklyPayments.push(...farmData.weeklyPayments);
     }
 
     if (result.week === maxTimeslotOffset) {
