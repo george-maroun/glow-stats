@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
-export const revalidate = 100;
+import type { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache'
+
+// export const revalidate = 100;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
@@ -150,7 +153,14 @@ async function fetchWeeklyData(startWeek = 0) {
 }
 
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+
+  const authHeader = request.headers.get('authorization');
+  
+  if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
+    revalidatePath('/api/allData');
+  }
+
   let weeklyData;
   try {
     weeklyData = await fetchWeeklyData(0);
