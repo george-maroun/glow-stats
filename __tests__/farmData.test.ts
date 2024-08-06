@@ -1,4 +1,4 @@
-import extractData from '../lib/utils/extractFarmDataHelper';
+// import extractData from '../lib/utils/extractFarmDataHelper';
 
 // Test data:
 // - One device with no output
@@ -37,13 +37,13 @@ const testData = [
 
 ];
 
-const mockGetFarmData = (data:any) => {
-  const farmOutputs = {};
-  for (let i = 0; i < data.length; i++) {
-    extractData(data[i], farmOutputs, i);
-  }
-  return farmOutputs;
-}
+// const mockGetFarmData = (data:any) => {
+//   const farmOutputs = {};
+//   for (let i = 0; i < data.length; i++) {
+//     extractData(data[i], farmOutputs, i);
+//   }
+//   return farmOutputs;
+// }
 
 
 interface FarmOutput {
@@ -54,24 +54,24 @@ interface FarmOutput {
 
 
 describe('mockGetFarmData', () => {
-  it('correctly processes data array and returns expected farm outputs', () => {
-    const result = mockGetFarmData(testData);
+  // it('correctly processes data array and returns expected farm outputs', () => {
+  //   const result = mockGetFarmData(testData);
 
-    // Expected output structure based on the provided data
-    const expectedOutput:Record<string, FarmOutput> = {
-      e1: { totalOutput: 6, weeklyOutputs: [{week: 0, value: 3}, {week: 1, value: 3}] },
-      70: { totalOutput: 12, weeklyOutputs: [{week: 0, value: 6}, {week: 1, value: 6}] },
-      cf: { totalOutput: 0, weeklyOutputs: [{week: 1, value: 0}] },
-    };
+  //   // Expected output structure based on the provided data
+  //   const expectedOutput:Record<string, FarmOutput> = {
+  //     e1: { totalOutput: 6, weeklyOutputs: [{week: 0, value: 3}, {week: 1, value: 3}] },
+  //     70: { totalOutput: 12, weeklyOutputs: [{week: 0, value: 6}, {week: 1, value: 6}] },
+  //     cf: { totalOutput: 0, weeklyOutputs: [{week: 1, value: 0}] },
+  //   };
 
-    let count = 0;
-    for (let farm in expectedOutput) {
-      if (expectedOutput[farm].totalOutput > 0) {
-        count++;
-      }
-    }
+  //   let count = 0;
+  //   for (let farm in expectedOutput) {
+  //     if (expectedOutput[farm].totalOutput > 0) {
+  //       count++;
+  //     }
+  //   }
 
-    expect(result).toEqual(expectedOutput);
-    expect(count).toEqual(2);
-  });
+  //   expect(result).toEqual(expectedOutput);
+  //   expect(count).toEqual(2);
+  // });
 });

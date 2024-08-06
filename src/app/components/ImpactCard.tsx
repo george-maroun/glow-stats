@@ -80,7 +80,10 @@ export default function ImpactCard({ weekCount, weeklyCarbonCredits }: ImpactPro
   const labels = createLabels();
 
   const getImpactMultiplier = () => {
-    const lifetimeProtocolFees = protocolFeesPerWeek.reduce((acc, curr:ProtocolFeesPerWeek) => acc + Number(curr.totalPayments), 0) / 1000000;
+    const lifetimeProtocolFees = (protocolFeesPerWeek?.reduce((acc, curr: ProtocolFeesPerWeek) => {
+      const payment = Number(curr.totalPayments);
+      return acc + (isNaN(payment) ? 0 : payment);
+    }, 0) ?? 0) / 1000000;
     const costOfImpactPower = impactPowerPrice;
     const totalImpactPower = impactPowerCount / 10 ** 12;
     return lifetimeProtocolFees / (costOfImpactPower * totalImpactPower);

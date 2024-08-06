@@ -1,5 +1,5 @@
 "use client"
-import { useMemo, useEffect, useState, use } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import 'react-tooltip/dist/react-tooltip.css'
 import { Analytics } from '@vercel/analytics/react';
 export const fetchCache = 'force-no-store';
@@ -12,7 +12,6 @@ import Farms from './components/farms/Farms';
 import FeesCard from './components/FeesCard';
 import TokenStats from './components/TokenStats';
 import FAQ from './components/faq';
-// import { IPanelCountPerFarm } from './types';
 import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
 
 
@@ -34,38 +33,50 @@ export default function Home() {
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
   const [AllFarmsInfo, setAllFarmsInfo] = useState<any>({});
-
-  const [time, setTime] = useState<string>('');
-
-  // useEffect(() => {
-  //   const fetchTime = async () => {
-  //     const res = await fetch('/api/testRoute');
-  //     const data = await res.json();
-  //     setTime(data.time);
-  //   }
-  //   fetchTime();
-  // }, []);
+    // Add loading states
+  const [isLoading, setIsLoading] = useState({
+    allData: true,
+    tokenStats: true,
+    allFarmsInfo: true,
+    impactPowerOwners: true,
+    impactPowerPrice: true,
+    tokenHolders: true,
+    tokenPrice: true
+  });
 
   // Get all data
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetch('/api/allData');
-      const allData = await data.json();
-      setWeeklyCarbonCredits(allData.weeklyCarbonCredit);
-      setWeeklyFarmCount(allData.weeklyFarmCount);
-      setWeeklyTotalOutput(allData.weeklyTotalOutput);
-      setWeeklyDataByFarm(allData.weeklyDataByFarm);
-      setCurrentFarmIds(allData.currentFarmIds);
+      try {
+        const data = await fetch('/api/allData');
+        const allData = await data.json();
+        setWeeklyCarbonCredits(allData.weeklyCarbonCredit || []);
+        setWeeklyFarmCount(allData.weeklyFarmCount || []);
+        setWeeklyTotalOutput(allData.weeklyTotalOutput || []);
+        setWeeklyDataByFarm(allData.weeklyDataByFarm || []);
+        setCurrentFarmIds(allData.currentFarmIds || []);
+      } catch (error) {
+        console.error('Failed to fetch all data:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, allData: false }));
+      }
     };
     fetchData();
   }, []);
 
+
   // Get token stats: circulating supply, total supply, market cap
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/glowStats');
-      const data = await res.json();
-      setTokenStats(data);
+      try {
+        const res = await fetch('/api/glowStats');
+        const data = await res.json();
+        setTokenStats(data);
+      } catch (error) {
+        console.error('Failed to fetch token stats:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, tokenStats: false }));
+      }
     };
     fetchData();
   }, []);
@@ -75,10 +86,16 @@ export default function Home() {
   // Retrieve allFarmsInfo (locations) in FarmList
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/allFarmsInfo');
-      const data = await res.json();
-      const allFarmsInfo = data.allFarmsInfo;
-      setAllFarmsInfo(allFarmsInfo);
+      try {
+        const res = await fetch('/api/allFarmsInfo');
+        const data = await res.json();
+        const allFarmsInfo = data.allFarmsInfo;
+        setAllFarmsInfo(allFarmsInfo);
+      } catch (error) {
+        console.error('Failed to fetch all farms info:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, allFarmsInfo: false }));
+      }
     };
     fetchData();
   }, []);
@@ -86,9 +103,15 @@ export default function Home() {
   // Get impact power owners
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetch('/api/impactPowerOwners');
-      const impactPowerOwners = await data.json();
-      setImpactPowerOwners(impactPowerOwners.count);
+      try {
+        const data = await fetch('/api/impactPowerOwners');
+        const impactPowerOwners = await data.json();
+        setImpactPowerOwners(impactPowerOwners.count);
+      } catch (error) {
+        console.error('Failed to fetch impact power owners:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, impactPowerOwners: false }));
+      }
     };
     fetchData();
   }, []);
@@ -96,20 +119,33 @@ export default function Home() {
   // Get impact power price
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/impactPowerPrice');
-      const data = await res.json();
-      setImpactPowerPrice(data.impactPowerPrice);
+      try {
+        const res = await fetch('/api/impactPowerPrice');
+        const data = await res.json();
+        setImpactPowerPrice(data.impactPowerPrice);
+      } catch (error) {
+        console.error('Failed to fetch impact power price:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, impactPowerPrice: false }));
+      }
     };
     fetchData();
   }, []);
 
   // Get token holder count
   useEffect(() => {
-    fetch('/api/tokenHolders')
-      .then(res => res.json())
-      .then(data => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/tokenHolders');
+        const data = await res.json();
         setTokenHolderCount(data.tokenHolderCount);
-      })
+      } catch (error) {
+        console.error('Failed to fetch token holders:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, tokenHolders: false }));
+      }
+    }
+    fetchData();
   }, []);
 
   // Get week count
@@ -140,26 +176,42 @@ export default function Home() {
         setTokenPriceUniswap(data.tokenPriceUniswap.toFixed(4));
       } catch (error) {
         console.error('Failed to fetch token prices:', error);
+      } finally {
+        setIsLoading(prev => ({ ...prev, tokenPrice: false }));
       }
     };
   
     fetchData();
   }, []);
 
-  const carbonCredits = weeklyCarbonCredits.reduce((acc, curr) => acc + curr.value, 0);
-  let totalPowerProduced = weeklyTotalOutput.reduce((acc, curr) => acc + curr.value, 0);
-  totalPowerProduced = Math.round(totalPowerProduced).toLocaleString();
+  const carbonCredits = useMemo(() => {
+    return Array.isArray(weeklyCarbonCredits) 
+      ? weeklyCarbonCredits.reduce((acc, curr) => acc + (curr.value || 0), 0)
+      : 0;
+  }, [weeklyCarbonCredits]);
 
-  const totalPanelCount:number = useMemo(() => {
+  const totalPowerProduced = useMemo(() => {
+    if (!Array.isArray(weeklyTotalOutput)) return '0';
+    const total = weeklyTotalOutput.reduce((acc, curr) => acc + (curr.value || 0), 0);
+    return Math.round(total).toLocaleString();
+  }, [weeklyTotalOutput]);
+
+  const totalPanelCount = useMemo(() => {
     if (!AllFarmsInfo) return 0;
-    return Object.values(AllFarmsInfo).reduce((acc:number, curr:any) => acc + curr.panelCount, 0);
+    return Object.values(AllFarmsInfo).reduce((acc, curr:any) => acc + (curr.panelCount || 0), 0);
   }, [AllFarmsInfo]);
+
+  const displayValue = (value:any, loadingState:boolean, formatter = (v:string | number) => v) => {
+    if (loadingState) return 'Loading...';
+    if (value === null || value === undefined || (Array.isArray(value) && value.length === 0)) return '0';
+    return formatter(value);
+  };
 
   const getEquivalentInTrees = () => {
     const CO2_ABSORPTION_PER_TREE_PER_WEEK_IN_KG = 0.19231;
     const KG_OF_CO2_PER_CARBON_CREDIT = 1000;
-    let lastWeekCarbonCredits = weeklyCarbonCredits[weeklyCarbonCredits.length - 2]?.value;
-    if (!lastWeekCarbonCredits) return 0;
+    if (!Array.isArray(weeklyCarbonCredits) || weeklyCarbonCredits.length < 2) return '0';
+    let lastWeekCarbonCredits = weeklyCarbonCredits[weeklyCarbonCredits.length - 2]?.value || 0;
     const equivalentInTrees = (Number(lastWeekCarbonCredits) * KG_OF_CO2_PER_CARBON_CREDIT) / CO2_ABSORPTION_PER_TREE_PER_WEEK_IN_KG;
     return Math.round(equivalentInTrees).toLocaleString();
   };
@@ -169,10 +221,6 @@ export default function Home() {
     <FarmsInfoContext.Provider value={AllFarmsInfo}>
       
     <main className='w-full' style={{maxWidth: "1244px"}}> 
-      <div className='mt-2 mb-0 text-md align-center flex flex-col lg:flex-row lg:gap-1' style={{color: "#777777"}}>
-        {/* <div className=''>Glow Stats is a community-built dashboard that aggregates metrics related to the <a className='underline' target="_blank" href='https://glow.org/'>Glow Protocol</a>.</div> */}
-      </div>
-      {/* <div>time {time}</div> */}
       <div 
         id='green-section' 
         className='lg:h-60 flex lg:flex-row justify-between lg:gap-0 flex-col mb-4 bg-[#A0DF01]' 
@@ -184,7 +232,7 @@ export default function Home() {
               Carbon Credits Created
             </div>
             <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
-              {carbonCredits ? Number(carbonCredits).toFixed(1) : 'Loading...'}
+              {displayValue(carbonCredits, isLoading.allData, (v) => Number(v).toFixed(1))}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
@@ -193,7 +241,7 @@ export default function Home() {
               Total Power Produced
             </div>
             <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
-              {totalPowerProduced !== '0' ? `${totalPowerProduced} kWh` : 'Loading...'}
+              {displayValue(totalPowerProduced, isLoading.allData, (v) => `${v.toLocaleString()} kWh`)}
             </div>
           </div>
         </div>
@@ -206,7 +254,7 @@ export default function Home() {
                 Active Solar Farms
               </div>
               <div className='lg:text-4xl text-3xl' style={{color: "#374151"}}>
-                {weeklyFarmCount.length ? weeklyFarmCount[weeklyFarmCount.length - 1].value : "Loading..."}
+                {displayValue(weeklyFarmCount[weeklyFarmCount.length - 1]?.value, isLoading.allData)}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
@@ -215,7 +263,7 @@ export default function Home() {
                 CO2 Capture Equivalent in Trees
               </div>
               <div className='lg:text-4xl text-3xl' style={{color: "#374151"}}>
-                {getEquivalentInTrees() == 0 ? 'Loading...' : getEquivalentInTrees()}
+                {displayValue(getEquivalentInTrees(), isLoading.allData, (v) => v.toLocaleString())}
               </div>
             </div>
           </div>
@@ -229,7 +277,7 @@ export default function Home() {
                 Solar Panel Count
               </div>
               <div className='lg:text-4xl text-3xl text-[#374151]'>
-                {totalPanelCount ? totalPanelCount : 'Loading...'}
+                {displayValue(totalPanelCount, isLoading.allFarmsInfo)}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>
@@ -238,7 +286,7 @@ export default function Home() {
                 Glow Token Price (UNI)
               </div>
               <div className='lg:text-4xl text-3xl' style={{color: "#374151"}}>
-                {tokenPriceUniswap ? `$${tokenPriceUniswap}` : 'Loading...'}
+                {displayValue(tokenPriceUniswap, isLoading.tokenPrice, (v) => `$${v}`)}
               </div>
             </div>
           </div>
