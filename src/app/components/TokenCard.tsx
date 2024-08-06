@@ -60,32 +60,31 @@ const TokenCard = ({glwPriceUni, glwPriceContract}:any) => {
     let priceDataPoints: number[] = [];
     let priceSlice: PriceData[] = [];
   
-    const getSlicedData = (dataCount:number): PriceData[] => {
+    const getSlicedData = (dataCount: number, interval: number): PriceData[] => {
       const dataSlice: PriceData[] = [];
-
-      let dataFrequency;
-      dataFrequency = Math.max(Math.round(glowPriceData.length / 50), 1);
-
-      for (let i = Math.max(glowPriceData.length - dataCount, 0); i < glowPriceData.length; i += dataFrequency) {
+      for (let i = Math.max(glowPriceData.length - dataCount, 0); i < glowPriceData.length; i += interval) {
         dataSlice.push(glowPriceData[i]);
       }
       return dataSlice;
     }
   
-    // Price is recorded every hour
     if (period['1D']) {
-      priceSlice = glowPriceData.slice(-12);
+      // Hourly data for 1 day (24 data points)
+      priceSlice = getSlicedData(24, 1);
     } else if (period['1W']) {
-      priceSlice = getSlicedData(7 * 24);
+      // Daily data for 1 week (7 data points)
+      priceSlice = getSlicedData(7 * 24, 24);
     } else if (period['1M']) {
-      priceSlice = getSlicedData(30 * 24);
+      // Daily data for 1 month (30 data points)
+      priceSlice = getSlicedData(30 * 24, 24);
     } else if (period['3M']) {
-      priceSlice = getSlicedData(90 * 24);
+      priceSlice = getSlicedData(90 * 24, 24);
     } else if (period['1Y']) {
-      priceSlice = getSlicedData(365 * 24);
+      priceSlice = getSlicedData(365 * 24, 24);
     } else if (period['Max']) {
-      priceSlice = getSlicedData(glowPriceData.length);
+      priceSlice = getSlicedData(glowPriceData.length, 24);
     }
+
     if (period['1D']) {
       labels = priceSlice.map(data => getISODateFromTimestamp(data.date).substring(11,16));
     } else {
@@ -97,8 +96,6 @@ const TokenCard = ({glwPriceUni, glwPriceContract}:any) => {
     setLabels(labels);
     setPriceDataPoints(priceDataPoints);
   }, [glowPriceData, period]);
-  
-
 
   const totalSupply = Math.round(tokenStats.totalSupply || 0);
   const circSupply = Math.round(tokenStats.circulatingSupply || 0);

@@ -65,8 +65,8 @@ const LineChart = (props: LineChartProps) => {
         callbacks: {
           title: function(tooltipItems: any) {
             let label = tooltipItems[0].label;
-            if (interval === 'Date'){
-              return `${interval} ${label}`;
+            if (interval === 'Date' || interval === 'Time') {
+              return `${interval}: ${label}`;
             }
             let date = getDateForWeek(parseInt(label));
             return `Week ${label}\n(${date})`;
