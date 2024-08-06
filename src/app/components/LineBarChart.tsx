@@ -24,7 +24,7 @@ interface LineChartProps {
 const LineBarChart = (props: LineChartProps) => {
   const { title, labels, dataPoints, styles } = props;
 
-  const cumulativeData = dataPoints.reduce<number[]>((acc, curr, i) => [...acc, (acc[i - 1] || 0) + curr], []);
+  const cumulativeData = dataPoints?.reduce<number[]>((acc, curr, i) => [...acc, (acc[i - 1] || 0) + curr], []) ?? [];
 
   const options = {
     responsive: true,

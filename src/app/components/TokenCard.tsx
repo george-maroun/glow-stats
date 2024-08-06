@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import LineChart from './LineChart';
-import ChartCounter from './ChartCounter';
 import TopValues from './TopValues';
 
 interface PriceData {
@@ -97,8 +96,8 @@ const TokenCard = ({glwPriceUni, glwPriceContract}:any) => {
     setPriceDataPoints(priceDataPoints);
   }, [glowPriceData, period]);
 
-  const totalSupply = Math.round(tokenStats.totalSupply || 0);
-  const circSupply = Math.round(tokenStats.circulatingSupply || 0);
+  // const totalSupply = Math.round(tokenStats.totalSupply || 0);
+  // const circSupply = Math.round(tokenStats.circulatingSupply || 0);
   const marketCap = Math.round(tokenStats.marketCap || 0);
 
   return (
