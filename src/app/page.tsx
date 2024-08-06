@@ -48,7 +48,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetch('/api/allDatau');
+        const data = await fetch('/api/allData');
         const allData = await data.json();
         setWeeklyCarbonCredits(allData.weeklyCarbonCredit || []);
         setWeeklyFarmCount(allData.weeklyFarmCount || []);
