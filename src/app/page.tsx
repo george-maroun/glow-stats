@@ -13,6 +13,7 @@ import FeesCard from './components/FeesCard';
 import TokenStats from './components/TokenStats';
 import FAQ from './components/faq';
 import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
+import { FarmInfo } from './types';
 
 
 export default function Home() {
@@ -32,7 +33,7 @@ export default function Home() {
   const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
-  const [allFarmsInfo, setAllFarmsInfo] = useState<any>({});
+  const [allFarmsInfo, setAllFarmsInfo] = useState<FarmInfo>({});
     // Add loading states
   const [isLoading, setIsLoading] = useState({
     allData: true,
@@ -195,7 +196,7 @@ export default function Home() {
     return Math.round(total).toLocaleString();
   }, [weeklyTotalOutput]);
 
-  const totalPanelCount = useMemo(() => {
+  const totalPanelCount: number = useMemo(() => {
     if (!allFarmsInfo) return 0;
     return Object.values(allFarmsInfo).reduce((acc, curr:any) => acc + (curr.panelCount || 0), 0);
   }, [allFarmsInfo]);
@@ -276,7 +277,7 @@ export default function Home() {
                 Solar Panel Count
               </div>
               <div className='lg:text-4xl text-3xl text-[#374151]'>
-                {displayValue(totalPanelCount, isLoading.allFarmsInfo)}
+                {displayValue(totalPanelCount.toLocaleString(), isLoading.allFarmsInfo)}
               </div>
             </div>
             <div className="h-px w-full bg-beige"></div>

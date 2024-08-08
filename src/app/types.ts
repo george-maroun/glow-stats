@@ -22,3 +22,11 @@ export interface IWeeklyDataByFarm {
 export interface IPanelCountPerFarm {
   [key: string]: number;
 }
+
+export interface FarmInfo {
+  farmName: string;
+  panelCount: number;
+  location: string;
+  averageSunlightPerDay: number;
+  protocolFee: number;
+}
