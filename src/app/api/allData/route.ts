@@ -171,46 +171,46 @@ async function fetchWeeklyData(startWeek = 0) {
   return output;
 }
 
-// export async function GET() {
-
-//   // This was used for the CRON job
-//   // const authHeader = request.headers.get('authorization');
-//   // if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
-//   //   revalidatePath('/api/allData');
-//   //   return NextResponse.json({Revalidated: true});
-//   // }
-
-//   try {
-//     const weeklyData = await fetchWeeklyData(0);
-//     return NextResponse.json(weeklyData);
-//   } catch (error) {
-//     console.error('Error fetching weekly farm data:', error);
-//     return NextResponse.json({ error: 'Error fetching weekly farm data' });
-//   }
-// }
-
 export async function GET() {
+
+  // This was used for the CRON job
+  // const authHeader = request.headers.get('authorization');
+  // if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
+  //   revalidatePath('/api/allData');
+  //   return NextResponse.json({Revalidated: true});
+  // }
+
   try {
     const weeklyData = await fetchWeeklyData(0);
-    
-    // Convert the response to a JSON string
-    const jsonResponse = JSON.stringify(weeklyData);
-    
-    // Calculate the size of the response
-    const responseSize = Buffer.byteLength(jsonResponse, 'utf8');
-    
-    // Log the size (you can also send this to your monitoring system)
-    console.log(`API response size: ${responseSize} bytes`);
-
-    // Create a NextResponse object
-    const response = NextResponse.json(weeklyData);
-
-    // Optionally, add the size as a custom header
-    response.headers.set('X-Response-Size', responseSize.toString());
-
-    return response;
+    return NextResponse.json(weeklyData);
   } catch (error) {
     console.error('Error fetching weekly farm data:', error);
     return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
 }
+
+// export async function GET() {
+//   try {
+//     const weeklyData = await fetchWeeklyData(0);
+    
+//     // Convert the response to a JSON string
+//     const jsonResponse = JSON.stringify(weeklyData);
+    
+//     // Calculate the size of the response
+//     const responseSize = Buffer.byteLength(jsonResponse, 'utf8');
+    
+//     // Log the size (you can also send this to your monitoring system)
+//     console.log(`API response size: ${responseSize} bytes`);
+
+//     // Create a NextResponse object
+//     const response = NextResponse.json(weeklyData);
+
+//     // Optionally, add the size as a custom header
+//     response.headers.set('X-Response-Size', responseSize.toString());
+
+//     return response;
+//   } catch (error) {
+//     console.error('Error fetching weekly farm data:', error);
+//     return NextResponse.json({ error: 'Error fetching weekly farm data' });
+//   }
+// }
