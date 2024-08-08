@@ -32,10 +32,6 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
 
   const selectedFarmLocation = farmLocations ? farmLocations[selectedFarm] : 'USA';
   
-  // const getWeatherString = () => {
-  //   const weatherEmoji = selectedFarmWeather ? getWeatherEmoji(selectedFarmWeather) : '';
-  //   return selectedFarmWeather ? `${weatherEmoji} ${selectedFarmWeather?.main.temp.toFixed(1)}°F` : '';
-  // };
 
   const dataTypeName = {
     outputs: ['Output', 'kWh'],
@@ -53,9 +49,9 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     if (selectedDataType === 'carbonCredits') {
       value = latestWeekDataPoint.toFixed(3);
     } else {
-      value = latestWeekDataPoint.toFixed(0).toLocaleString();
+      value = latestWeekDataPoint.toFixed(0);
     }
-    return `${value} ${dataTypeName[selectedDataType][1]}`;
+    return `${Number(value).toLocaleString()} ${dataTypeName[selectedDataType][1]}`;
   };
 
   const weeklyFarmCounts = weeklyFarmCount.map(data => data.value);
@@ -64,12 +60,32 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
   const ActiveFarmsCount = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) : 0;
   const newFarms = weeklyFarmCounts.length ? weeklyFarmCounts[weeklyFarmCounts.length - 2] - weeklyFarmCounts[weeklyFarmCounts.length - 3] : 0;
 
+  const getSelectedFarmPanelCount = () => {
+    if (selectedFarm === 0) {
+      return 0;
+    }
+
+    if (!allFarmsInfo) {
+      return 0;
+    }
+
+    if (allFarmsInfo.hasOwnProperty(selectedFarm)) {
+      return allFarmsInfo[selectedFarm].panelCount;
+    }
+
+    for (const farm of Object.values(allFarmsInfo)) {
+      if ((farm as any).farmName.includes(selectedFarm.toString())) {
+        return (farm as any).panelCount;
+      }
+    }
+  }
+
   return selectedFarm > 0 ? (
     <TopValues
       title1='Location'
       value1={formatLocation(selectedFarmLocation)}
       title2='Solar Panel Count'
-      value2={allFarmsInfo[selectedFarm]?.panelCount}
+      value2={getSelectedFarmPanelCount()}
       title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]} (so far)`}
       value3={getLatestWeekDataPoint()}
     />

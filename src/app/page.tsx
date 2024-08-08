@@ -32,7 +32,7 @@ export default function Home() {
   const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
-  const [AllFarmsInfo, setAllFarmsInfo] = useState<any>({});
+  const [allFarmsInfo, setAllFarmsInfo] = useState<any>({});
     // Add loading states
   const [isLoading, setIsLoading] = useState({
     allData: true,
@@ -63,7 +63,6 @@ export default function Home() {
     };
     fetchData();
   }, []);
-
 
   // Get token stats: circulating supply, total supply, market cap
   useEffect(() => {
@@ -197,9 +196,9 @@ export default function Home() {
   }, [weeklyTotalOutput]);
 
   const totalPanelCount = useMemo(() => {
-    if (!AllFarmsInfo) return 0;
-    return Object.values(AllFarmsInfo).reduce((acc, curr:any) => acc + (curr.panelCount || 0), 0);
-  }, [AllFarmsInfo]);
+    if (!allFarmsInfo) return 0;
+    return Object.values(allFarmsInfo).reduce((acc, curr:any) => acc + (curr.panelCount || 0), 0);
+  }, [allFarmsInfo]);
 
   const displayValue = (value:any, loadingState:boolean, formatter = (v:string | number) => v) => {
     if (loadingState) return 'Loading...';
@@ -218,7 +217,7 @@ export default function Home() {
 
 
   return (
-    <FarmsInfoContext.Provider value={AllFarmsInfo}>
+    <FarmsInfoContext.Provider value={allFarmsInfo}>
       
     <main className='w-full' style={{maxWidth: "1244px"}}> 
       <div 

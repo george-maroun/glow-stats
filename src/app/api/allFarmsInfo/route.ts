@@ -10,10 +10,10 @@ export async function GET() {
   try {
     const res = await fetch("https://www.glow.org/api/audits");
     const data = await res.json();
-    const audits = data.audits;
     
-    audits.forEach((audit:any) => {
+    data.forEach((audit:any) => {
       allFarmsInfo[audit.id] = {};
+      allFarmsInfo[audit.id].farmName = audit.farmName;
       allFarmsInfo[audit.id].panelCount = audit.summary.solarPanels.quantity;
       allFarmsInfo[audit.id].location = audit.summary.address.location;
       allFarmsInfo[audit.id].averageSunlightPerDay = audit.summary.carbonFootprintAndProduction.averageSunlightPerDay;
