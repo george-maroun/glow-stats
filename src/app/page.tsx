@@ -33,7 +33,7 @@ export default function Home() {
   const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
 
-  const [allFarmsInfo, setAllFarmsInfo] = useState<FarmInfo>({});
+  const [allFarmsInfo, setAllFarmsInfo] = useState<Record<string, FarmInfo>>({});
     // Add loading states
   const [isLoading, setIsLoading] = useState({
     allData: true,
