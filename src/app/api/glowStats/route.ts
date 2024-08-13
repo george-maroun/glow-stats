@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-export const revalidate = 60;
+export const revalidate = 0;
 
 const GLOW_GREEN_API_BASE = process.env.GLOW_GREEN_API || '';
 const GLOW_GREEN_API = `${GLOW_GREEN_API_BASE}headline-stats`;
