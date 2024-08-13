@@ -1,6 +1,6 @@
 // Import necessary modules
 import { NextResponse } from 'next/server';
-export const revalidate = 60;
+export const revalidate = 0;
 
 const GRAPHQL_QUERY = {
   query: `
