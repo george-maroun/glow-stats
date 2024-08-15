@@ -49,23 +49,23 @@ const TokenStats = ({
       <div className="flex flex-col justify-between ">
         <CounterRow 
           title1={"Glow Token Holders"}
-          value1={tokenHolderCount}
+          value1={tokenHolderCount ? tokenHolderCount.toLocaleString() : 'Loading...'}
           title2={"Market Cap"}
-          value2={marketCap ? marketCap.toLocaleString() : ''}
+          value2={marketCap ? marketCap.toLocaleString() : 'Loading...'}
         />
         <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
         <CounterRow 
           title1={"Circulating Supply"}
-          value1={circSupply ? circSupply.toLocaleString() : ''}
+          value1={circSupply ? circSupply.toLocaleString() : 'Loading...'}
           title2={"Total Supply"}
-          value2={totalSupply ? totalSupply.toLocaleString() : ''}
+          value2={totalSupply ? totalSupply.toLocaleString() : 'Loading...'}
         />
         <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
         <CounterRow 
           title1={"Impact Power Price"}
-          value1={"$" + impactPowerPrice}
+          value1={impactPowerPrice ? `$${impactPowerPrice.toLocaleString()}` : 'Loading...'}
           title2={"Impact Power Owners"}
-          value2={impactPowerOwners}
+          value2={impactPowerOwners ? impactPowerOwners.toLocaleString() : 'Loading...'}
         />
       </div>
     </div>
