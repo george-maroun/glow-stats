@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
 import getPlaceName from '../../../../lib/utils/getPlaceNameHelper'
-export const revalidate = 60;
+export const revalidate = 6000;
 
 // type Param = number | string;
 
