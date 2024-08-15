@@ -4,7 +4,7 @@ import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTo
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
 import type { NextRequest } from 'next/server';
-export const revalidate = 600
+export const revalidate = 7000;
 // import { revalidatePath } from 'next/cache'
 
 interface Output {
