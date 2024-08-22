@@ -55,7 +55,7 @@ export default function Home() {
         setWeeklyFarmCount(allData.weeklyFarmCount || []);
         setWeeklyTotalOutput(allData.weeklyTotalOutput || []);
         setWeeklyDataByFarm(allData.weeklyDataByFarm || []);
-        setCurrentFarmIds(allData.currentFarmIds || []);
+        setCurrentFarmIds(allData?.weeklyFarmIds?.[allData.weeklyFarmIds?.length - 1].value || []);
       } catch (error) {
         console.error('Failed to fetch all data:', error);
       } finally {

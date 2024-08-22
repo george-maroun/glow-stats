@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-export const revalidate = 6000;
+export const revalidate = 21600;
 import { FarmInfo } from '../../types';
 
 type AllFarmsInfo = Record<string, FarmInfo>;
