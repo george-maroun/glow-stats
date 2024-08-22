@@ -3,16 +3,14 @@ import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
-import type { NextRequest } from 'next/server';
-export const revalidate = 7000;
-// import { revalidatePath } from 'next/cache'
+export const revalidate = 21600;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
   weeklyFarmCount: {week: number; value: number}[];
-  weeklyTotalOutput: {week: number; value: number}[]
+  weeklyFarmIds: {week: number; value: number[]}[];
+  weeklyTotalOutput: {week: number; value: number}[];
   weeklyDataByFarm: IWeeklyDataByFarm;
-  currentFarmIds: number[];
 }
 
 const maxTimeslotOffset = getWeeksSinceStart();
@@ -29,25 +27,24 @@ const getRequestBody = (week: number) => ({
 });
 
 const getBannedFarms = async (): Promise<number[]> => {
-  // try {
-  //   const response = await fetch(FARM_STATUS_URL);
-  //   if (!response.ok) {
-  //     throw new Error(`HTTP error! status: ${response.status}`);
-  //   }
+  try {
+    const response = await fetch(FARM_STATUS_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  //   const data = await response.json();
-  //   return data.legacy
-  //     .filter((farm: { status: unknown }) => {
-  //       return typeof farm.status === 'object' && 
-  //              farm.status !== null && 
-  //              'Banned' in farm.status;
-  //     })
-  //     .map((farm: { short_id: string }) => Number(farm.short_id));
-  // } catch (error) {
-  //   console.error('Error fetching banned farms:', error);
-  //   return DEFAULT_BANNED_FARMS;
-  // }
-  return DEFAULT_BANNED_FARMS;
+    const data = await response.json();
+    return data.legacy
+      .filter((farm: { status: unknown }) => {
+        return typeof farm.status === 'object' && 
+               farm.status !== null && 
+               'Banned' in farm.status;
+      })
+      .map((farm: { short_id: string }) => Number(farm.short_id));
+  } catch (error) {
+    console.error('Error fetching banned farms:', error);
+    return DEFAULT_BANNED_FARMS;
+  }
 };
 
 async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
@@ -101,9 +98,9 @@ async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
     weeklyDataByFarm[farmId].carbonCredits.push({ week, value: farm.carbonCreditsProduced });
     weeklyDataByFarm[farmId].weeklyPayments.push({ week, value: farm.weeklyPayment });
 
-    if (week === maxTimeslotOffset) {
+    // if (week === maxTimeslotOffset) {
       currentFarmIds.push(farmId);
-    }
+    // }
   }
 
   return {
@@ -130,9 +127,10 @@ async function fetchWeeklyData(startWeek = 0) {
   const output: Output = {
     weeklyCarbonCredit: [],
     weeklyFarmCount: [],
+    weeklyFarmIds: [],
     weeklyTotalOutput: [],
     weeklyDataByFarm: {} as IWeeklyDataByFarm,
-    currentFarmIds: [],
+    // currentFarmIds: [],
   };
 
   for (const result of weekResults) {
@@ -156,9 +154,12 @@ async function fetchWeeklyData(startWeek = 0) {
       output.weeklyDataByFarm[id].weeklyPayments.push(...farmData.weeklyPayments);
     }
 
-    if (result.week === maxTimeslotOffset) {
-      output.currentFarmIds = result.currentFarmIds;
-    }
+    // if (result.week === maxTimeslotOffset) {
+      output.weeklyFarmIds.push({
+        week: result.week,
+        value: result.currentFarmIds
+      });
+    // }
   }
 
   const weeklyTokenRewards = calculateWeeklyTokenRewards(output.weeklyDataByFarm);
@@ -173,14 +174,6 @@ async function fetchWeeklyData(startWeek = 0) {
 }
 
 export async function GET() {
-
-  // This was used for the CRON job
-  // const authHeader = request.headers.get('authorization');
-  // if (authHeader === `Bearer ${process.env.CRON_SECRET}`) {
-  //   revalidatePath('/api/allData');
-  //   return NextResponse.json({Revalidated: true});
-  // }
-
   try {
     const weeklyData = await fetchWeeklyData(0);
     return NextResponse.json(weeklyData);
@@ -189,29 +182,3 @@ export async function GET() {
     return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
 }
-
-// export async function GET() {
-//   try {
-//     const weeklyData = await fetchWeeklyData(0);
-    
-//     // Convert the response to a JSON string
-//     const jsonResponse = JSON.stringify(weeklyData);
-    
-//     // Calculate the size of the response
-//     const responseSize = Buffer.byteLength(jsonResponse, 'utf8');
-    
-//     // Log the size (you can also send this to your monitoring system)
-//     console.log(`API response size: ${responseSize} bytes`);
-
-//     // Create a NextResponse object
-//     const response = NextResponse.json(weeklyData);
-
-//     // Optionally, add the size as a custom header
-//     response.headers.set('X-Response-Size', responseSize.toString());
-
-//     return response;
-//   } catch (error) {
-//     console.error('Error fetching weekly farm data:', error);
-//     return NextResponse.json({ error: 'Error fetching weekly farm data' });
-//   }
-// }
