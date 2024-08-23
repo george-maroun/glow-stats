@@ -11,6 +11,7 @@ interface Output {
   weeklyFarmIds: {week: number; value: number[]}[];
   weeklyTotalOutput: {week: number; value: number}[];
   weeklyDataByFarm: IWeeklyDataByFarm;
+  weeklySolarPanelCount: {week: number; value: number}[];
 }
 
 const maxTimeslotOffset = getWeeksSinceStart();
@@ -22,9 +23,60 @@ const DEFAULT_BANNED_FARMS = [1, 5, 8, 6, 7, 11, 13];
 const getRequestBody = (week: number) => ({
   urls: [GCA_SERVER_URL],
   week_number: week,
-  with_full_data: true,
+  with_full_data: false,
   include_unassigned_farms: false
 });
+
+interface FarmInfo {
+  panelCount: number;
+  farmName: string;
+  [key: string]: any;
+}
+
+interface WeeklyFarmId {
+  week: number;
+  value: number[];
+}
+
+interface WeeklySolarCount {
+  week: number;
+  value: number;
+}
+
+async function getWeeklySolarPanelCount(weeklyFarmIds: WeeklyFarmId[]): Promise<WeeklySolarCount[]> {
+  // Fetch allFarmsInfo from the API using fetch
+  const response = await fetch('https://glowstats.xyz/api/allFarmsInfo');
+  const data = await response.json();
+  const allFarmsInfo: Record<string, FarmInfo> = data.allFarmsInfo;
+
+  const weeklySolarCounts: WeeklySolarCount[] = [];
+
+  for (const weekData of weeklyFarmIds) {
+    let currWeekSolarCount = 0;
+
+    for (const id of weekData.value) {
+      if (id in allFarmsInfo) {
+        currWeekSolarCount += allFarmsInfo[id].panelCount;
+      } else {
+        // If id is not found, check if it's part of the farmName
+        const matchingFarm = Object.values(allFarmsInfo).find(farm => {
+          return farm.farmName.includes(id.toString());
+        }
+        );
+        if (matchingFarm) {
+          currWeekSolarCount += matchingFarm.panelCount;
+        }
+      }
+    }
+
+    weeklySolarCounts.push({
+      week: weekData.week,
+      value: currWeekSolarCount
+    });
+  }
+
+  return weeklySolarCounts;
+}
 
 const getBannedFarms = async (): Promise<number[]> => {
   try {
@@ -130,6 +182,7 @@ async function fetchWeeklyData(startWeek = 0) {
     weeklyFarmIds: [],
     weeklyTotalOutput: [],
     weeklyDataByFarm: {} as IWeeklyDataByFarm,
+    weeklySolarPanelCount: [],
     // currentFarmIds: [],
   };
 
@@ -169,6 +222,9 @@ async function fetchWeeklyData(startWeek = 0) {
     output.weeklyDataByFarm[farmId].weeklyTokenRewards = weeklyTokenRewards[farmId].weeklyTokenRewards;
     output.weeklyDataByFarm[farmId].weeklyCashRewards = weeklyCashRewards[farmId].weeklyCashRewards;
   }
+
+  const weeklySolarPanelCount = await getWeeklySolarPanelCount(output.weeklyFarmIds);
+  output.weeklySolarPanelCount = weeklySolarPanelCount;
 
   return output;
 }
