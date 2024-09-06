@@ -1,4 +1,4 @@
-export type TSelectedDataType = 'outputs' | 'carbonCredits' | 'tokenRewards' | 'cashRewards' | 'farmCount' | 'solarPanelCount';
+export type TSelectedDataType = 'outputs' | 'carbonCredits' | 'tokenRewards' | 'cashRewards';
 
 export type TDataPoint = { week: number; value: number };
 
@@ -7,8 +7,6 @@ export interface ISelectedFarmData {
   carbonCredits: number[];
   tokenRewards: number[];
   cashRewards: number[];
-  farmCount: number[];
-  solarPanelCount: number[];
 }
 
 export interface IWeeklyDataByFarm {
