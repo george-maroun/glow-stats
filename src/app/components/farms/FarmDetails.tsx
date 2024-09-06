@@ -49,11 +49,13 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
         selectedFarm={selectedFarm}
         equipmentDetails={equipmentDetails}
         weeklyFarmCount={weeklyFarmCount}
+        weeklySolarPanelCount={weeklySolarPanelCount}
         weekCount={weekCount}
         selectedFarmData={selectedFarmData}
         selectedDataType={selectedDataType}
         selectedFarmWeather={selectedFarmWeather}
         farmLocations={farmLocations}
+        allFarmSelectedDataType={allFarmSelectedDataType}
       />
       <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
       <div className='pl-4 pb-2 pt-2 text-gray text-md'>
