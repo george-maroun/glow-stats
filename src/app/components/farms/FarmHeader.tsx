@@ -15,7 +15,7 @@ const FarmHeader: React.FC<FarmHeaderProps> = ({ selectedFarm, handleResetFarmSe
             <div>{`Farm ${selectedFarm}`}</div>
             <StatusIndicator status={true} />
           </div>
-        ) : 'Statistics'}
+        ) : 'Farm Statistics'}
       </div>
       {selectedFarm > 0 ? (
         <div onClick={handleResetFarmSelection} className='pl-4 pb-0 p-1 text-gray text-base cursor-pointer underline decoration-1 underline-offset-1'>

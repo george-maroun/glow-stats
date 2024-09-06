@@ -38,6 +38,8 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     carbonCredits: ['Carbon Credits', ''],
     tokenRewards: ['Token Rewards', 'GLW'],
     cashRewards: ['USDG Rewards', 'USDG'],
+    farmCount: ['Farm Count', ''],
+    solarPanelCount: ['Solar Panel Count', '']
   }
 
   const getLatestWeekDataPoint = () => {
@@ -59,6 +61,8 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5] : 0;
   const ActiveFarmsCount = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) : 0;
   const newFarms = weeklyFarmCounts.length ? weeklyFarmCounts[weeklyFarmCounts.length - 2] - weeklyFarmCounts[weeklyFarmCounts.length - 3] : 0;
+
+  const pastMonthChange = pastMonthFarms > 0 ? '+' : '';
 
   const getSelectedFarmPanelCount = () => {
     if (selectedFarm === 0) {
@@ -95,8 +99,8 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
       value1={ActiveFarmsCount}
       title2='Added Last Week'
       value2={newFarms.toString()}
-      title3='Past Month Increase'
-      value3={weeklyFarmCounts.length ? pastMonthFarms.toString() : '0'}
+      title3='Past Month Change'
+      value3={weeklyFarmCounts.length ? `${pastMonthChange}${pastMonthFarms}` : '0'}
     />
   );
 };

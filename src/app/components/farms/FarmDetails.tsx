@@ -9,9 +9,10 @@ import { TSelectedDataType, IWeeklyDataByFarm, TDataPoint } from '../../types';
 
 interface IFarmDetailsProps {
   selectedFarm: number;
-  equipmentDetails: any; // Define a more specific type
+  equipmentDetails: any;
   weeklyFarmCount: TDataPoint[];
-  weeklyDataByFarm: IWeeklyDataByFarm; // Define a more specific type
+  weeklySolarPanelCount: TDataPoint[];
+  weeklyDataByFarm: IWeeklyDataByFarm;
   handleResetFarmSelection: () => void;
   farmLocations: any;
 }
@@ -21,10 +22,11 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
   equipmentDetails,
   weeklyFarmCount,
   weeklyDataByFarm,
+  weeklySolarPanelCount,
   handleResetFarmSelection,
   farmLocations,
 }) => {
-  const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
+  const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>(selectedFarm ? 'outputs' : 'farmCount');
 
   const weekCount = getWeeksSinceStart();
   const { selectedFarmWeather } = useWeather(equipmentDetails[selectedFarm]?.Latitude, equipmentDetails[selectedFarm]?.Longitude);
@@ -55,6 +57,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
           weeklyFarmCount={weeklyFarmCount}
           selectedFarmData={selectedFarmData}
           selectedDataType={selectedDataType}
+          weeklySolarPanelCount={weeklySolarPanelCount}
           handleSetSelectedDataType={handleSetSelectedDataType}
           dataLabels={dataLabels}
           weekCount={weekCount}
@@ -65,4 +68,3 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
 };
 
 export default FarmDetails;
-

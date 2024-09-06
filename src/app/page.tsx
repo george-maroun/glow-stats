@@ -32,6 +32,7 @@ export default function Home() {
   const [weeklyTotalOutput, setWeeklyTotalOutput] = useState<any[]>([]);
   const [weeklyDataByFarm, setWeeklyDataByFarm] = useState<any[]>([]);
   const [currentFarmIds, setCurrentFarmIds] = useState<number[]>([]);
+  const [weeklySolarPanelCount, setWeeklySolarPanelCount] = useState<any[]>([]);
 
   const [allFarmsInfo, setAllFarmsInfo] = useState<Record<string, FarmInfo>>({});
     // Add loading states
@@ -56,6 +57,7 @@ export default function Home() {
         setWeeklyTotalOutput(allData.weeklyTotalOutput || []);
         setWeeklyDataByFarm(allData.weeklyDataByFarm || []);
         setCurrentFarmIds(allData?.weeklyFarmIds?.[allData.weeklyFarmIds?.length - 1].value || []);
+        setWeeklySolarPanelCount(allData.weeklySolarPanelCount || []);
       } catch (error) {
         console.error('Failed to fetch all data:', error);
       } finally {
@@ -307,6 +309,7 @@ export default function Home() {
       <Farms 
         labels={labels.slice(0, labels.length - 1)} 
         weeklyFarmCount={weeklyFarmCount} 
+        weeklySolarPanelCount={weeklySolarPanelCount}
         weeklyDataByFarm={weeklyDataByFarm}
         currentFarmIds={currentFarmIds}
       />
