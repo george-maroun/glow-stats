@@ -8,7 +8,9 @@ interface FarmChartsProps {
   weeklyFarmCount: Array<{ week: number; value: number }>;
   selectedFarmData: ISelectedFarmData;
   selectedDataType: TSelectedDataType;
+  allFarmSelectedDataType: string;
   handleSetSelectedDataType: (type: TSelectedDataType) => void;
+  handleSetAllFarmSelectedDataType: (type: string) => void;
   weeklySolarPanelCount: Array<{ week: number; value: number }>;
   dataLabels: string[];
   weekCount: number;
@@ -45,47 +47,54 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
   selectedFarmData,
   weeklySolarPanelCount,
   selectedDataType,
+  allFarmSelectedDataType,
   handleSetSelectedDataType,
+  handleSetAllFarmSelectedDataType,
   dataLabels,
   weekCount
 }) => {
-  const labels = useMemo(() => Array.from({ length: weekCount }, (_, i) => `${i}`), [weekCount]);
+  const labels = useMemo(() => Array.from({ length: weekCount + 1 }, (_, i) => `${i}`), [weekCount]);
+
+  console.log(labels);
 
   const removeLastElement = (arr: any[]) => {
     return arr.slice(0, arr.length - 1);
   }
 
-  const getChartData = () => {
+  const getDataPoints = () => {
     if (selectedFarm) {
       return removeLastElement(selectedFarmData[selectedDataType]);
     } else {
-      if (selectedDataType === 'farmCount') {
-        return removeLastElement(weeklyFarmCount.map(data => data.value));
-      } else if (selectedDataType === 'solarPanelCount') {
-        return removeLastElement(weeklySolarPanelCount.map(data => data.value));
-      }
+      return allFarmSelectedDataType === 'farmCount'
+        ? weeklyFarmCount.map(data => data.value)
+        : weeklySolarPanelCount.map(data => data.value);
     }
-    return [];
   };
 
   return (
     <>
       {selectedFarm ? (
-        <FarmSpecificDataTypeSelector selectedDataType={selectedDataType} onChange={(type: any) => handleSetSelectedDataType(type)} />
+        <FarmSpecificDataTypeSelector
+          selectedDataType={selectedDataType}
+          onChange={(type: any) => handleSetSelectedDataType(type)}
+        />
       ) : (
-        <AllFarmsDataTypeSelector selectedDataType={selectedDataType} onChange={(type: any) => handleSetSelectedDataType(type)} />
+        <AllFarmsDataTypeSelector
+          selectedDataType={allFarmSelectedDataType}
+          onChange={(type: any) => handleSetAllFarmSelectedDataType(type)}
+        />
       )}
       {selectedFarm && selectedDataType.includes('Reward') ? (
         <LineBarChart
           title=""
           labels={dataLabels}
-          dataPoints={getChartData()}
+          dataPoints={getDataPoints()}
         />
       ) : (
         <LineChart
           title=""
           labels={selectedFarm ? dataLabels : labels}
-          dataPoints={getChartData()}
+          dataPoints={getDataPoints()}
         />
       )}
     </>

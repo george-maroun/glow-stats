@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useWeather from '../../hooks/useWeather';
 import useFilteredData from '../../hooks/useFilteredData';
 import FarmHeader from './FarmHeader';
@@ -26,7 +26,8 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
   handleResetFarmSelection,
   farmLocations,
 }) => {
-  const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>(selectedFarm ? 'outputs' : 'farmCount');
+  const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
+  const [allFarmSelectedDataType, setAllFarmSelectedDataType] = useState<string>('farmCount');
 
   const weekCount = getWeeksSinceStart();
   const { selectedFarmWeather } = useWeather(equipmentDetails[selectedFarm]?.Latitude, equipmentDetails[selectedFarm]?.Longitude);
@@ -34,6 +35,10 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
 
   const handleSetSelectedDataType = (type: TSelectedDataType) => {
     setSelectedDataType(type);
+  }
+
+  const handleSetAllFarmSelectedDataType = (type: string) => {
+    setAllFarmSelectedDataType(type);
   }
   
   return (
@@ -57,8 +62,10 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
           weeklyFarmCount={weeklyFarmCount}
           selectedFarmData={selectedFarmData}
           selectedDataType={selectedDataType}
+          allFarmSelectedDataType={allFarmSelectedDataType}
           weeklySolarPanelCount={weeklySolarPanelCount}
           handleSetSelectedDataType={handleSetSelectedDataType}
+          handleSetAllFarmSelectedDataType={handleSetAllFarmSelectedDataType}
           dataLabels={dataLabels}
           weekCount={weekCount}
         />
