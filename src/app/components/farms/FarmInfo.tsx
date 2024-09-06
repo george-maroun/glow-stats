@@ -10,29 +10,32 @@ interface FarmInfoProps {
   selectedFarm: number;
   equipmentDetails: any;
   weeklyFarmCount: Array<{ week: number; value: number }>;
+  weeklySolarPanelCount: Array<{ week: number; value: number }>;
   weekCount: number;
   selectedFarmData: ISelectedFarmData;
   selectedDataType: TSelectedDataType;
   selectedFarmWeather: any;
   farmLocations: any;
+  allFarmSelectedDataType: string;
 }
 
 const FarmInfo: React.FC<FarmInfoProps> = ({
   selectedFarm,
   equipmentDetails,
   weeklyFarmCount,
+  weeklySolarPanelCount,
   weekCount,
   selectedFarmData,
   selectedDataType,
   selectedFarmWeather,
-  farmLocations
+  farmLocations,
+  allFarmSelectedDataType
 }) => {
 
   const allFarmsInfo = useFarmsInfo();
 
   const selectedFarmLocation = farmLocations ? farmLocations[selectedFarm] : 'USA';
   
-
   const dataTypeName = {
     outputs: ['Output', 'kWh'],
     carbonCredits: ['Carbon Credits', ''],
@@ -56,14 +59,6 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     return `${Number(value).toLocaleString()} ${dataTypeName[selectedDataType][1]}`;
   };
 
-  const weeklyFarmCounts = weeklyFarmCount.map(data => data.value);
-  const pastMonthFarms = weeklyFarmCounts.length ? 
-    weeklyFarmCounts[weeklyFarmCounts.length - 1] - weeklyFarmCounts[weeklyFarmCounts.length - 5] : 0;
-  const ActiveFarmsCount = weeklyFarmCounts.length ? Number(weeklyFarmCounts[weeklyFarmCounts.length - 1]) : 0;
-  const newFarms = weeklyFarmCounts.length ? weeklyFarmCounts[weeklyFarmCounts.length - 2] - weeklyFarmCounts[weeklyFarmCounts.length - 3] : 0;
-
-  const pastMonthChange = pastMonthFarms > 0 ? '+' : '';
-
   const getSelectedFarmPanelCount = () => {
     if (selectedFarm === 0) {
       return 0;
@@ -84,23 +79,63 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     }
   }
 
+  const getSolarPanelInfo = () => {
+    if (!weeklySolarPanelCount || weeklySolarPanelCount.length === 0) {
+      return { count: 'N/A', lastWeekChange: 'N/A', lastMonthChange: 'N/A' };
+    }
+    const counts = weeklySolarPanelCount.map(data => data.value);
+    return getInfoFromCounts(counts);
+  }
+
+  const getFarmCountInfo = () => {
+    if (!weeklyFarmCount || weeklyFarmCount.length === 0) {
+      return { count: 'N/A', lastWeekChange: 'N/A', lastMonthChange: 'N/A' };
+    }
+    const counts = weeklyFarmCount.map(data => data.value);
+    return getInfoFromCounts(counts);
+  }
+
+  const getInfoFromCounts = (counts: number[]) => {
+    if (counts.length < 5) {
+      return { count: 'N/A', lastWeekChange: 'N/A', lastMonthChange: 'N/A' };
+    }
+    const currentCount = counts[counts.length - 1];
+    const lastWeekChange = counts[counts.length - 1] - counts[counts.length - 2];
+    const lastMonthChange = counts[counts.length - 1] - counts[counts.length - 5];
+
+    return {
+      count: currentCount.toString(),
+      lastWeekChange: lastWeekChange > 0 ? `+${lastWeekChange}` : lastWeekChange.toString(),
+      lastMonthChange: lastMonthChange > 0 ? `+${lastMonthChange}` : lastMonthChange.toString()
+    };
+  }
+
   return selectedFarm > 0 ? (
     <TopValues
       title1='Location'
       value1={formatLocation(selectedFarmLocation)}
       title2='Solar Panel Count'
-      value2={getSelectedFarmPanelCount()}
+      value2={getSelectedFarmPanelCount().toString()}
       title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]} (so far)`}
       value3={getLatestWeekDataPoint()}
+    />
+  ) : allFarmSelectedDataType === 'solarPanelCount' ? (
+    <TopValues
+      title1='Solar Panel Count'
+      value1={getSolarPanelInfo().count}
+      title2='Last Week Change'
+      value2={getSolarPanelInfo().lastWeekChange}
+      title3='Last Month Change'
+      value3={getSolarPanelInfo().lastMonthChange}
     />
   ) : (
     <TopValues
       title1='Active Farms'
-      value1={ActiveFarmsCount}
-      title2='Added Last Week'
-      value2={newFarms.toString()}
-      title3='Past Month Change'
-      value3={weeklyFarmCounts.length ? `${pastMonthChange}${pastMonthFarms}` : '0'}
+      value1={getFarmCountInfo().count}
+      title2='Last Week Change'
+      value2={getFarmCountInfo().lastWeekChange}
+      title3='Last Month Change'
+      value3={getFarmCountInfo().lastMonthChange}
     />
   );
 };
