@@ -16,10 +16,11 @@ interface FarmsProps {
   labels: string[];
   weeklyFarmCount: { week: number, value: number }[];
   weeklyDataByFarm: IWeeklyDataByFarm;
+  weeklySolarPanelCount: { week: number, value: number }[];
   currentFarmIds: number[];
 }
 
-export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds }: FarmsProps) {
+export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds, weeklySolarPanelCount }: FarmsProps) {
   const { equipmentDetails } = useEquipmentDetails(currentFarmIds);
 
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
@@ -74,13 +75,13 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
   function handleFarmSelection(detail: Equipment) {
     setMapCenter({ lat: detail.Latitude, lng: detail.Longitude });
     setSelectedFarm(detail.ShortID);
-    setMapZoom(3);
+    setMapZoom(2);
   }
 
   function handleResetFarmSelection() {
     setMapCenter({ lat: 38.794810, lng: -97.058722 });
     setSelectedFarm(0);
-    setMapZoom(3);
+    setMapZoom(2);
   }
 
   const mapContainerStyle = {
@@ -143,6 +144,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
           equipmentDetails={equipmentDetails}
           weeklyFarmCount={weeklyFarmCount}
           weeklyDataByFarm={weeklyDataByFarm}
+          weeklySolarPanelCount={weeklySolarPanelCount}
           handleResetFarmSelection={handleResetFarmSelection}
           farmLocations={farmLocations}
         />

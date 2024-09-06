@@ -14,6 +14,13 @@ const twitterUrls = [
 
 const glowVideosUrls = [
   {
+    title: 'New Shapes and Structures in the Solar Economy | DePIN Summit 2024',
+    author: 'EV3 Ventures',
+    url: 'https://www.youtube.com/watch?v=1OxItnQurLM',
+    type: 'youtube',
+    thumbnail: '',
+  },
+  {
     title: 'New Frontiers in Carbon Avoidance: Solar',
     author: 'Flowcarbon',
     url: 'https://youtu.be/m9AKGvJR9jw?si=Wab0TM_vQPRDzx5L',
@@ -83,30 +90,44 @@ const relatedVideosUrls = [
 
 const blogData = [
   {
+    title: 'What is Glow?',
+    author: 'David Vorick',
+    url: 'https://glow.org/blog/what-is-glow',
+    type: 'blog',
+    thumbnail: 'https://glow.org/_next/image?url=%2Fwhat-is-glow.jpg&w=3840&q=75'
+  },
+  {
+    title: 'Exploring the GCA Protocol Binary Bug',
+    author: 'Simon Boccara',
+    url: 'https://glow.org/blog/gca-binary-bug',
+    type: 'blog',
+    thumbnail: 'https://glow.org/_next/image?url=%2Fbinary-bug.png&w=3840&q=75'
+  },
+  {
     title: 'The First Major Refactor of the Glow Audit Standard',
     author: 'David Vorick',
-    url: 'https://glowlabs.org/blog/first-audit-refactor',
+    url: 'https://glow.org/blog/first-audit-refactor',
     type: 'blog',
     thumbnail: 'https://assets-global.website-files.com/6537b494fe5c52989474b734/66071d1c075bcaa07cc90b8a_o07400_A_visionary_3D_isometric_concept_of_a_solar-powered_tran-4.png'
   },
   {
     title: 'The Glow Impact Platform',
     author: 'David Vorick',
-    url: 'https://glowlabs.org/blog/glow-impact-platform',
+    url: 'https://glow.org/blog/glow-impact-platform',
     type: 'blog',
     thumbnail: 'https://assets-global.website-files.com/6537b494fe5c52989474b734/659cca0070c9a5bc1f304424_6.png'
   },
   {
     title: 'Guarded Launch: Protecting Glow Users Against Hacks',
     author: 'David Vorick',
-    url: 'https://glowlabs.org/blog/glow-guarded-launch',
+    url: 'https://glow.org/blog/glow-guarded-launch',
     type: 'blog',
     thumbnail: 'https://assets-global.website-files.com/6537b494fe5c52989474b734/659cc1e3947b43db47da63c8_Screenshot%202024-01-08%20at%2014-37-07%20Figma.png'
   },
   {
     title: 'Why Glow Excites Me',
     author: 'David Vorick',
-    url: 'https://glowlabs.org/blog/why-glow-excites-me',
+    url: 'https://glow.org/blog/why-glow-excites-me',
     type: 'blog',
     thumbnail: '/why-glow-excites-me.png'
   },
@@ -131,7 +152,8 @@ const resources: Resource[] = [
   { description: "Interest Form to Run a Solar Farm on Glow", type: "Document", url: "https://docs.google.com/forms/d/16iNCg4stGSaa9YNS3qMRMNDHOivivAfSRUA_n2ZZgTk" },
   { description: "Buy $GLW", type: "Website", url: "https://app.glow.org/" },
   { description: "Community-built Frontend to Buy $GLW", type: "Website", url: "https://glowstation.tech/" },
-  { description: "Community-built Glow Statistcs Dashboard", type: "Website", url: "https://www.glowstats.xyz/" }
+  { description: "Community-built Glow Statistcs Dashboard", type: "Website", url: "https://www.glowstats.xyz/" },
+  { description: "Glow Rewards Estimator", type: "Website", url: "https://glow-rewards-estimator.xyz/" },
 ];
 
 const Content = () => {
