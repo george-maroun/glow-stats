@@ -15,7 +15,6 @@ interface FarmHeaderProps {
 }
 
 const FarmHeader: React.FC<FarmHeaderProps> = ({ selectedFarm, handleResetFarmSelection, selectedFarmWeather }) => {
-  console.log(selectedFarmWeather);
   const weatherEmoji = selectedFarm && selectedFarmWeather && selectedFarmWeather.hasOwnProperty('weather') ? getWeatherEmoji(selectedFarmWeather) : null;
   const weatherDescription = selectedFarmWeather?.weather[0]?.description;
 

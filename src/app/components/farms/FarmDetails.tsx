@@ -31,15 +31,6 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
   const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
   const [allFarmSelectedDataType, setAllFarmSelectedDataType] = useState<string>('farmCount');
 
-  // const allFarmsInfo = useFarmsInfo();
-
-  // const weekCount = getWeeksSinceStart();
-
-
-  // let coordinates = selectedFarm ? extractCoordinates(allFarmsInfo[selectedFarm].coordinates) : { latitude: 0, longitude: 0 };
-
-  // const { selectedFarmWeather } = useWeather(coordinates?.latitude, coordinates?.longitude);
-
   const weekCount = getWeeksSinceStart();
   const { selectedFarmWeather } = useWeather(equipmentDetails[selectedFarm]?.Latitude, equipmentDetails[selectedFarm]?.Longitude);
   const { selectedFarmData, dataLabels } = useFilteredData(weeklyDataByFarm, selectedFarm);
