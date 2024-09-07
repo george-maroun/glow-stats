@@ -1,6 +1,12 @@
 import React from 'react';
 import getWeatherEmoji from '../../../../lib/utils/getWeatherEmojiHelper';
-import Tooltip from '../Tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 interface FarmHeaderProps {
   selectedFarm: number;
@@ -21,9 +27,15 @@ const FarmHeader: React.FC<FarmHeaderProps> = ({ selectedFarm, handleResetFarmSe
             <div>{`Farm ${selectedFarm}`}</div>
             
             {weatherEmoji && (
-              <Tooltip message={weatherDescription} style='capitalize w-24 -right-10'>
-                {weatherEmoji}
+              
+              <TooltipProvider>
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger>{weatherEmoji}</TooltipTrigger>
+                <TooltipContent>
+                  <p>{weatherDescription}</p>
+                </TooltipContent>
               </Tooltip>
+            </TooltipProvider>
             )}
           </div>
         ) : 'Farm Statistics'}
