@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import formatLocation from "./helpers/formatLocationHelper";
+import { useFarmsInfo } from "../../providers/allFarmsInfoProvider";
 
 type FarmListProps = {
   equipmentDetails: any;
@@ -11,11 +12,23 @@ type FarmListProps = {
 
 const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selectedFarm, farmLocations }: FarmListProps) => {
   const [hoveredFarm, setHoveredFarm] = useState<number | null>(null);
+  const allFarmsInfo = useFarmsInfo();
+
+  const farmIdSet = useMemo(() => {
+    const set = new Set<string>();
+    for (let farm of Object.values(allFarmsInfo)) {
+      const name = (farm as any).farmName;
+      const id = name.split(" ")[1];
+      set.add((id.split(",")[0]));
+    }
+    return set;
+  }, [allFarmsInfo]);
 
   function listFarms() {
     return (
       <div>
         {Object.keys(equipmentDetails).map((farmId, index) => {
+          if (!farmIdSet.has(farmId)) return null;
           let farmFeesExist = protocolFeesByFarm && farmId in protocolFeesByFarm
           let fees = farmFeesExist ? Number(protocolFeesByFarm?.[farmId].toFixed(2)).toLocaleString() : "";
           return (
@@ -52,7 +65,6 @@ const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selec
       </div>
     );
   }
-
 
   return (
     <div>
