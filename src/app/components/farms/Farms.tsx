@@ -75,13 +75,13 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
   function handleFarmSelection(detail: Equipment) {
     setMapCenter({ lat: detail.Latitude, lng: detail.Longitude });
     setSelectedFarm(detail.ShortID);
-    setMapZoom(2);
+    setMapZoom(3);
   }
 
   function handleResetFarmSelection() {
     setMapCenter({ lat: 38.794810, lng: -97.058722 });
     setSelectedFarm(0);
-    setMapZoom(2);
+    setMapZoom(3);
   }
 
   const mapContainerStyle = {
