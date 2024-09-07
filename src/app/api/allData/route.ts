@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import calculateWeeklyTokenRewards from '../../../../lib/utils/calculateWeeklyTokenRewards';
 import calculateWeeklyCashRewards from '../../../../lib/utils/calculateWeeklyCashRewards';
 import { IWeeklyDataByFarm } from '../../types';
-export const revalidate = 21600;
+export const revalidate = 7200;
 
 interface Output {
   weeklyCarbonCredit: {week: number; value: number}[];
