@@ -79,6 +79,8 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
     }
   }
 
+  console.log({allFarmsInfo})
+
   const getSolarPanelInfo = () => {
     if (!weeklySolarPanelCount || weeklySolarPanelCount.length === 0) {
       return { count: 'N/A', lastWeekChange: 'N/A', lastMonthChange: 'N/A' };

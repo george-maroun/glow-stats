@@ -15,6 +15,7 @@ export async function GET() {
         farmName: audit.farmName,
         panelCount: audit.summary.solarPanels.quantity,
         location: audit.summary.address.location,
+        coordinates: audit.summary.address.coordinates,
         averageSunlightPerDay: audit.summary.carbonFootprintAndProduction.averageSunlightPerDay,
         protocolFee: audit.summary.carbonFootprintAndProduction.protocolFees,
       };

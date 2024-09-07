@@ -8,3 +8,10 @@ body {
   font-family: 'Manrope';
   background-color: "#F9F7EB";
 }
+
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}

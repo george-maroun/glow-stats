@@ -1,5 +1,11 @@
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import Tooltip from './Tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 interface ChartCounterProps {
   title: string;
@@ -19,7 +25,14 @@ const ChartCounter = ({ title, value, info=false, infoMessage="" }: ChartCounter
       (
         <div className='pl-4 pb-0 p-1 mb-1 text-gray text-md flex flex-row justify-between items-center gap-1'>
           {title}
-          <Tooltip message={infoMessage}><AiOutlineInfoCircle/></Tooltip>
+          <TooltipProvider>
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger>{<AiOutlineInfoCircle/>}</TooltipTrigger>
+              <TooltipContent className='w-52 text-center text-black'>
+                <p>{infoMessage}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       )
       :
