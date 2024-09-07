@@ -26,6 +26,7 @@ export interface IPanelCountPerFarm {
 export interface FarmInfo {
   farmName: string;
   panelCount: number;
+  coordinates: string;
   location: string;
   averageSunlightPerDay: number;
   protocolFee: number;

@@ -55,7 +55,6 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
 }) => {
   const labels = useMemo(() => Array.from({ length: weekCount + 1 }, (_, i) => `${i}`), [weekCount]);
 
-  console.log(labels);
 
   const removeLastElement = (arr: any[]) => {
     return arr.slice(0, arr.length - 1);

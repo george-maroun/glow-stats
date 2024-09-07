@@ -6,6 +6,8 @@ import FarmInfo from './FarmInfo';
 import FarmCharts from './FarmCharts';
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { TSelectedDataType, IWeeklyDataByFarm, TDataPoint } from '../../types';
+import extractCoordinates from '../../../../lib/utils/extractCoordinates';
+import { useFarmsInfo } from '../../providers/allFarmsInfoProvider';
 
 interface IFarmDetailsProps {
   selectedFarm: number;
@@ -29,6 +31,15 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
   const [selectedDataType, setSelectedDataType] = useState<TSelectedDataType>('outputs');
   const [allFarmSelectedDataType, setAllFarmSelectedDataType] = useState<string>('farmCount');
 
+  // const allFarmsInfo = useFarmsInfo();
+
+  // const weekCount = getWeeksSinceStart();
+
+
+  // let coordinates = selectedFarm ? extractCoordinates(allFarmsInfo[selectedFarm].coordinates) : { latitude: 0, longitude: 0 };
+
+  // const { selectedFarmWeather } = useWeather(coordinates?.latitude, coordinates?.longitude);
+
   const weekCount = getWeeksSinceStart();
   const { selectedFarmWeather } = useWeather(equipmentDetails[selectedFarm]?.Latitude, equipmentDetails[selectedFarm]?.Longitude);
   const { selectedFarmData, dataLabels } = useFilteredData(weeklyDataByFarm, selectedFarm);
@@ -43,7 +54,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
   
   return (
     <div id='right-figure' className='rounded-xl lg:h-full h-auto lg:w-6/12 border' style={{backgroundColor: "white", borderColor: "rgb(220,220,220"}}>
-      <FarmHeader selectedFarm={selectedFarm} handleResetFarmSelection={handleResetFarmSelection} />
+      <FarmHeader selectedFarm={selectedFarm} handleResetFarmSelection={handleResetFarmSelection} selectedFarmWeather={selectedFarmWeather} />
       <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
       <FarmInfo
         selectedFarm={selectedFarm}

@@ -1,19 +1,30 @@
 import React from 'react';
-import StatusIndicator from '../StatusIndicator';
+import getWeatherEmoji from '../../../../lib/utils/getWeatherEmojiHelper';
+import Tooltip from '../Tooltip';
 
 interface FarmHeaderProps {
   selectedFarm: number;
   handleResetFarmSelection: () => void;
+  selectedFarmWeather?: any;
 }
 
-const FarmHeader: React.FC<FarmHeaderProps> = ({ selectedFarm, handleResetFarmSelection }) => {
+const FarmHeader: React.FC<FarmHeaderProps> = ({ selectedFarm, handleResetFarmSelection, selectedFarmWeather }) => {
+  console.log(selectedFarmWeather);
+  const weatherEmoji = selectedFarm && selectedFarmWeather && selectedFarmWeather.hasOwnProperty('weather') ? getWeatherEmoji(selectedFarmWeather) : null;
+  const weatherDescription = selectedFarmWeather?.weather[0]?.description;
+
   return (
     <div className='p-4 pb-2 text-2xl flex flex-row justify-between items-center'>
       <div>
         {selectedFarm ? (
           <div className='flex flex-row gap-4 items-center'>
             <div>{`Farm ${selectedFarm}`}</div>
-            <StatusIndicator status={true} />
+            
+            {weatherEmoji && (
+              <Tooltip message={weatherDescription} style='capitalize w-24 -right-10'>
+                {weatherEmoji}
+              </Tooltip>
+            )}
           </div>
         ) : 'Farm Statistics'}
       </div>

@@ -11,6 +11,7 @@ type WeatherData = {
 };
 
 const useWeather = (latitude: number, longitude: number) => {
+
   const [selectedFarmWeather, setSelectedFarmWeather] = useState<WeatherData | null>(null);
   const [weatherError, setWeatherError] = useState<any>(null);
 
