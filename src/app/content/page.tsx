@@ -97,6 +97,13 @@ const blogData = [
     thumbnail: 'https://glow.org/_next/image?url=%2Fwhat-is-glow.jpg&w=3840&q=75'
   },
   {
+    title: 'Week 40 Bucket Submission Post-Mortem',
+    author: 'Simon Boccara',
+    url: 'https://glow.org/blog/week-40-bucket-submission-post-mortem',
+    type: 'blog',
+    thumbnail: 'https://glow.org/_next/image?url=%2Fbinary-bug.png&w=3840&q=75'
+  },
+  {
     title: 'Exploring the GCA Protocol Binary Bug',
     author: 'Simon Boccara',
     url: 'https://glow.org/blog/gca-binary-bug',
@@ -153,7 +160,7 @@ const resources: Resource[] = [
   { description: "Buy $GLW", type: "Website", url: "https://app.glow.org/" },
   { description: "Community-built Frontend to Buy $GLW", type: "Website", url: "https://glowstation.tech/" },
   { description: "Community-built Glow Statistcs Dashboard", type: "Website", url: "https://www.glowstats.xyz/" },
-  { description: "Glow Rewards Estimator", type: "Website", url: "https://glow-rewards-estimator.xyz/" },
+  { description: "Glow Rewards Estimator", type: "Website", url: "https://glow-rewards-estimator.vercel.app/" },
 ];
 
 const Content = () => {
