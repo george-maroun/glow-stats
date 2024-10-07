@@ -53,18 +53,21 @@ async function getWeeklySolarPanelCount(weeklyFarmIds: WeeklyFarmId[]): Promise<
 
   for (const weekData of weeklyFarmIds) {
     let currWeekSolarCount = 0;
+    const seen = new Set();
 
     for (const id of weekData.value) {
-      if (id in allFarmsInfo) {
+      if (id in allFarmsInfo && !seen.has(allFarmsInfo[id].farmName)) {
         currWeekSolarCount += allFarmsInfo[id].panelCount;
+        seen.add(allFarmsInfo[id].farmName);
       } else {
         // If id is not found, check if it's part of the farmName
         const matchingFarm = Object.values(allFarmsInfo).find(farm => {
           return farm.farmName.includes(id.toString());
         }
         );
-        if (matchingFarm) {
+        if (matchingFarm && !seen.has(matchingFarm.farmName)) {
           currWeekSolarCount += matchingFarm.panelCount;
+          seen.add(matchingFarm.farmName);
         }
       }
     }
