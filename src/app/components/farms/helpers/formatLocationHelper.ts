@@ -1,5 +1,5 @@
 const formatLocation = (location: string) => {
-  if (!(location)) return 'USA';
+  if (!(location)) return 'India';
 
   const locationArr = location.split(',');
   if (locationArr.length < 4) return 'USA';
