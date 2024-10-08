@@ -105,7 +105,7 @@ const TokenCard = ({glwPriceUni, glwPriceContract}:any) => {
     <div className='flex flex-row justify-between items-center'>
       <div className='p-4 pb-2 text-2xl'>Glow Token</div>
       <a 
-      href='https://app.glow.org/' 
+      href='https://buyglow.xyz/' 
       target='_blank' 
       className='text-gray underline p-4 pb-2'
       >
