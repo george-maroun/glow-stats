@@ -18,6 +18,7 @@ export async function GET() {
         coordinates: audit.summary.address.coordinates,
         averageSunlightPerDay: audit.summary.carbonFootprintAndProduction.averageSunlightPerDay,
         protocolFee: audit.summary.carbonFootprintAndProduction.protocolFees,
+        activeShortIds: audit.activeShortIds
       };
     });
 

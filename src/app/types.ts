@@ -30,4 +30,5 @@ export interface FarmInfo {
   location: string;
   averageSunlightPerDay: number;
   protocolFee: number;
+  activeShortIds: number[];
 }
