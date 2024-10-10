@@ -1,13 +1,17 @@
 const formatLocation = (location: string) => {
-  if (!(location)) return 'India';
+  if (!(location)) return 'Unavailable';
 
   const locationArr = location.split(',');
-  if (locationArr.length < 4) return 'India';
+  const country = locationArr[locationArr.length - 1].trim();
+  if (country === 'USA') {
+    const city = locationArr[1].trim();
+    const state = locationArr[2].trim().split(' ')[0];
+    return `${city}, ${state}`;
+  }
 
-  const city = locationArr[1].trim();
-  const state = locationArr[2].trim().split(' ')[0];
+  const city = locationArr[locationArr.length - 2].trim();
 
-  return `${city}, ${state}`;
+  return `${city}, ${country}`;
 }
 
 export default formatLocation;

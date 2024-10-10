@@ -43,7 +43,6 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
     getFarmLocations();
   }, []);
 
-
   useEffect(() => {
     const getProtocolFeesByFarm = async () => {
       let protocolFees = {};

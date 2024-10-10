@@ -34,7 +34,7 @@ const useEquipmentDetails = (currentFarmIds: number[]) => {
         const filteredEquipmentDetails: EquipmentDetails = {};
 
         Object.keys(data).forEach(key => {
-          if (currentFarmIds.includes(Number(key))) {
+          if (currentFarmIds.includes(Number(key)) && Number(key) !== 185) {
             filteredEquipmentDetails[key] = data[key];
           }
         });

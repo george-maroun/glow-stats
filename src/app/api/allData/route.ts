@@ -45,30 +45,22 @@ interface WeeklySolarCount {
 
 async function getWeeklySolarPanelCount(weeklyFarmIds: WeeklyFarmId[]): Promise<WeeklySolarCount[]> {
   // Fetch allFarmsInfo from the API using fetch
-  const response = await fetch('https://glowstats.xyz/api/allFarmsInfo');
+  const response = await fetch('https://glow.org/api/audits');
   const data = await response.json();
-  const allFarmsInfo: Record<string, FarmInfo> = data.allFarmsInfo;
 
   const weeklySolarCounts: WeeklySolarCount[] = [];
 
   for (const weekData of weeklyFarmIds) {
     let currWeekSolarCount = 0;
-    const seen = new Set();
+    const ids = new Set<number>(weekData.value);
 
-    for (const id of weekData.value) {
-      if (id in allFarmsInfo && !seen.has(allFarmsInfo[id].farmName)) {
-        currWeekSolarCount += allFarmsInfo[id].panelCount;
-        seen.add(allFarmsInfo[id].farmName);
-      } else {
-        // If id is not found, check if it's part of the farmName
-        const matchingFarm = Object.values(allFarmsInfo).find(farm => {
-          return farm.farmName.includes(id.toString());
-        }
-        );
-        if (matchingFarm && !seen.has(matchingFarm.farmName)) {
-          currWeekSolarCount += matchingFarm.panelCount;
-          seen.add(matchingFarm.farmName);
-        }
+    for (const farm of data) {
+      const shortIds = farm.activeShortIds;
+      // Check if any of the farm's shortIds are in the ids set
+      if (shortIds.some((id: number) => ids.has(id))) {
+        currWeekSolarCount += farm.summary.solarPanels.quantity;
+        // Skip remaining IDs for this farm
+        continue;
       }
     }
 
@@ -153,9 +145,10 @@ async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
     weeklyDataByFarm[farmId].carbonCredits.push({ week, value: farm.carbonCreditsProduced });
     weeklyDataByFarm[farmId].weeklyPayments.push({ week, value: farm.weeklyPayment });
 
-    // if (week === maxTimeslotOffset) {
-      currentFarmIds.push(farmId);
-    // }
+    currentFarmIds.push(farmId);
+    if (farm.status.hasOwnProperty("AuditInherited") && farm.status.AuditInherited.hasOwnProperty("oldFarmId")) {
+      currentFarmIds.push(farm.status.AuditInherited.oldFarmId);
+    }
   }
 
   return {
@@ -209,13 +202,10 @@ async function fetchWeeklyData(startWeek = 0) {
       output.weeklyDataByFarm[id].carbonCredits.push(...farmData.carbonCredits);
       output.weeklyDataByFarm[id].weeklyPayments.push(...farmData.weeklyPayments);
     }
-
-    // if (result.week === maxTimeslotOffset) {
-      output.weeklyFarmIds.push({
-        week: result.week,
-        value: result.currentFarmIds
-      });
-    // }
+    output.weeklyFarmIds.push({
+      week: result.week,
+      value: result.currentFarmIds
+    });
   }
 
   const weeklyTokenRewards = calculateWeeklyTokenRewards(output.weeklyDataByFarm);
