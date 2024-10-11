@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import formatLocation from "./helpers/formatLocationHelper";
-import { useFarmsInfo } from "../../providers/allFarmsInfoProvider";
 
 type FarmListProps = {
   equipmentDetails: any;
@@ -8,21 +7,11 @@ type FarmListProps = {
   protocolFeesByFarm: {[key: string]: number} | null;
   selectedFarm: number;
   farmLocations: any;
+  farmIdSet: Set<string>;
 }
 
-const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selectedFarm, farmLocations }: FarmListProps) => {
+const FarmList = ({equipmentDetails, handleSelectFarm, protocolFeesByFarm, selectedFarm, farmLocations, farmIdSet}: FarmListProps) => {
   const [hoveredFarm, setHoveredFarm] = useState<number | null>(null);
-  const allFarmsInfo = useFarmsInfo();
-
-  const farmIdSet = useMemo(() => {
-    const set = new Set<string>();
-    for (let farm of Object.values(allFarmsInfo)) {
-      const name = (farm as any).farmName;
-      const id = name.split(" ")[1];
-      set.add((id.split(",")[0]));
-    }
-    return set;
-  }, [allFarmsInfo]);
 
   function listFarms() {
     return (

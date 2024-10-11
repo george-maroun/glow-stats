@@ -1,6 +1,7 @@
 "use client"
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { useFarmsInfo } from "../../providers/allFarmsInfoProvider";
 
 import useEquipmentDetails from '../../hooks/useEquipment';
 import { Equipment } from '../../hooks/useEquipment';
@@ -22,7 +23,7 @@ interface FarmsProps {
 
 export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds, weeklySolarPanelCount }: FarmsProps) {
   const { equipmentDetails } = useEquipmentDetails(currentFarmIds);
-  console.log(equipmentDetails);
+  const allFarmsInfo = useFarmsInfo();
 
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 38.794810, lng: -97.058722 });
@@ -30,6 +31,16 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
   const [view, setView] = useState<string>('map'); // State to manage the selected view
   const [protocolFeesByFarm, setProtocolFeesByFarm] = useState<{[key: string]: number;} | null>(null);
   const [farmLocations, setFarmLocations] = useState<any>(null);
+
+  const farmIdSet = useMemo(() => {
+    const set = new Set<string>();
+    for (let farm of Object.values(allFarmsInfo)) {
+      const name = (farm as any).farmName;
+      const id = name.split(" ")[1];
+      set.add((id.split(",")[0]));
+    }
+    return set;
+  }, [allFarmsInfo]);
 
   useEffect(() => {
     const getFarmLocations = async () => {
@@ -118,6 +129,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
               zoom={mapZoom}
             >
               {Object.values(equipmentDetails).map((detail: Equipment, index: number) => {
+                if (!farmIdSet.has(detail.ShortID.toString())) return null;
                 return (
                   <Marker
                     key={detail.ShortID}
@@ -135,6 +147,7 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
               protocolFeesByFarm={protocolFeesByFarm}
               selectedFarm={selectedFarm}
               farmLocations={farmLocations}
+              farmIdSet={farmIdSet}
             />
           )}
         </div>
