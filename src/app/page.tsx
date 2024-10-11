@@ -14,6 +14,14 @@ import TokenStats from './components/TokenStats';
 import FAQ from './components/faq';
 import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
 import { FarmInfo } from './types';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+
 
 
 export default function Home() {
@@ -230,8 +238,16 @@ export default function Home() {
       >
         <div id='left-subsection' className='flex flex-col lg:w-6/12'>
           <div className='p-3 pb-2 grow max-w-xl flex flex-col justify-between lg:h-auto h-28'>
-            <div className='lg:text-2xl text-xl'>
+            <div className='lg:text-2xl text-xl flex flex-row items-center gap-1'>
               Carbon Credits Created
+              <TooltipProvider>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger>{<AiOutlineInfoCircle/>}</TooltipTrigger>
+                  <TooltipContent className='w-52 text-center text-black'>
+                    <p>This represents the total number of carbon credits created by Glow Farms, including both those certified and those not yet certified by Glow Carbon Auditors.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
               {displayValue(carbonCredits, isLoading.allData, (v) => Number(v).toFixed(1))}

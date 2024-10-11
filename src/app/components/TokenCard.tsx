@@ -72,14 +72,14 @@ const TokenCard = ({glwPriceUni, glwPriceContract}:any) => {
       priceSlice = getSlicedData(24, 1);
     } else if (period['1W']) {
       // Daily data for 1 week (7 data points)
-      priceSlice = getSlicedData(7 * 24, 24);
+      priceSlice = getSlicedData(7 * 24, 1);
     } else if (period['1M']) {
       // Daily data for 1 month (30 data points)
-      priceSlice = getSlicedData(30 * 24, 24);
+      priceSlice = getSlicedData(30 * 24, 1);
     } else if (period['3M']) {
-      priceSlice = getSlicedData(90 * 24, 24);
+      priceSlice = getSlicedData(90 * 24, 1);
     } else if (period['1Y']) {
-      priceSlice = getSlicedData(365 * 24, 24);
+      priceSlice = getSlicedData(365 * 24, 1);
     } else if (period['Max']) {
       priceSlice = getSlicedData(glowPriceData.length, 24);
     }
