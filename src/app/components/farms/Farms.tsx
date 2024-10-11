@@ -22,6 +22,7 @@ interface FarmsProps {
 
 export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmIds, weeklySolarPanelCount }: FarmsProps) {
   const { equipmentDetails } = useEquipmentDetails(currentFarmIds);
+  console.log(equipmentDetails);
 
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 38.794810, lng: -97.058722 });
