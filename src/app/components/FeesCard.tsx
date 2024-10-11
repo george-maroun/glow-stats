@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import getWeeksSinceStart from "@/../lib/utils/currentWeekHelper";
 
 interface ProtocolFeePayment {
   id: string;
@@ -7,6 +8,8 @@ interface ProtocolFeePayment {
 
 const FeesCard = () => {
   const [protocolFeesPerWeek, setProtocolFeesPerWeek] = useState<ProtocolFeePayment[]>([]);
+
+  const weeksSinceStart = getWeeksSinceStart();
 
   // Get protocol fees per week
   useEffect(() => {
@@ -21,8 +24,15 @@ const FeesCard = () => {
   function listProtocolFees() {
     const cumulativeFeesList: string[] = [];
     let cumulativeFees = 0;
-    for (let i = protocolFeesPerWeek.length - 1; i > 0; i--) {
-      const fee = Number(protocolFeesPerWeek[i].totalPayments) / 1000000;
+    
+    // Determine whether to remove the first entry
+    const feesToDisplay = weeksSinceStart > Number(protocolFeesPerWeek[0].id)
+      ? protocolFeesPerWeek
+      : protocolFeesPerWeek.slice(1);
+
+    // Calculate cumulative fees
+    for (let i = feesToDisplay.length - 1; i >= 0; i--) {
+      const fee = Number(feesToDisplay[i].totalPayments) / 1000000;
       cumulativeFees += fee;
       const formattedCumulativeFees = (Math.round(cumulativeFees * 100) / 100).toLocaleString();
       cumulativeFeesList.unshift(formattedCumulativeFees);
@@ -30,7 +40,7 @@ const FeesCard = () => {
   
     return (
       <div>
-        {protocolFeesPerWeek.slice(1).map((protocolFee, index) => {
+        {feesToDisplay.map((protocolFee, index) => {
           const fee = Number(protocolFee.totalPayments) / 1000000;
           const roundedFee = Math.round(fee * 100) / 100;
           const formattedFee = roundedFee.toLocaleString();
