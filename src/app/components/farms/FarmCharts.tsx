@@ -23,21 +23,75 @@ interface DataTypeSelectorProps {
 
 const FarmSpecificDataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedDataType, onChange }) => {
   return (
-    <select onChange={e => onChange(e.target.value)} value={selectedDataType}>
-      <option value="outputs">Weekly Power Output (kWh)</option>
-      <option value="carbonCredits">Weekly Carbon Credits</option>
-      <option value="tokenRewards">Weekly Token Rewards ($GLW)</option>
-      <option value="cashRewards">Weekly USDG Rewards ($)</option>
-    </select>
+    <div className="flex space-x-3 mb-1">
+      <button
+        className={`px-2 py-1 rounded-md text-sm ${
+          selectedDataType === 'outputs'
+            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
+            : 'bg-[#EEEEEE]/70 text-[#666666]'
+        }`}
+        onClick={() => onChange('outputs')}
+      >
+        Output (kWh)
+      </button>
+      <button
+        className={`px-2 py-1 rounded-md text-sm ${
+          selectedDataType === 'carbonCredits'
+            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
+            : 'bg-[#EEEEEE]/70 text-[#666666]'
+        }`}
+        onClick={() => onChange('carbonCredits')}
+      >
+        Carbon Credits
+      </button>
+      <button
+        className={`px-2 py-1 rounded-md text-sm ${
+          selectedDataType === 'tokenRewards'
+            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
+            : 'bg-[#EEEEEE]/70 text-[#666666]'
+        }`}
+        onClick={() => onChange('tokenRewards')}
+      >
+        Glow Rewards
+      </button>
+      <button
+        className={`px-2 py-1 rounded-md text-sm ${
+          selectedDataType === 'cashRewards'
+            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
+            : 'bg-[#EEEEEE]/70 text-[#666666]'
+        }`}
+        onClick={() => onChange('cashRewards')}
+      >
+        USDG Rewards
+      </button>
+    </div>
   );
 };
 
 const AllFarmsDataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedDataType, onChange }) => {
   return (
-    <select onChange={e => onChange(e.target.value)} value={selectedDataType}>
-      <option value="farmCount">Weekly Farm Count</option>
-      <option value="solarPanelCount">Weekly Solar Panel Count</option>
-    </select>
+    <div className="flex space-x-3 mb-1 ">
+      <button
+        className={`px-2 py-1 rounded-md text-sm ${
+          selectedDataType === 'farmCount'
+            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
+            : 'bg-[#EEEEEE]/70 text-[#666666]'
+        }`}
+        onClick={() => onChange('farmCount')}
+      >
+        Farm Count
+      </button>
+      <button
+        className={`px-2 py-1 rounded-md text-sm ${
+          selectedDataType === 'solarPanelCount'
+            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
+            : 'bg-[#EEEEEE]/70 text-[#666666]'
+        }`}
+        onClick={() => onChange('solarPanelCount')}
+      >
+        Solar Panel Count
+      </button>
+    </div>
   );
 };
 
