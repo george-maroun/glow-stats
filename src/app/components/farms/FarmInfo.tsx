@@ -116,7 +116,7 @@ const FarmInfo: React.FC<FarmInfoProps> = ({
       value1={formatLocation(selectedFarmLocation)}
       title2='Solar Panel Count'
       value2={getSelectedFarmPanelCount().toString()}
-      title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]} (so far)`}
+      title3={`Week ${weekCount} ${dataTypeName[selectedDataType][0]}`}
       value3={getLatestWeekDataPoint()}
     />
   ) : allFarmSelectedDataType === 'solarPanelCount' ? (
