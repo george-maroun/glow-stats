@@ -39,7 +39,7 @@ const PowerCard = (props:PowerCardProps) => {
         value1={currentWeekOutput && Number(currentWeekOutput.toFixed(0)).toLocaleString() + " kWh"}
         title2="Past Month"
         value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)).toLocaleString() + " kWh"}
-        title3="Equivalent in Homes"
+        title3="Homes Powered"
         value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}
         isInfo3={true}
         infoMessage3="The number of homes that Glow farms could serve based on the power generated last month."
