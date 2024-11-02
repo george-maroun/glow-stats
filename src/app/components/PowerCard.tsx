@@ -17,6 +17,8 @@ const PowerCard = (props:PowerCardProps) => {
 
   const currentWeekOutput = weeklyOutputs.length && weeklyOutputs[weeklyOutputs.length - 1];
 
+  const weeklyOutputWithoutCurrentWeek = weeklyOutputs.slice(0, weeklyOutputs.length - 1);
+
   const pastMonthOutput = useMemo(() => {
     return getPastMonthValues(weeklyOutputs);
   }, [weeklyOutputs]);
@@ -63,7 +65,7 @@ const PowerCard = (props:PowerCardProps) => {
       <LineChart 
         title="" 
         labels={labels.slice(0, labels.length - 1)} 
-        dataPoints={weeklyOutputs} 
+        dataPoints={weeklyOutputWithoutCurrentWeek} 
         dataLabel={"Output"}
         useLogScale={useLogScale}
       />
