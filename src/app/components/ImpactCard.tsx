@@ -124,7 +124,7 @@ export default function ImpactCard({ weekCount, weeklyCarbonCredits }: ImpactPro
             <LineBarChart 
               title="" 
               labels={labels} 
-              dataPoints={weeklyCarbonCreditsValues} 
+              dataPoints={weeklyCarbonCreditsValues.slice(0, weeklyCarbonCreditsValues.length - 1)} 
             />
 
         </div>

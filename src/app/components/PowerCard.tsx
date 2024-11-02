@@ -17,6 +17,8 @@ const PowerCard = (props:PowerCardProps) => {
 
   const currentWeekOutput = weeklyOutputs.length && weeklyOutputs[weeklyOutputs.length - 1];
 
+  const weeklyOutputWithoutCurrentWeek = weeklyOutputs.slice(0, weeklyOutputs.length - 1);
+
   const pastMonthOutput = useMemo(() => {
     return getPastMonthValues(weeklyOutputs);
   }, [weeklyOutputs]);
@@ -37,7 +39,7 @@ const PowerCard = (props:PowerCardProps) => {
         value1={currentWeekOutput && Number(currentWeekOutput.toFixed(0)).toLocaleString() + " kWh"}
         title2="Past Month"
         value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)).toLocaleString() + " kWh"}
-        title3="Equivalent in Homes"
+        title3="Homes Powered"
         value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}
         isInfo3={true}
         infoMessage3="The number of homes that Glow farms could serve based on the power generated last month."
@@ -63,7 +65,7 @@ const PowerCard = (props:PowerCardProps) => {
       <LineChart 
         title="" 
         labels={labels.slice(0, labels.length - 1)} 
-        dataPoints={weeklyOutputs} 
+        dataPoints={weeklyOutputWithoutCurrentWeek} 
         dataLabel={"Output"}
         useLogScale={useLogScale}
       />

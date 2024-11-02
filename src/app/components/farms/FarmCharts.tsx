@@ -23,69 +23,71 @@ interface DataTypeSelectorProps {
 
 const FarmSpecificDataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedDataType, onChange }) => {
   return (
-    <div className="flex space-x-3 mb-1">
-      <button
-        className={`px-2 py-1 rounded-md text-sm ${
-          selectedDataType === 'outputs'
-            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
-            : 'bg-[#EEEEEE]/70 text-[#666666]'
-        }`}
-        onClick={() => onChange('outputs')}
-      >
-        Output (kWh)
-      </button>
-      <button
-        className={`px-2 py-1 rounded-md text-sm ${
-          selectedDataType === 'carbonCredits'
-            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
-            : 'bg-[#EEEEEE]/70 text-[#666666]'
-        }`}
-        onClick={() => onChange('carbonCredits')}
-      >
-        Carbon Credits
-      </button>
-      <button
-        className={`px-2 py-1 rounded-md text-sm ${
-          selectedDataType === 'tokenRewards'
-            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
-            : 'bg-[#EEEEEE]/70 text-[#666666]'
-        }`}
-        onClick={() => onChange('tokenRewards')}
-      >
-        Glow Rewards
-      </button>
-      <button
-        className={`px-2 py-1 rounded-md text-sm ${
-          selectedDataType === 'cashRewards'
-            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
-            : 'bg-[#EEEEEE]/70 text-[#666666]'
-        }`}
-        onClick={() => onChange('cashRewards')}
-      >
-        USDG Rewards
-      </button>
+    <div className="flex mb-1 gap-2 bg-[#EEEEEE]/70 rounded-md items-center justify-between px-2 w-[94%] sm:w-[494px] py-1 sm:py-0 sm:h-[34px]">
+      <div className="flex gap-2 w-full justify-center sm:bg-transparent rounded-md">
+        <button
+          className={`px-2 py-[0.23rem] rounded-md text-sm flex-1 sm:flex-initial ${
+            selectedDataType === 'outputs'
+              ? 'bg-[#ffffff] text-[#000000] shadow-md font-semibold'
+              : 'text-[#666666] font-semibold'
+          }`}
+          onClick={() => onChange('outputs')}
+        >
+          Output (kWh)
+        </button>
+        <button
+          className={`px-2 py-[0.23rem] rounded-md text-sm flex-1 sm:flex-initial ${
+            selectedDataType === 'carbonCredits'
+              ? 'bg-[#ffffff] text-[#000000] shadow-md font-semibold'
+              : 'text-[#666666] font-semibold'
+          }`}
+          onClick={() => onChange('carbonCredits')}
+        >
+          Carbon Credits
+        </button>
+        <button
+          className={`px-2 py-[0.23rem] rounded-md text-sm flex-1 sm:flex-initial ${
+            selectedDataType === 'tokenRewards'
+              ? 'bg-[#ffffff] text-[#000000] shadow-md font-semibold'
+              : 'text-[#666666] font-semibold'
+          }`}
+          onClick={() => onChange('tokenRewards')}
+        >
+          Glow Rewards
+        </button>
+        <button
+          className={`px-2 py-[0.23rem] rounded-md text-sm flex-1 sm:flex-initial ${
+            selectedDataType === 'cashRewards'
+              ? 'bg-[#ffffff] text-[#000000] shadow-md font-semibold'
+              : 'text-[#666666] font-semibold'
+          }`}
+          onClick={() => onChange('cashRewards')}
+        >
+          USDG Rewards
+        </button>
+      </div>
     </div>
   );
 };
 
 const AllFarmsDataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedDataType, onChange }) => {
   return (
-    <div className="flex space-x-3 mb-1 ">
+    <div className="flex items-center justify-between px-1 gap-2 mb-1 bg-[#EEEEEE]/70 w-[255px] rounded-md h-[34px]">
       <button
-        className={`px-2 py-1 rounded-md text-sm ${
+        className={`px-2 py-[0.23rem] rounded-md text-sm ${
           selectedDataType === 'farmCount'
-            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
-            : 'bg-[#EEEEEE]/70 text-[#666666]'
+            ? 'bg-[#ffffff] text-[#000000] shadow-md font-semibold'
+            : 'text-[#666666] font-semibold'
         }`}
         onClick={() => onChange('farmCount')}
       >
         Farm Count
       </button>
       <button
-        className={`px-2 py-1 rounded-md text-sm ${
+        className={`px-2 py-[0.23rem] rounded-md text-sm ${
           selectedDataType === 'solarPanelCount'
-            ? 'bg-[#EEEEEE]/80 text-[#666666] shadow-sm shadow-[#555555]/40'
-            : 'bg-[#EEEEEE]/70 text-[#666666]'
+            ? 'bg-[#ffffff] text-[#000000] shadow-md font-semibold'
+            : 'text-[#666666] font-semibold'
         }`}
         onClick={() => onChange('solarPanelCount')}
       >
@@ -126,17 +128,19 @@ const FarmCharts: React.FC<FarmChartsProps> = ({
 
   return (
     <>
-      {selectedFarm ? (
-        <FarmSpecificDataTypeSelector
-          selectedDataType={selectedDataType}
-          onChange={(type: any) => handleSetSelectedDataType(type)}
-        />
-      ) : (
-        <AllFarmsDataTypeSelector
-          selectedDataType={allFarmSelectedDataType}
-          onChange={(type: any) => handleSetAllFarmSelectedDataType(type)}
-        />
-      )}
+      <div className='ml-3'>
+        {selectedFarm ? (
+          <FarmSpecificDataTypeSelector
+            selectedDataType={selectedDataType}
+            onChange={(type: any) => handleSetSelectedDataType(type)}
+          />
+        ) : (
+          <AllFarmsDataTypeSelector
+            selectedDataType={allFarmSelectedDataType}
+            onChange={(type: any) => handleSetAllFarmSelectedDataType(type)}
+          />
+        )}
+      </div>
       {selectedFarm && selectedDataType.includes('Reward') ? (
         <LineBarChart
           title=""

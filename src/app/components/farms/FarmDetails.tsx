@@ -60,7 +60,7 @@ const FarmDetails: React.FC<IFarmDetailsProps> = ({
         allFarmSelectedDataType={allFarmSelectedDataType}
       />
       <div className='h-px w-full' style={{backgroundColor: "rgb(230,230,230"}}></div>
-      <div className='pl-4 pb-2 pt-2 text-gray text-md'>
+      <div className='pl-0 pb-2 pt-2 text-gray text-md'>
         <FarmCharts
           selectedFarm={selectedFarm}
           weeklyFarmCount={weeklyFarmCount}
