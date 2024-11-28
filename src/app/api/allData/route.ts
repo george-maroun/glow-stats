@@ -12,6 +12,7 @@ interface Output {
   weeklyTotalOutput: {week: number; value: number}[];
   weeklyDataByFarm: IWeeklyDataByFarm;
   weeklySolarPanelCount: {week: number; value: number}[];
+  // weeklyFarmNames: {week: number; value: string[]}[];
 }
 
 const maxTimeslotOffset = getWeeksSinceStart();
@@ -38,15 +39,19 @@ interface WeeklyFarmId {
   value: number[];
 }
 
+interface WeeklyFarmName {
+  week: number;
+  value: string[];
+}
+
 interface WeeklySolarCount {
   week: number;
   value: number;
 }
 
-async function getWeeklySolarPanelCount(weeklyFarmIds: WeeklyFarmId[]): Promise<WeeklySolarCount[]> {
+async function getWeeklySolarPanelCount(auditData: any, weeklyFarmIds: WeeklyFarmId[]): Promise<WeeklySolarCount[]> {
   // Fetch allFarmsInfo from the API using fetch
-  const response = await fetch('https://glow.org/api/audits');
-  const data = await response.json();
+  
 
   const weeklySolarCounts: WeeklySolarCount[] = [];
 
@@ -54,7 +59,7 @@ async function getWeeklySolarPanelCount(weeklyFarmIds: WeeklyFarmId[]): Promise<
     let currWeekSolarCount = 0;
     const ids = new Set<number>(weekData.value);
 
-    for (const farm of data) {
+    for (const farm of auditData) {
       const shortIds = farm.activeShortIds;
       // Check if any of the farm's shortIds are in the ids set
       if (shortIds.some((id: number) => ids.has(id))) {
@@ -71,6 +76,33 @@ async function getWeeklySolarPanelCount(weeklyFarmIds: WeeklyFarmId[]): Promise<
   }
 
   return weeklySolarCounts;
+}
+
+function getFarmNameIdMap(auditData: any): Record<number, string> {
+  const idFarmNameMap: Record<number, string> = {};
+  for (const farm of auditData) {
+    for (const shortId of farm.activeShortIds) {
+      idFarmNameMap[shortId] = farm.farmName;
+    }
+  }
+  return idFarmNameMap;
+}
+
+async function getWeeklyFarmNames(auditData: any, weeklyFarmIds: WeeklyFarmId[]): Promise<WeeklyFarmName[]> {
+  const farmNameIdMap = getFarmNameIdMap(auditData);
+  const weeklyFarmNames: WeeklyFarmName[] = [];
+  let counter = 1;
+  for (const weekData of weeklyFarmIds) {
+    const farmNames = new Set<string>();
+    for (const id of weekData.value) {
+      if (farmNameIdMap.hasOwnProperty(id)) {
+        farmNames.add(farmNameIdMap[id]);
+      }
+    }
+    weeklyFarmNames.push({ week: weekData.week, value: Array.from(farmNames) });
+    counter++;
+  }
+  return weeklyFarmNames;
 }
 
 const getBannedFarms = async (): Promise<number[]> => {
@@ -114,7 +146,7 @@ async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
   let carbonCredits = 0;
   let powerOutput = 0;
   let totalPayments = 0;
-  let activeFarms = 0;
+  // let activeFarms = 0;
   let weeklyDataByFarm: IWeeklyDataByFarm = {};
   let currentFarmIds: number[] = [];
 
@@ -129,7 +161,7 @@ async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
       continue;
     }
 
-    activeFarms++;
+    // activeFarms++;
 
     if (!weeklyDataByFarm[farmId]) {
       weeklyDataByFarm[farmId] = {
@@ -155,13 +187,23 @@ async function fetchWeekData(week: number, bannedFarmsSet: Set<number>) {
     week,
     carbonCredits,
     powerOutput,
-    activeFarms,
+    // activeFarms,
     weeklyDataByFarm,
     currentFarmIds,
   };
 }
 
 async function fetchWeeklyData(startWeek = 0) {
+  const response = await fetch('https://glow.org/api/audits');
+  const auditData = await response.json();
+
+  // for each farm in auditData, create a mapping of farm.farmName to farm.activeShortIds
+  const farmNameIdMap: Record<string, number[]> = {};
+  for (const farm of auditData) {
+    farmNameIdMap[farm.activeShortIds[0]] = farm.activeShortIds;
+  }
+
+
   const BANNED_FARMS = await getBannedFarms();
   const bannedFarmsSet = new Set(BANNED_FARMS);
 
@@ -179,12 +221,13 @@ async function fetchWeeklyData(startWeek = 0) {
     weeklyTotalOutput: [],
     weeklyDataByFarm: {} as IWeeklyDataByFarm,
     weeklySolarPanelCount: [],
+    // weeklyFarmNames: [],
     // currentFarmIds: [],
   };
 
   for (const result of weekResults) {
     output.weeklyCarbonCredit.push({ week: result.week, value: result.carbonCredits });
-    output.weeklyFarmCount.push({ week: result.week, value: result.activeFarms });
+    // output.weeklyFarmCount.push({ week: result.week, value: result.activeFarms });
     output.weeklyTotalOutput.push({ week: result.week, value: result.powerOutput });
 
     for (const [farmId, farmData] of Object.entries(result.weeklyDataByFarm)) {
@@ -216,8 +259,16 @@ async function fetchWeeklyData(startWeek = 0) {
     output.weeklyDataByFarm[farmId].weeklyCashRewards = weeklyCashRewards[farmId].weeklyCashRewards;
   }
 
-  const weeklySolarPanelCount = await getWeeklySolarPanelCount(output.weeklyFarmIds);
+
+
+  const weeklySolarPanelCount = await getWeeklySolarPanelCount(auditData, output.weeklyFarmIds);
+  const weeklyFarmNames = await getWeeklyFarmNames(auditData, output.weeklyFarmIds);
+
   output.weeklySolarPanelCount = weeklySolarPanelCount;
+  // output.weeklyFarmNames = weeklyFarmNames;
+  for (const week of weeklyFarmNames) {
+    output.weeklyFarmCount.push({ week: week.week, value: week.value.length });
+  }
 
   return output;
 }
