@@ -26,8 +26,8 @@ export default function Farms({ weeklyFarmCount, weeklyDataByFarm, currentFarmId
   const allFarmsInfo = useFarmsInfo();
 
   const [selectedFarm, setSelectedFarm] = useState<number>(0);
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 38.794810, lng: -97.058722 });
-  const [mapZoom, setMapZoom] = useState<number>(4);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 43.239415, lng: 6.664042 });
+  const [mapZoom, setMapZoom] = useState<number>(1);
   const [view, setView] = useState<string>('map'); // State to manage the selected view
   const [protocolFeesByFarm, setProtocolFeesByFarm] = useState<{[key: string]: number;} | null>(null);
   const [farmLocations, setFarmLocations] = useState<any>(null);
