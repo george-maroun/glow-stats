@@ -245,9 +245,10 @@ async function fetchWeeklyData(startWeek = 0) {
       const farmId = idToFarmName[Number(id)];
       if (!farmId) continue;
 
-      if (!weeklyDataByFarm[Number(farmId)]) {
-        weeklyDataByFarm[Number(farmId)] = {
-          powerOutputs: [],
+      const numFarmId = Number(farmId);
+      if (!weeklyDataByFarm[numFarmId]) {
+        weeklyDataByFarm[numFarmId] = {
+          powerOutputs: [],    // Use arrays to match the interface
           carbonCredits: [],
           weeklyPayments: [],
           weeklyTokenRewards: [],
@@ -255,35 +256,35 @@ async function fetchWeeklyData(startWeek = 0) {
         };
       }
 
-      // Initialize or update weekly values
-      data.powerOutputs.forEach((weekData: { week: number; value: number }) => {
-        const existingWeek = weeklyDataByFarm[Number(farmId)].powerOutputs.find(w => w.week === weekData.week);
-        if (existingWeek) {
-          existingWeek.value += weekData.value;
+      // Combine all data types in a single pass
+      for (const weekData of data.powerOutputs) {
+        const existingEntry = weeklyDataByFarm[numFarmId].powerOutputs.find(entry => entry.week === weekData.week);
+        if (existingEntry) {
+          existingEntry.value += weekData.value;
         } else {
-          weeklyDataByFarm[Number(farmId)].powerOutputs.push({ ...weekData });
+          weeklyDataByFarm[numFarmId].powerOutputs.push({ week: weekData.week, value: weekData.value });
         }
-      });
+      }
 
-      data.carbonCredits.forEach((weekData: { week: number; value: number }) => {
-        const existingWeek = weeklyDataByFarm[Number(farmId)].carbonCredits.find(w => w.week === weekData.week);
-        if (existingWeek) {
-          existingWeek.value += weekData.value;
+      for (const weekData of data.carbonCredits) {
+        const existingEntry = weeklyDataByFarm[numFarmId].carbonCredits.find(entry => entry.week === weekData.week);
+        if (existingEntry) {
+          existingEntry.value += weekData.value;
         } else {
-          weeklyDataByFarm[Number(farmId)].carbonCredits.push({ ...weekData });
+          weeklyDataByFarm[numFarmId].carbonCredits.push({ week: weekData.week, value: weekData.value });
         }
-      });
+      }
 
-      data.weeklyPayments.forEach((weekData: { week: number; value: number }) => {
-        const existingWeek = weeklyDataByFarm[Number(farmId)].weeklyPayments.find(w => w.week === weekData.week);
-        if (existingWeek) {
-          existingWeek.value += weekData.value;
+      for (const weekData of data.weeklyPayments) {
+        const existingEntry = weeklyDataByFarm[numFarmId].weeklyPayments.find(entry => entry.week === weekData.week);
+        if (existingEntry) {
+          existingEntry.value += weekData.value;
         } else {
-          weeklyDataByFarm[Number(farmId)].weeklyPayments.push({ ...weekData });
+          weeklyDataByFarm[numFarmId].weeklyPayments.push({ week: weekData.week, value: weekData.value });
         }
-      });
+      }
     }
-    
+
     return weeklyDataByFarm;
   }
 
