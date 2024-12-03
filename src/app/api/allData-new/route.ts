@@ -200,7 +200,11 @@ async function fetchWeeklyData(startWeek = 0) {
   // for each farm in auditData, create a mapping of farm.farmName to farm.activeShortIds
   const farmNameIdMap: Record<string, number[]> = {};
   for (const farm of auditData) {
-    farmNameIdMap[farm.activeShortIds[0]] = farm.activeShortIds;
+    if (farm.activeShortIds[2] == 490) {
+      farmNameIdMap[farm.activeShortIds[2]] = farm.activeShortIds;
+    } else {
+      farmNameIdMap[farm.activeShortIds[0]] = farm.activeShortIds;
+    }
   }
 
 
@@ -225,15 +229,78 @@ async function fetchWeeklyData(startWeek = 0) {
     // currentFarmIds: [],
   };
 
+  function combineDataByFarmName(weeklyDataById: IWeeklyDataByFarm, farmNameIdMap: Record<string, number[]>): IWeeklyDataByFarm {
+    const weeklyDataByFarm: IWeeklyDataByFarm = {};
+    
+    // Create reverse mapping from ID to farm name
+    const idToFarmName: Record<number, string> = {};
+    for (const [primaryId, ids] of Object.entries(farmNameIdMap)) {
+      for (const id of ids) {
+        idToFarmName[id] = primaryId;
+      }
+    }
+
+    // Combine data for each week
+    for (const [id, data] of Object.entries(weeklyDataById)) {
+      const farmId = idToFarmName[Number(id)];
+      if (!farmId) continue;
+
+      const numFarmId = Number(farmId);
+      if (!weeklyDataByFarm[numFarmId]) {
+        weeklyDataByFarm[numFarmId] = {
+          powerOutputs: [],    // Use arrays to match the interface
+          carbonCredits: [],
+          weeklyPayments: [],
+          weeklyTokenRewards: [],
+          weeklyCashRewards: [],
+        };
+      }
+
+      // Combine all data types in a single pass
+      for (const weekData of data.powerOutputs) {
+        const existingEntry = weeklyDataByFarm[numFarmId].powerOutputs.find(entry => entry.week === weekData.week);
+        if (existingEntry) {
+          existingEntry.value += weekData.value;
+        } else {
+          weeklyDataByFarm[numFarmId].powerOutputs.push({ week: weekData.week, value: weekData.value });
+        }
+      }
+
+      for (const weekData of data.carbonCredits) {
+        const existingEntry = weeklyDataByFarm[numFarmId].carbonCredits.find(entry => entry.week === weekData.week);
+        if (existingEntry) {
+          existingEntry.value += weekData.value;
+        } else {
+          weeklyDataByFarm[numFarmId].carbonCredits.push({ week: weekData.week, value: weekData.value });
+        }
+      }
+
+      for (const weekData of data.weeklyPayments) {
+        const existingEntry = weeklyDataByFarm[numFarmId].weeklyPayments.find(entry => entry.week === weekData.week);
+        if (existingEntry) {
+          existingEntry.value += weekData.value;
+        } else {
+          weeklyDataByFarm[numFarmId].weeklyPayments.push({ week: weekData.week, value: weekData.value });
+        }
+      }
+    }
+
+    return weeklyDataByFarm;
+  }
+
+  // Replace the existing data aggregation with the new combined data
   for (const result of weekResults) {
     output.weeklyCarbonCredit.push({ week: result.week, value: result.carbonCredits });
-    // output.weeklyFarmCount.push({ week: result.week, value: result.activeFarms });
     output.weeklyTotalOutput.push({ week: result.week, value: result.powerOutput });
+    
+    // Combine data by farm name instead of by ID
+    const combinedDataByFarmName = combineDataByFarmName(result.weeklyDataByFarm, farmNameIdMap);
+    // output.weeklyDataByFarm[id].combinedDataByFarmName;
 
-    for (const [farmId, farmData] of Object.entries(result.weeklyDataByFarm)) {
+    for (const [farmId, farmData] of Object.entries(combinedDataByFarmName)) {
       const id = Number(farmId);
       if (!output.weeklyDataByFarm[Number(id)]) {
-        output.weeklyDataByFarm[id] = {
+        output.weeklyDataByFarm[Number(id)] = {
           powerOutputs: [],
           carbonCredits: [],
           weeklyPayments: [],
@@ -245,11 +312,19 @@ async function fetchWeeklyData(startWeek = 0) {
       output.weeklyDataByFarm[id].carbonCredits.push(...farmData.carbonCredits);
       output.weeklyDataByFarm[id].weeklyPayments.push(...farmData.weeklyPayments);
     }
+    
     output.weeklyFarmIds.push({
       week: result.week,
       value: result.currentFarmIds
     });
   }
+
+  // sum all the values for powerOutputs for each value output.weeklyDataByFarm and console.log it
+  // let totalPowerOutput = 0;
+  // for (const farmId in output.weeklyDataByFarm) {
+  //   totalPowerOutput += output.weeklyDataByFarm[farmId].powerOutputs.reduce((acc, curr) => acc + curr.value, 0);
+  // }
+  // console.log(totalPowerOutput);
 
   const weeklyTokenRewards = calculateWeeklyTokenRewards(output.weeklyDataByFarm);
   const weeklyCashRewards = calculateWeeklyCashRewards(output.weeklyDataByFarm);
@@ -282,3 +357,4 @@ export async function GET() {
     return NextResponse.json({ error: 'Error fetching weekly farm data' });
   }
 }
+

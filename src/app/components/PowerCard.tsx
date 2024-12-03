@@ -42,7 +42,7 @@ const PowerCard = (props:PowerCardProps) => {
         title3="Homes Powered"
         value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}
         isInfo3={true}
-        infoMessage3="The number of homes that Glow farms could serve based on the power generated last month."
+        infoMessage3="The number of homes powered by Glow Farms based on the power generated last month."
       />
       
       <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>
