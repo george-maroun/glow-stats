@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import LineChart from './LineChart';
 import getPastMonthValues from '../../../lib/utils/getPastMonthValuesHelper';
 import TopValues from './TopValues';
+import { formatValue } from '../../../lib/utils/formatValue';
 
 interface PowerCardProps {
   weekCount: number;
@@ -36,13 +37,13 @@ const PowerCard = (props:PowerCardProps) => {
       
       <TopValues
         title1={`Week ${weekCount} (Current)`} 
-        value1={currentWeekOutput && Number(currentWeekOutput.toFixed(0)).toLocaleString() + " kWh"}
+        value1={currentWeekOutput && formatValue(Number(currentWeekOutput) * 1000, 3)}
         title2="Past Month"
-        value2={pastMonthOutput && Number(pastMonthOutput.toFixed(0)).toLocaleString() + " kWh"}
+        value2={pastMonthOutput && formatValue(Number(pastMonthOutput) * 1000, 3)}
         title3="Homes Powered"
         value3={pastMonthOutput && Math.round(pastMonthOutput / 900)}
         isInfo3={true}
-        infoMessage3="The number of homes powered by Glow Farms based on the power generated last month."
+        infoMessage3="The number of U.S. homes powered by Glow Farms based on the power generated last month."
       />
       
       <div className='h-px w-full bg-beige' style={{backgroundColor: "rgb(230,230,230"}}></div>

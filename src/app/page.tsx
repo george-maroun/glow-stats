@@ -14,6 +14,7 @@ import TokenStats from './components/TokenStats';
 import FAQ from './components/faq';
 import { FarmsInfoContext } from './providers/allFarmsInfoProvider';
 import { FarmInfo } from './types';
+import { formatValue } from '../../lib/utils/formatValue';
 import {
   Tooltip,
   TooltipContent,
@@ -203,7 +204,7 @@ export default function Home() {
   const totalPowerProduced = useMemo(() => {
     if (!Array.isArray(weeklyTotalOutput)) return '0';
     const total = weeklyTotalOutput.reduce((acc, curr) => acc + (curr.value || 0), 0);
-    return Math.round(total).toLocaleString();
+    return total;
   }, [weeklyTotalOutput]);
 
   const totalPanelCount: number = useMemo(() => {
@@ -244,13 +245,13 @@ export default function Home() {
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger>{<AiOutlineInfoCircle/>}</TooltipTrigger>
                   <TooltipContent className='w-52 text-center text-black'>
-                    <p>This represents the total number of carbon credits created by Glow Farms, including both those certified and those not yet certified by Glow Carbon Auditors.</p>
+                    <p>Total number of carbon credits created by Glow Farms, including both those certified and those not yet certified by Glow Carbon Auditors.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
             <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
-              {displayValue(carbonCredits, isLoading.allData, (v) => Number(v).toFixed(1))}
+              {displayValue(carbonCredits, isLoading.allData, (v) => Math.round(Number(v)).toLocaleString())}
             </div>
           </div>
           <div className="h-px w-full bg-beige"></div>
@@ -259,7 +260,7 @@ export default function Home() {
               Total Power Produced
             </div>
             <div className='lg:text-5xl text-3xl' style={{color: "#374151"}}>
-              {displayValue(totalPowerProduced, isLoading.allData, (v) => `${v.toLocaleString()} kWh`)}
+              {displayValue(totalPowerProduced, isLoading.allData, (v) => formatValue(Number(v) * 1000, 3))}
             </div>
           </div>
         </div>
