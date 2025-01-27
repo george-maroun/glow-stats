@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-export const revalidate = 1000;
+export const revalidate = 0;
 
 const GLOW_GREEN_API = process.env.GLOW_GREEN_API || '';
 const GLOW_PRICE_API = `${GLOW_GREEN_API}all-glow-prices`;

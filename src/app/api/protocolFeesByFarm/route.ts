@@ -1,6 +1,6 @@
 import getWeeksSinceStart from '../../../../lib/utils/currentWeekHelper';
 import { NextResponse } from 'next/server';
-export const revalidate = 7200;
+export const revalidate = 0;
 
 const maxTimeslotOffset = getWeeksSinceStart();
 const BASE_URL = process.env.FARM_STATS_URL || '';
